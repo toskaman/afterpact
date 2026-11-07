@@ -1,0 +1,337 @@
+{
+  "info": {
+    "name": "AFTERPACT",
+    "description": "AFTERPACT (PayPal AI Hackathon 2026) — local API + PayPal Sandbox helpers.\n\nRun order: 00 Health → 01 Copilot flow (saves ids to variables) → 02–08.\nThe local API has no auth; PayPal requests use the OAuth helper in folder 09.\nNegative cases assert exact error codes (see docs for the contract).",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:3001", "description": "Local AFTERPACT API (npm start)." },
+    { "key": "intentId", "value": "", "description": "Saved by: create intent." },
+    { "key": "offerId", "value": "", "description": "Saved by: list offers (first offer)." },
+    { "key": "promiseId", "value": "", "description": "Saved by: create promise." },
+    { "key": "orderId", "value": "", "description": "Saved by: create order." },
+    { "key": "idempotencyKey", "value": "postman-demo-key-001", "description": "Reuse to prove idempotent replay." },
+    { "key": "incidentId", "value": "", "description": "Saved by: record outcome (partial delivery)." },
+    { "key": "proposalId", "value": "", "description": "Saved by: propose resolution." },
+    { "key": "paypalBase", "value": "https://api-m.sandbox.paypal.com", "description": "PayPal Sandbox ONLY. Never production." },
+    { "key": "paypalClientId", "value": "REPLACE_ME", "description": "Sandbox client id (Postman environment, never commit)." },
+    { "key": "paypalSecret", "value": "REPLACE_ME", "description": "Sandbox secret (Postman environment, never commit)." }
+  ],
+  "item": [
+    {
+      "name": "00 Health + config",
+      "item": [
+        {
+          "name": "health",
+          "request": { "method": "GET", "url": "{{baseUrl}}/api/health" },
+          "event": [{ "listen": "test", "script": { "exec": ["pm.test('healthy', () => {", "  pm.response.to.have.status(200);", "  pm.expect(pm.response.json().data.status).to.eql('ok');", "});"], "type": "text/javascript" } }]
+        },
+        {
+          "name": "config (sponsor labels)",
+          "request": { "method": "GET", "url": "{{baseUrl}}/api/config" },
+          "event": [{ "listen": "test", "script": { "exec": ["pm.test('honest sponsor labels', () => {", "  const f = pm.response.json().data.features;", "  pm.expect(f.agStudio).to.eql('ag-grid-community');", "  pm.expect(['live','unconfigured']).to.include(f.channel3);", "});"], "type": "text/javascript" } }]
+        },
+        { "name": "metrics", "request": { "method": "GET", "url": "{{baseUrl}}/api/metrics" } }
+      ]
+    },
+    {
+      "name": "01 Copilot flow (positive)",
+      "item": [
+        {
+          "name": "create intent",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/intents",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\"rawText\": \"Purchase three field sensor kits, budget under $500, delivery within 14 days.\", \"buyerId\": \"postman\"}" }
+          },
+          "event": [{ "listen": "test", "script": { "exec": ["pm.test('intent created', () => {", "  pm.response.to.have.status(201);", "  pm.collectionVariables.set('intentId', pm.response.json().data.intent.id);", "});"], "type": "text/javascript" } }]
+        },
+        {
+          "name": "list offers",
+          "request": { "method": "GET", "url": "{{baseUrl}}/api/offers?intentId={{intentId}}" },
+          "event": [{ "listen": "test", "script": { "exec": ["pm.test('offers listed', () => {", "  pm.response.to.have.status(200);", "  pm.collectionVariables.set('offerId', pm.response.json().data.offers[0].id);", "});"], "type": "text/javascript" } }]
+        },
+        {
+          "name": "create promise",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/promises",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\"intentId\": \"{{intentId}}\", \"offerId\": \"{{offerId}}\"}" }
+          },
+          "event": [{ "listen": "test", "script": { "exec": ["pm.test('promise awaiting approval', () => {", "  pm.response.to.have.status(201);", "  pm.expect(pm.response.json().data.state).to.eql('AWAITING_APPROVAL');", "  pm.collectionVariables.set('promiseId', pm.response.json().data.promise.id);", "});"], "type": "text/javascript" } }]
+        },
+        {
+          "name": "approve promise",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/promises/{{promiseId}}/approve",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\"approvedBy\": \"postman\"}" }
+          },
+          "event": [{ "listen": "test", "script": { "exec": ["pm.test('approved + cleared', () => {", "  pm.response.to.have.status(200);", "  pm.expect(pm.response.json().data.policy.verdict).to.eql('Cleared');", "});"], "type": "text/javascript" } }]
+        },
+        { "name": "view promise", "request": { "method": "GET", "url": "{{baseUrl}}/api/promises/{{promiseId}}" } }
+      ]
+    },
+    {
+      "name": "02 Payments (positive + idempotency)",
+      "item": [
+        {
+          "name": "create order",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/payments/orders",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\"promiseId\": \"{{promiseId}}\", \"idempotencyKey\": \"{{idempotencyKey}}\"}" }
+          },
+          "event": [{ "listen": "test", "script": { "exec": ["pm.test('order created', () => {", "  pm.response.to.have.status(201);", "  pm.expect(pm.response.json().data.duplicate).to.eql(false);", "  pm.collectionVariables.set('orderId', pm.response.json().data.order.id);", "});"], "type": "text/javascript" } }]
+        },
+        {
+          "name": "create order — idempotent replay (same key)",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/payments/orders",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\"promiseId\": \"{{promiseId}}\", \"idempotencyKey\": \"{{idempotencyKey}}\"}" }
+          },
+          "event": [{ "listen": "test", "script": { "exec": ["pm.test('replay returns duplicate', () => {", "  pm.response.to.have.status(201);", "  pm.expect(pm.response.json().data.duplicate).to.eql(true);", "});"], "type": "text/javascript" } }]
+        },
+        {
+          "name": "buyer approve (mock transport only)",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/payments/orders/{{orderId}}/buyer-approve",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{}" }
+          }
+        },
+        {
+          "name": "capture order",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/payments/orders/{{orderId}}/capture",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\"idempotencyKey\": \"{{idempotencyKey}}-capture\"}" }
+          },
+          "event": [{ "listen": "test", "script": { "exec": ["pm.test('captured', () => {", "  pm.response.to.have.status(200);", "  pm.expect(pm.response.json().data.order.status).to.eql('captured');", "});"], "type": "text/javascript" } }]
+        },
+        { "name": "order status", "request": { "method": "GET", "url": "{{baseUrl}}/api/payments/orders/{{orderId}}" } }
+      ]
+    },
+    {
+      "name": "03 Outcomes + incidents + resolutions",
+      "item": [
+        {
+          "name": "record outcome (partial delivery → incident)",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/outcomes",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\"promiseId\": \"{{promiseId}}\", \"kind\": \"delivery-scan\", \"summary\": \"Carrier scan: 2 of 3 kits delivered.\", \"payload\": {\"deliveredQuantity\": 2, \"status\": \"partial\"}, \"provenance\": {\"source\": \"simulated-logistics\"}, \"confidence\": 1}" }
+          },
+          "event": [{ "listen": "test", "script": { "exec": ["pm.test('incident detected', () => {", "  pm.response.to.have.status(201);", "  pm.expect(pm.response.json().data.incidents.length).to.be.above(0);", "  pm.collectionVariables.set('incidentId', pm.response.json().data.incidents[0].id);", "});"], "type": "text/javascript" } }]
+        },
+        { "name": "list incidents", "request": { "method": "GET", "url": "{{baseUrl}}/api/incidents" } },
+        {
+          "name": "propose partial refund",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/resolutions",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\"incidentId\": \"{{incidentId}}\", \"kind\": \"refund-partial\", \"amount\": {\"currency\": \"USD\", \"amountMinor\": 12999}, \"rationale\": \"One kit missing; refund one unit share.\", \"proposedBy\": \"postman\"}" }
+          },
+          "event": [{ "listen": "test", "script": { "exec": ["pm.test('proposal queued', () => {", "  pm.response.to.have.status(201);", "  pm.collectionVariables.set('proposalId', pm.response.json().data.proposal.id);", "});"], "type": "text/javascript" } }]
+        },
+        {
+          "name": "decide resolution (approve → refund)",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/resolutions/{{proposalId}}/decide",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\"decidedBy\": \"postman\", \"decision\": \"approved\"}" }
+          },
+          "event": [{ "listen": "test", "script": { "exec": ["pm.test('verified recovery', () => {", "  pm.response.to.have.status(200);", "  pm.expect(pm.response.json().data.state).to.eql('RESOLUTION_VERIFIED');", "});"], "type": "text/javascript" } }]
+        }
+      ]
+    },
+    {
+      "name": "04 Studio + timeline",
+      "item": [
+        { "name": "studio datasets", "request": { "method": "GET", "url": "{{baseUrl}}/api/studio/datasets" } },
+        {
+          "name": "studio command — incidents unresolved refunds >$100",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/studio/command",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\"command\": \"incidents unresolved refunds >$100\"}" }
+          }
+        },
+        {
+          "name": "studio command — invalid (422 studio-command)",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/studio/command",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\"command\": \"incidents frobnicate\"}" }
+          },
+          "event": [{ "listen": "test", "script": { "exec": ["pm.test('strict command language', () => {", "  pm.response.to.have.status(422);", "  pm.expect(pm.response.json().error.code).to.eql('studio-command');", "});"], "type": "text/javascript" } }]
+        },
+        { "name": "recovery timeline", "request": { "method": "GET", "url": "{{baseUrl}}/api/timeline?promiseId={{promiseId}}" } }
+      ]
+    },
+    {
+      "name": "05 Discovery (Channel3)",
+      "item": [
+        { "name": "discovery status", "request": { "method": "GET", "url": "{{baseUrl}}/api/discovery/status" } },
+        {
+          "name": "search (live when key set, else 503)",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/discovery/search",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\"query\": \"field sensor kit IP67\", \"limit\": 5}" }
+          }
+        },
+        {
+          "name": "compare products",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/discovery/compare",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\"productIds\": [\"prod_abc123\", \"prod_def456\"]}" }
+          }
+        },
+        {
+          "name": "lookup merchant URL",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/discovery/lookup",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\"url\": \"https://merchant.example.com/products/kit\"}" }
+          }
+        }
+      ]
+    },
+    {
+      "name": "06 Demo + recorder",
+      "item": [
+        {
+          "name": "run flagship",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/demo/run",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\"scenario\": \"flagship\", \"label\": \"postman\"}" }
+          },
+          "event": [{ "listen": "test", "script": { "exec": ["pm.test('flagship completes', () => {", "  pm.response.to.have.status(201);", "  pm.expect(pm.response.json().data.status).to.be.oneOf(['completed','awaiting-action']);", "});"], "type": "text/javascript" } }]
+        },
+        {
+          "name": "run injection (negative scenario)",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/demo/run",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\"scenario\": \"injection\", \"label\": \"postman\"}" }
+          }
+        },
+        { "name": "audit list", "request": { "method": "GET", "url": "{{baseUrl}}/api/audit?limit=20" } },
+        { "name": "audit export (download)", "request": { "method": "GET", "url": "{{baseUrl}}/api/audit/export?promiseId={{promiseId}}" } }
+      ]
+    },
+    {
+      "name": "07 Negatives + error codes",
+      "item": [
+        {
+          "name": "over-budget promise (422 over-budget)",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/promises",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\"intentId\": \"{{intentId}}\", \"offerId\": \"{{offerId}}\"}" }
+          }
+        },
+        {
+          "name": "missing query param (422 missing-param)",
+          "request": { "method": "GET", "url": "{{baseUrl}}/api/offers" },
+          "event": [{ "listen": "test", "script": { "exec": ["pm.test('missing param', () => {", "  pm.response.to.have.status(422);", "  pm.expect(pm.response.json().error.code).to.eql('missing-param');", "});"], "type": "text/javascript" } }]
+        },
+        {
+          "name": "unknown promise (404 promise-not-found)",
+          "request": { "method": "GET", "url": "{{baseUrl}}/api/promises/does-not-exist" },
+          "event": [{ "listen": "test", "script": { "exec": ["pm.test('not found', () => {", "  pm.response.to.have.status(404);", "  pm.expect(pm.response.json().error.code).to.eql('promise-not-found');", "});"], "type": "text/javascript" } }]
+        },
+        {
+          "name": "bad JSON (400 bad-json)",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/intents",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\"rawText\": oops}" }
+          },
+          "event": [{ "listen": "test", "script": { "exec": ["pm.test('bad json', () => {", "  pm.response.to.have.status(400);", "  pm.expect(pm.response.json().error.code).to.eql('bad-json');", "});"], "type": "text/javascript" } }]
+        },
+        {
+          "name": "validation error (422 validation-error)",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/intents",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\"rawText\": \"\"}" }
+          },
+          "event": [{ "listen": "test", "script": { "exec": ["pm.test('validation error', () => {", "  pm.response.to.have.status(422);", "  pm.expect(pm.response.json().error.code).to.eql('validation-error');", "});"], "type": "text/javascript" } }]
+        }
+      ]
+    },
+    {
+      "name": "08 Admin",
+      "item": [
+        {
+          "name": "kill switch on (mock only)",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/admin/kill-switch",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\"engaged\": true, \"actor\": \"postman\"}" }
+          }
+        },
+        {
+          "name": "kill switch off",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/admin/kill-switch",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\"engaged\": false, \"actor\": \"postman\"}" }
+          }
+        },
+        {
+          "name": "demo reset (mock only)",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/demo/reset",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{}" }
+          }
+        }
+      ]
+    },
+    {
+      "name": "09 PayPal Sandbox helpers (auth + verify)",
+      "item": [
+        {
+          "name": "OAuth2 token (client_credentials)",
+          "request": {
+            "method": "POST",
+            "url": "{{paypalBase}}/v1/oauth2/token",
+            "header": [{ "key": "Content-Type", "value": "application/x-www-form-urlencoded" }],
+            "body": { "mode": "urlencoded", "urlencoded": [{ "key": "grant_type", "value": "client_credentials" }] },
+            "auth": { "type": "basic", "basic": [{ "key": "username", "value": "{{paypalClientId}}" }, { "key": "password", "value": "{{paypalSecret}}" }] }
+          },
+          "event": [{ "listen": "test", "script": { "exec": ["pm.test('sandbox token issued', () => {", "  pm.response.to.have.status(200);", "  pm.expect(pm.response.json().access_token).to.be.a('string');", "});"], "type": "text/javascript" } }]
+        }
+      ]
+    }
+  ]
+}

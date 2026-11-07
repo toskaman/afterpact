@@ -1,0 +1,48 @@
+# AFTERPACT on Render — deployment-as-code Blueprint.
+# Docs: docs/sponsors/RENDER_DEPLOYMENT.md
+# NOTE: demo state is an ephemeral JSON file (./data/afterpact.json) unless a
+# disk is attached. The jury demo is reproducible from scratch via
+# POST /api/demo/run, so ephemeral state is acceptable; attach the disk
+# below for persistence across deploys/restarts.
+services:
+  - type: web
+    name: afterpact
+    runtime: node
+    plan: starter
+    buildCommand: npm ci && npm run build
+    startCommand: npm start
+    healthCheckPath: /api/health
+    autoDeploy: true
+    envVars:
+      - key: NODE_VERSION
+        value: 24.14.1
+      - key: AFTERPACT_ALLOW_DEMO_RESET
+        value: "1"
+      - key: AFTERPACT_DATA_DIR
+        value: /var/data/afterpact
+      - key: PAYPAL_MODE
+        value: sandbox
+      - key: PAYPAL_API_BASE
+        value: https://api-m.sandbox.paypal.com
+      - key: PAYPAL_ALLOW_LIVE
+        value: "false"
+      - key: PAYPAL_KILL_SWITCH
+        value: "false"
+      - key: PAYPAL_REQUEST_TIMEOUT_MS
+        value: "15000"
+      - key: PAYPAL_CLIENT_ID
+        sync: false
+      - key: PAYPAL_CLIENT_SECRET
+        sync: false
+      - key: PAYPAL_WEBHOOK_ID
+        sync: false
+      - key: CHANNEL3_API_KEY
+        sync: false
+      - key: CHANNEL3_COUNTRY
+        value: US
+      - key: CHANNEL3_CURRENCY
+        value: USD
+    disk:
+      name: afterpact-data
+      mountPath: /var/data
+      sizeGB: 1

@@ -1,0 +1,33 @@
+{
+  "name": "afterpact",
+  "version": "0.1.0",
+  "description": "AFTERPACT — the assurance layer for agentic commerce (PayPal AI Hackathon 2026)",
+  "private": true,
+  "type": "module",
+  "packageManager": "npm@11.11.0",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "test": "vitest run",
+    "test:unit": "vitest run tests/unit",
+    "test:integration": "vitest run tests/integration",
+    "typecheck": "tsc --noEmit -p packages/domain && tsc --noEmit -p packages/policy && tsc --noEmit -p packages/payments && tsc --noEmit -p apps/api && tsc --noEmit -p tests",
+    "build": "tsc -p apps/api",
+    "start": "node apps/api/dist/apps/api/src/index.js",
+    "bench": "node scripts/bench.mjs",
+    "vendor:ag-grid": "node scripts/vendor-ag-grid.mjs"
+  },
+  "dependencies": {
+    "zod": "4.6.7"
+  },
+  "devDependencies": {
+    "@types/node": "26.6.6",
+    "typescript": "5.9.3",
+    "vitest": "5.1.0"
+  },
+  "engines": {
+    "node": ">=24"
+  }
+}

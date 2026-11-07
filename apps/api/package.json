@@ -1,0 +1,13 @@
+{
+  "name": "@afterpact/api",
+  "version": "0.1.0",
+  "description": "AFTERPACT API server + static web host (zero framework deps, node:http)",
+  "private": true,
+  "type": "commonjs",
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "start": "node dist/apps/api/src/index.js",
+    "dev": "npm run build && npm run start",
+    "typecheck": "tsc --noEmit -p tsconfig.json"
+  }
+}

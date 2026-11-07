@@ -1,0 +1,14 @@
+{
+  "name": "@afterpact/payments",
+  "version": "0.1.0",
+  "description": "AFTERPACT server-side PayPal module (sandbox-only, audited, idempotent)",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "dependencies": {
+    "@afterpact/domain": "0.1.0",
+    "@afterpact/policy": "0.1.0",
+    "zod": "4.6.7"
+  }
+}

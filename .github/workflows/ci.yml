@@ -1,0 +1,35 @@
+name: ci
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24.14.1
+          cache: npm
+      - run: npm ci
+      - run: npm run typecheck
+      - run: node --check apps/web/public/app.js
+      - run: npm test -- --reporter=verbose
+      - run: npm run build
+      - name: smoke-test compiled server
+        run: |
+          PORT=3101 AFTERPACT_DATA_DIR=':memory:' node apps/api/dist/apps/api/src/index.js &
+          SERVER_PID=$!
+          trap 'kill $SERVER_PID' EXIT
+          for i in $(seq 1 30); do
+            curl -fsS http://localhost:3101/api/health && break
+            sleep 1
+          done
+          curl -fsS http://localhost:3101/api/config | grep -o 'ag-grid-community'
+          curl -fsS http://localhost:3101/vendor/ag-grid-community.min.js -o /tmp/ag-grid.js
+          test "$(stat -c%s /tmp/ag-grid.js)" -gt 1000000
+          curl -fsS -X POST http://localhost:3101/api/demo/run \
+            -H 'content-type: application/json' \
+            -d '{"scenario":"flagship","label":"ci"}' | grep -o '"status":"completed"'

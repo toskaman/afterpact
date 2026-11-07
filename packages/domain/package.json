@@ -1,0 +1,12 @@
+{
+  "name": "@afterpact/domain",
+  "version": "0.1.0",
+  "description": "AFTERPACT pure domain core (zero framework deps)",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "dependencies": {
+    "zod": "4.6.7"
+  }
+}
