@@ -51,6 +51,20 @@ No gate is PASS on an unexecuted path.
 - `apps/api/src/demo.ts` Acts 2 + 9 upgraded to the real discovery and
   Studio surfaces (same Ops methods as the routes; no parallel demo path).
 
+## Post-gate fix (2026-11-07, after screenshots)
+
+- Header + Developer Center read `health.chainValid`, but `/api/health`
+  returns `auditChainValid` (contract locked by `apps.api.test.ts`), so
+  the UI showed a permanent false "CHAIN BROKEN". Fixed in
+  `apps/web/public/app.js` (2 read sites); regression test added in
+  `tests/integration/frontend.contract.test.ts` (every `health.*` read
+  must exist in the live payload). Suite now 156 passed + 1 skipped;
+  re-captured UI shows "CHAIN VALID · 13" with 0 console errors.
+- Suspected `/vendor/ag-grid-community.min.js` 404 investigated and
+  refuted: GET returns 200 (1.88 MB). Earlier 404s were a HEAD-method
+  probe artifact plus one tx-API 404 from the screenshot script passing
+  a wrong id (script fixed to use the promise id).
+
 ## Residual risks for the orchestrator
 
 - JURY_EVIDENCE_MATRIX.md still reads all-TBD (sibling scope; this gate

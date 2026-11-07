@@ -137,8 +137,8 @@ async function refreshTopbar() {
     transport.className = `pill ${live ? "accent" : "warn"}`;
     transport.textContent = live ? "PAYPAL SANDBOX · LIVE" : "MOCK · SIMULATED";
     const chain = $("#chainPill");
-    chain.className = `pill ${health.chainValid ? "ok" : "bad"}`;
-    chain.textContent = health.chainValid ? `CHAIN VALID · ${health.auditEntries}` : "CHAIN BROKEN";
+    chain.className = `pill ${health.auditChainValid ? "ok" : "bad"}`;
+    chain.textContent = health.auditChainValid ? `CHAIN VALID · ${health.auditEntries}` : "CHAIN BROKEN";
     if (health.killSwitch) {
       chain.textContent += " · KILL-SWITCH ON";
       chain.className = "pill bad";
@@ -823,7 +823,7 @@ async function renderDeveloper() {
             <dt>Status</dt><dd>${escapeHtml(health.status)} · v${escapeHtml(health.version)}</dd>
             <dt>Time</dt><dd>${formatTime(health.time)}</dd>
             <dt>Transport</dt><dd>${originPill(health.transport)}</dd>
-            <dt>Audit chain</dt><dd>${health.chainValid ? "valid" : "BROKEN"} (${health.auditEntries} entries)</dd>
+            <dt>Audit chain</dt><dd>${health.auditChainValid ? "valid" : "BROKEN"} (${health.auditEntries} entries)</dd>
             <dt>Kill-switch</dt><dd>${health.killSwitch ? "ENGAGED" : "off"}</dd>
             <dt>Demo reset</dt><dd>${health.resetAllowed ? "allowed (mock mode)" : "refused (live mode)"}</dd>
           </dl>

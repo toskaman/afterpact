@@ -137,7 +137,7 @@ Nothing is PASS on confidence alone — every PASS names its artifact.
 | 85 | Flagship demo reproducible by a judge? | One API call or `#/demo` → Flagship; reset included | README flagship, `demo.ts` | H | PASS |
 | 86 | Real-vs-simulated markers everywhere? | Origin badges on all surfaces; legend in guide | README policy, demo guide | H | PASS |
 | 87 | Negative scenario demoable? | `injection` scenario: both attacks blocked w/ exact reasons | `demo.ts` | M | PASS |
-| 88 | Screenshots / architecture diagram ready? | No screenshots; no diagram file (contracts described in docs) | — | M | FAIL |
+| 88 | Screenshots / architecture diagram ready? | 9 headless-Edge captures of seeded flagship + Mermaid diagram; 0 console errors | `docs/demo/screenshots/`, `docs/architecture/ARCHITECTURE.md` | M | PASS |
 | 89 | Video script + shot list ready? | Yes, <3-min structure with timestamps | `DEMO_SCRIPT.md` | H | PASS |
 | 90 | Devpost draft complete? | All sections drafted; URLs/creds marked TBD | `DEVPOST_DRAFT.md` | H | PASS |
 
@@ -158,9 +158,9 @@ Nothing is PASS on confidence alone — every PASS names its artifact.
 
 ## Tally (2026-11-07)
 
-PASS 75 · PARTIAL 20 · FAIL 4 (Q5 hosted demo, Q6 video, Q84 usability
-test, Q88 screenshots/diagram) · UNKNOWN 1 (Q57 multi-tenancy, out of
-scope for this single-tenant build). All FAILs are human/external steps
-the owner can clear before submission: Render deploy, <3-min video, one
-usability session, screenshots from the running app.
+PASS 76 · PARTIAL 20 · FAIL 3 (Q5 hosted demo, Q6 video, Q84 usability
+test) · UNKNOWN 1 (Q57 multi-tenancy, out of scope for this
+single-tenant build). All FAILs are human/external steps the owner can
+clear before submission: Render deploy, <3-min video, one usability
+session. (Q88 cleared 2026-11-07: screenshots + diagram committed.)
 
