@@ -5,27 +5,27 @@ Deadline: **Nov 12, 2026, 12:00 PM PT**. Source: `OFFICIAL_RULES_AUDIT.md`
 
 ## Repo (public, open-source)
 
-- [ ] Repo is PUBLIC on GitHub/Bitbucket/GitLab with all source + assets.
-- [ ] OSI-approved license file at top level, visible/detectable
-      (`LICENSE`, MIT). No source-available substitute.
-- [ ] Dependency licenses reviewed: runtime `zod` (MIT); vendored AG Grid
+- [x] Repo is PUBLIC: `https://github.com/toskaman/afterpact` (`main`,
+      pushed 2026-11-07; GitHub Actions CI `success`).
+- [x] OSI-approved license file at top level (`LICENSE`, MIT).
+- [x] Dependency licenses reviewed: runtime `zod` (MIT); vendored AG Grid
       Community (MIT + license file); dev-only TypeScript/Vitest (Apache/MIT).
-- [ ] No secrets anywhere: `.env` untracked, `.env.example` placeholders
-      only, no keys in tests/fixtures/video.
-- [ ] README has: problem, differentiation, PayPal, AI scope, real-vs-simulated,
+- [x] No secrets anywhere: `.env` absent/untracked, `.env.example`
+      placeholders only, key-material scan clean (release gate 13).
+- [x] README has: problem, differentiation, PayPal, AI scope, real-vs-simulated,
       install, test, flagship repro, proofs, sponsors, limitations, license.
-- [ ] `SECURITY.md`, `CONTRIBUTING.md` present.
-- [ ] Proprietary sponsor files: NONE redistributed (no AG Studio/Bryntum
-      trial binaries in the repo — verified by `docs/RELEASE_GATE.md`).
+- [x] `SECURITY.md`, `CONTRIBUTING.md` present.
+- [x] Proprietary sponsor files: NONE redistributed (release gate 14).
 
 ## Functional demo
 
 - [ ] Hosted demo URL live (Render Blueprint applied) OR complete
       setup/run instructions in README (both preferred).
 - [ ] Demo stays free + unrestricted until **Dec 15, 2026**.
-- [ ] Flagship repro verified on the submission build (`completed`, 9 acts).
-- [ ] Judges' credentials/keys documented if needed (sandbox creds /
-      Channel3 key instructions — never the keys themselves).
+- [x] Flagship repro verified locally (`completed`, 9 acts; 155 tests
+      green). Still to re-run on the hosted URL once deployed.
+- [x] Judges' key instructions documented (`docs/demo/KEY_RETRIEVAL_GUIDE.md`
+      — steps only, never the keys themselves).
 
 ## Video (<3 min, public YouTube)
 
@@ -36,17 +36,21 @@ Deadline: **Nov 12, 2026, 12:00 PM PT**. Source: `OFFICIAL_RULES_AUDIT.md`
 
 ## Devpost submission text
 
-- [ ] Feature description (what it does, complete product story).
-- [ ] PayPal centrality explicit (Orders v2 + capture + refund + webhooks).
-- [ ] **List of AI tools used + how each was used** (deterministic
+Draft: `docs/demo/DEVPOST_DRAFT.md` (all sections written; URLs pasted as
+they land). Repo URL filled; demo + video URLs pending human steps.
+
+- [x] Feature description (what it does, complete product story).
+- [x] PayPal centrality explicit (Orders v2 + capture + refund + webhooks).
+- [x] **List of AI tools used + how each was used** (deterministic
       components listed as deterministic; no LLM inference claimed).
-- [ ] Real-vs-simulated disclosure (what is live, what is simulated, what
+- [x] Real-vs-simulated disclosure (what is live, what is simulated, what
       needs keys).
-- [ ] Sponsor usage stated exactly: AG Grid Community (not Studio),
+- [x] Sponsor usage stated exactly: AG Grid Community (not Studio),
       Channel3 live-when-keyed, Bryntum fallback (not Bryntum), Render
       hosting, Postman collection. APIMatic/AG Studio/Bryntum prizes NOT
       claimed.
-- [ ] Public repo URL + demo URL + video URL all present and reachable.
+- [ ] Public repo URL + demo URL + video URL all present and reachable
+      (repo done; demo + video are human steps).
 
 ## Rules compliance
 
@@ -58,8 +62,8 @@ Deadline: **Nov 12, 2026, 12:00 PM PT**. Source: `OFFICIAL_RULES_AUDIT.md`
 
 ## Pre-submit verification (day before)
 
-- [ ] `npm ci && npm run typecheck && npm test && npm run build` green
-      on a clean checkout (Linux/CI).
+- [x] `npm ci && npm run typecheck && npm test && npm run build` green
+      on a clean checkout (Linux/CI) — GitHub Actions `success` 2026-11-07.
 - [ ] `docs/RELEASE_GATE.md` all green with no inflated PASS.
 - [ ] Click every README/Devpost link from an incognito window.
 - [ ] Re-run the flagship on the hosted URL; confirm `chainValid: true`.
