@@ -10,7 +10,7 @@ Nothing is PASS on confidence alone — every PASS names its artifact.
 
 | # | Question | Answer | Evidence | Sev | Status |
 |---|---|---|---|---|---|
-| 1 | Does the build integrate PayPal meaningfully (not a button)? | Yes on mock transport: Orders→capture→refund→webhooks→reconcile; live sandbox implemented but unexecuted | `packages/payments/`, `tests/integration/paypal.*` | H | PARTIAL |
+| 1 | Does the build integrate PayPal meaningfully (not a button)? | Mock full-loop green; live: OAuth + create + get verified (`paypal.live`), live flagship order 4FH32915JA251353Y created; capture/refund await personal buyer | `paypal.live.test.ts`, `RELEASE_GATE.md` gate 15 | H | PARTIAL |
 | 2 | Is AI essential, not decorative? | AI surfaces are deterministic (heuristic parse, rule matching, strict NL) and gate real flows; no LLM runs | README "AI scope", `ai.ts`, `nlparse.ts`, `studio.ts` | H | PARTIAL |
 | 3 | Is the repo public with an OSI license? | MIT LICENSE in repo; repo is local-only, not yet public | `LICENSE`, `git log` | H | PARTIAL |
 | 4 | Are install/test instructions reproducible? | Yes: README quickstart + `.env.example`; clean-install verified on isolated copy | README, `docs/RELEASE_GATE.md` gate 5 | H | PASS |
@@ -33,7 +33,7 @@ Nothing is PASS on confidence alone — every PASS names its artifact.
 | 16 | Is the customer segment crisp for a PM judge? | Merchant ops teams/marketplaces, single persona | README, `COMMERCIAL_STRATEGY.md` | M | PASS |
 | 17 | Is differentiation provable vs named competitors? | 10-entry landscape + 6-point checklist; Acts 5–8 have no pre-auth equivalent | `COMPETITIVE_LANDSCAPE.md` | M | PASS |
 | 18 | Is AG Grid usage real for the sponsor judge? | Community tables on live data + NL; Studio honestly not claimed | `studio.ts`, `AG_GRID_STATUS.md` | H | PARTIAL |
-| 19 | Is Channel3 usage real for its judge? | Client + normalization + fail-closed tested; zero live calls yet | `channel3.ts`, `sponsors.discovery.test.ts` | H | PARTIAL |
+| 19 | Is Channel3 usage real for its judge? | Keyed live search green (`channel3.live.test.ts`) + live search inside flagship Act 2; normalization/attribution asserted on real payloads | `channel3.ts`, `channel3.live.test.ts` | H | PASS |
 | 20 | Can Postman/Render judges verify their slice? | Postman: 38-req collection validated; Render: config only, no URL | `postman/`, `render.yaml` | M | PARTIAL |
 
 ## 3. User problem and measurable impact
@@ -71,7 +71,7 @@ Nothing is PASS on confidence alone — every PASS names its artifact.
 | # | Question | Answer | Evidence | Sev | Status |
 |---|---|---|---|---|---|
 | 41 | OAuth implemented + tested? | Cached OAuth via stubbed-fetch transport tests | `transport.ts`, `paypal.safety.test.ts` | H | PASS |
-| 42 | Create→approve→capture→refund flow green? | 16 flow tests on mock; live unexecuted | `paypal.flows.test.ts`, gate 15 | H | PARTIAL |
+| 42 | Create→approve→capture→refund flow green? | 16 flow tests on mock; live: create verified (order 4FH32915JA251353Y), approve blocked by buyer account, capture/refund pending | `paypal.flows.test.ts`, gate 15 | H | PARTIAL |
 | 43 | Is money exact (no floats)? | Integer minor units + currency-aware decimals + wire parse/format | `money.ts`, `money.test.ts` | H | PASS |
 | 44 | `PayPal-Request-Id` on writes? | Yes, asserted in transport tests | `transport.ts` | H | PASS |
 | 45 | Replay-before-gate idempotency? | Same-key retry after completion replays; different payload refused; 2 real bugs fixed here | `service.ts`, `store.ts`, safety tests | H | PASS |
@@ -158,9 +158,10 @@ Nothing is PASS on confidence alone — every PASS names its artifact.
 
 ## Tally (2026-11-07)
 
-PASS 76 · PARTIAL 20 · FAIL 3 (Q5 hosted demo, Q6 video, Q84 usability
+PASS 77 · PARTIAL 19 · FAIL 3 (Q5 hosted demo, Q6 video, Q84 usability
 test) · UNKNOWN 1 (Q57 multi-tenancy, out of scope for this
 single-tenant build). All FAILs are human/external steps the owner can
 clear before submission: Render deploy, <3-min video, one usability
-session. (Q88 cleared 2026-11-07: screenshots + diagram committed.)
+session. (Q88 cleared 2026-11-07: screenshots + diagram committed. Q19
+cleared same day: live Channel3 search verified.)
 

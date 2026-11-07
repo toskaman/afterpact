@@ -17,7 +17,7 @@ owner, agent = build agent). Re-verify by re-running the stated command.
 
 | Q | Gap | Fix | Owner | Verify |
 |---|---|---|---|---|
-| Q1/Q12/Q36/Q42 | Live PayPal never executed | Set `PAYPAL_CLIENT_ID/SECRET` (+ webhook id), run `paypal.live` + flagship continue path | human | Live IDs in Recorder; `vitest run tests/integration/paypal.live` green |
+| Q1/Q12/Q36/Q42 | Live PayPal partially executed (2026-11-07) | Creds set; `paypal.live` green; flagship created live order 4FH32915JA251353Y. STILL NEEDS: personal sandbox buyer email+password in APIS.txt (business account self-pays → CAN_NOT_PAY_SELF), then agent re-runs approve → capture → refund | human (2 min in Dashboard → Sandbox Accounts) | Capture + refund IDs in Recorder; gate 15 PASS |
 | Q18 | AG Studio not integrated | Only if Studio access obtained: embed per `AG_STUDIO_UPGRADE_PATH.md`; else keep honest Community claim | human | Studio dashboard on live data or unchanged non-claim |
 | Q19 | No live Channel3 call | Set `CHANNEL3_API_KEY`, re-run Act 2 / `#/discovery` | human | `CHANNEL3 · LIVE` badge + logged request in Recorder |
 | Q20/Q69 | Render/CI unverified | Push to GitHub (public), watch CI green, apply Blueprint | human | CI badge green; live URL |

@@ -36,7 +36,10 @@ describeLive("paypal live sandbox", () => {
         customId: "afterpact-live-probe",
       });
       expect(order.id).toBeTruthy();
-      expect(order.status).toBe("PAYER_ACTION_REQUIRED");
+      // Live truth (verified 2026-11-07 against api-m.sandbox.paypal.com):
+      // an order created without payment_source is CREATED with an approve
+      // link — PAYER_ACTION_REQUIRED only applies with a payment_source.
+      expect(order.status).toBe("CREATED");
       expect(order.approveUrl).toContain("paypal.com");
 
       const fetched = await transport.getOrder(order.id);

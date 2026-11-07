@@ -23,7 +23,7 @@ No gate is PASS on an unexecuted path.
 | 12 | Docs pack | **PASS** | README (problem, differentiation, PayPal, AI, real-vs-simulated, install, test, flagship repro, proofs, sponsors, limitations), SECURITY.md, CONTRIBUTING.md, `docs/demo/DEMO_SCRIPT.md` (+<3-min shot list), `docs/hackathon/SUBMISSION_CHECKLIST.md`, `docs/benchmarks/IMPACT_BENCHMARK.md` (one machine-recorded row). |
 | 13 | No secrets in repo | **PASS** | `.env` untracked/absent; `.env.example` placeholders; Postman vars placeholder; key-material scan over README/SECURITY/CONTRIBUTING/render.yaml/collection/channel3 client clean; status endpoints return presence booleans only (tested). |
 | 14 | License / OSS | **PASS** | MIT `LICENSE`; runtime dep `zod` MIT; vendored AG Grid Community MIT with license file; no proprietary/trial binaries redistributed (no AG Studio, no Bryntum trial). |
-| 15 | Live-sandbox flagship | **NOT VERIFIED** | `awaiting-action` buyer-approval path implemented but unexecuted (no PayPal creds). Verify manually with sandbox keys before the video. |
+| 15 | Live-sandbox flagship | **PARTIAL (order live; approval blocked)** | Live order **4FH32915JA251353Y** created via flagship (2026-11-07) + Channel3 live search inside Act 2; run correctly paused `awaiting-action`. Buyer approval failed with PayPal `CAN_NOT_PAY_SELF`: the provided sandbox account is the merchant. Need a separate PERSONAL sandbox buyer (Dashboard → Sandbox Accounts) to continue → capture → refund. |
 | 16 | Demo video + hosted URL | **NOT DONE** | Human steps: record <3-min video (shot list ready), apply Render Blueprint, paste URLs into README + Devpost. |
 
 ## Bugs found and fixed during this gate

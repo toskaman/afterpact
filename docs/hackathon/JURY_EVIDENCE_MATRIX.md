@@ -51,7 +51,7 @@ background).
 
 | Requirement | Evidence | Status |
 |---|---|---|
-| Real PayPal operations | Mock transport only: order→approve→capture→partial+full refund in `tests/integration/paypal.flows.test.ts` (16 tests). Live sandbox order/capture/refund with real IDs: implemented (`awaiting-action` path) but unexecuted | **PARTIAL** — live run needs `PAYPAL_CLIENT_ID/SECRET` |
+| Real PayPal operations | Mock full-loop (16 tests) + live: OAuth/create/get green (`paypal.live.test.ts`), flagship created live order 4FH32915JA251353Y and paused `awaiting-action` correctly; buyer approval needs a personal sandbox account (business self-pay refused by PayPal) | **PARTIAL** — capture/refund live pending personal buyer |
 | Idempotency | `PayPal-Request-Id` on writes, fingerprint-on-raw-request replays, duplicate-webhook dedupe; `tests/integration/paypal.safety.test.ts` + same-key concurrency test (1 success + 1 duplicate) | **PASS** (mock) |
 | Permission boundaries | Scoped server tools (`packages/payments/src/scopedTools.ts`, incl. provider-import guard test); AI proposes via Zod-validated outputs, deterministic code decides, human approves | **PASS** |
 | Transaction integrity | Integer minor units, currency-aware decimals, PayPal wire format/parse (`packages/domain/src/money.ts`); 17-state lifecycle with `InvalidTransitionError` (`lifecycle.ts`); totals footing (`offer.ts`) | **PASS** |
@@ -117,10 +117,10 @@ background).
 
 | Requirement | Evidence | Status |
 |---|---|---|
-| Real product search requests | Live client implemented (`POST /v1/search`, `GET` products, `POST` lookup) and tested against stubbed fetch; **no real call executed** (no API key in this environment) | **NOT VERIFIED** — set `CHANNEL3_API_KEY`, re-run Act 2 / `#/discovery` |
+| Real product search requests | Keyed `POST /v1/search` executed live 2026-11-07 (`channel3.live.test.ts` green) and inside flagship Act 2 (3 candidates, e.g. motion-sensor kit) | **PASS** |
 | Normalization + comparison | Minor-unit normalization, unknowns-stay-unknown, per-currency comparison, ranking explanations (`channel3.ts` + 18 tests in `sponsors.discovery.test.ts`) | **PASS** (against stubs) |
 | Source transparency | Merchant/source attribution per offer + checkout disclaimer (discovery ≠ chargeable merchant) | **PASS** |
-| AI selection on real results | Agent pick traced to actual payload when keyed; keyless Act 2 uses isolated, labeled fallback (asserted in flagship test) | **PARTIAL** — live trace needs key |
+| AI selection on real results | Flagship Act 2 traced a live keyed payload (3 candidates) and routed payment to the authorized sandbox offer; keyless fallback remains tested and labeled | **PASS** |
 | Failure isolation | Unconfigured → HTTP 503 fail-closed verified over HTTP; never fabricates availability | **PASS** |
 
 ### Elastic (Richmond)

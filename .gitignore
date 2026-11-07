@@ -10,3 +10,7 @@ coverage/
 data/
 .DS_Store
 Thumbs.db
+# Local secret holders (user-provided, never commit)
+APIS.txt
+*.key
+*.pem
