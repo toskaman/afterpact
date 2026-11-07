@@ -99,7 +99,7 @@ docs flip from TBD to evidence only when the artifact is built and green.
 Prerequisites: Node 24+, npm 11+.
 
 ```bash
-git clone <this-repo> && cd afterpact
+git clone https://github.com/toskaman/afterpact && cd afterpact
 npm install
 cp .env.example .env   # never commit .env
 npm run build

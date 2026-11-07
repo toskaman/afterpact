@@ -104,7 +104,7 @@ Refunds, Webhooks — Sandbox), Channel3, AG Grid Community, Postman, Render.
 ## How to test
 
 ```bash
-git clone TBD:repo-url && cd afterpact
+git clone https://github.com/toskaman/afterpact && cd afterpact
 npm install && cp .env.example .env
 npm run build && npm start   # http://localhost:3001
 npm test                     # 155 passed, 1 skipped (live probe needs creds)
