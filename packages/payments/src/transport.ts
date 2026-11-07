@@ -3,6 +3,7 @@ import type { PayPalConfig, PayPalCredentials } from "./config";
 import { assertLiveAllowed } from "./config";
 import {
   PayPalConfigError,
+  PayPalInvalidStateError,
   PayPalProviderError,
 } from "./errors";
 import {
@@ -235,12 +236,25 @@ export class HttpPayPalTransport implements PayPalTransport {
       },
     });
     const refund = PayPalRefundWireSchema.parse(json);
-    return {
-      id: refund.id,
-      status: refund.status,
-      amount: wireToMoney(refund.amount),
-      raw: json,
-    };
+    // Live POST responses omit amount: use what we requested, else resolve
+    // via GET (which carries the full object), else fail loudly on drift.
+    if (refund.amount !== undefined) {
+      return {
+        id: refund.id,
+        status: refund.status,
+        amount: wireToMoney(refund.amount),
+        raw: json,
+      };
+    }
+    if (input.amount !== undefined) {
+      return {
+        id: refund.id,
+        status: refund.status,
+        amount: input.amount,
+        raw: json,
+      };
+    }
+    return this.getRefund(refund.id);
   }
 
   async getRefund(providerRefundId: string): Promise<ProviderRefund> {
@@ -249,6 +263,11 @@ export class HttpPayPalTransport implements PayPalTransport {
       path: `/v2/payments/refunds/${encodeURIComponent(providerRefundId)}`,
     });
     const refund = PayPalRefundWireSchema.parse(json);
+    if (refund.amount === undefined) {
+      throw new PayPalInvalidStateError(
+        `provider refund ${refund.id} has no amount; cannot determine refunded total`,
+      );
+    }
     return {
       id: refund.id,
       status: refund.status,

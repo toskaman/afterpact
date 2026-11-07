@@ -10,7 +10,7 @@ Nothing is PASS on confidence alone — every PASS names its artifact.
 
 | # | Question | Answer | Evidence | Sev | Status |
 |---|---|---|---|---|---|
-| 1 | Does the build integrate PayPal meaningfully (not a button)? | Mock full-loop green; live: OAuth + create + get verified (`paypal.live`), live flagship order 4FH32915JA251353Y created; capture/refund await personal buyer | `paypal.live.test.ts`, `RELEASE_GATE.md` gate 15 | H | PARTIAL |
+| 1 | Does the build integrate PayPal meaningfully (not a button)? | Mock full-loop green + live full-loop completed: order→approval→capture→refund→verified (IDs in gate 15) | `paypal.live.test.ts`, `RELEASE_GATE.md` gate 15 | H | PASS |
 | 2 | Is AI essential, not decorative? | AI surfaces are deterministic (heuristic parse, rule matching, strict NL) and gate real flows; no LLM runs | README "AI scope", `ai.ts`, `nlparse.ts`, `studio.ts` | H | PARTIAL |
 | 3 | Is the repo public with an OSI license? | MIT LICENSE in repo; repo is local-only, not yet public | `LICENSE`, `git log` | H | PARTIAL |
 | 4 | Are install/test instructions reproducible? | Yes: README quickstart + `.env.example`; clean-install verified on isolated copy | README, `docs/RELEASE_GATE.md` gate 5 | H | PASS |
@@ -26,7 +26,7 @@ Nothing is PASS on confidence alone — every PASS names its artifact.
 | # | Question | Answer | Evidence | Sev | Status |
 |---|---|---|---|---|---|
 | 11 | Can a Dev Advocate install and run it in minutes? | Yes locally; hosted one-click pending Render | README Install, gate 5 | H | PARTIAL |
-| 12 | Are PayPal operations real enough for an engineer judge? | Mock-verified end to end; live IDs pending creds | `paypal.flows/safety/live.test.ts` | H | PARTIAL |
+| 12 | Are PayPal operations real enough for an engineer judge? | Mock-verified + live full-loop with real IDs (order/capture/refund) and provider reconciliation | `paypal.flows/safety/live.test.ts`, gate 15 | H | PASS |
 | 13 | Is the audit trail convincing to a fintech reviewer? | Append-only hash chain + replay + redacted export, restart-persistence tested | `audit.ts`, `apps.api.test.ts` | M | PASS |
 | 14 | Does the policy engine read as deterministic? | Pure functions → Cleared/Hold/Refused + refund gate, 22 unit tests | `packages/policy/`, `policy.test.ts` | M | PASS |
 | 15 | Is refusal behavior demonstrable on demand? | Yes: `{"scenario":"injection"}` → both attacks blocked w/ reasons | `demo.ts`, `apps.api.test.ts` | M | PASS |
@@ -60,7 +60,7 @@ Nothing is PASS on confidence alone — every PASS names its artifact.
 | 33 | Is the promise object real? | Versioned, hash-chained, approval-bound, expiry-enforcing; 11 tests | `promise.ts`, `promise.test.ts` | H | PASS |
 | 34 | Do material changes invalidate approval? | Yes: version/hash rebind required, tested | `approval.ts`, `approval.test.ts` | H | PASS |
 | 35 | Is the Flight Recorder more than a log? | Hash-chained, append-only, replayable, exportable (redacted), restart-persistent | `audit.ts`, `#/recorder`, export test | M | PASS |
-| 36 | Does recovery touch real money paths? | Mock-verified refund+verify; live refund unexecuted | `paypal.flows.test.ts`, gate 15 | H | PARTIAL |
+| 36 | Does recovery touch real money paths? | Live sandbox refund 8DJ895035B173303G executed for 12999 USD and verified `succeeded` at the provider | gate 15 | H | PASS |
 | 37 | Is there an end-to-end repro in one command? | `POST /api/demo/run flagship` → 9 acts completed; also `#/demo` | `demo.ts`, README flagship | M | PASS |
 | 38 | Could a competitor demo the same in a weekend? | Mechanics yes (MIT); the eval corpus + policy packs are the compounding part | `tests/`, `COMPETITIVE_MOAT.md` | L | PASS |
 | 39 | Are originality claims evidenced? | Each competitor entry states what AFTERPACT does differently | `COMPETITIVE_LANDSCAPE.md` | M | PASS |
@@ -71,7 +71,7 @@ Nothing is PASS on confidence alone — every PASS names its artifact.
 | # | Question | Answer | Evidence | Sev | Status |
 |---|---|---|---|---|---|
 | 41 | OAuth implemented + tested? | Cached OAuth via stubbed-fetch transport tests | `transport.ts`, `paypal.safety.test.ts` | H | PASS |
-| 42 | Create→approve→capture→refund flow green? | 16 flow tests on mock; live: create verified (order 4FH32915JA251353Y), approve blocked by buyer account, capture/refund pending | `paypal.flows.test.ts`, gate 15 | H | PARTIAL |
+| 42 | Create→approve→capture→refund flow green? | 16 flow tests on mock + live end-to-end completed (order 2ER387580K033722V, capture 7R158417X9367771B, refund 8DJ895035B173303G `succeeded`) | `paypal.flows.test.ts`, gate 15 | H | PASS |
 | 43 | Is money exact (no floats)? | Integer minor units + currency-aware decimals + wire parse/format | `money.ts`, `money.test.ts` | H | PASS |
 | 44 | `PayPal-Request-Id` on writes? | Yes, asserted in transport tests | `transport.ts` | H | PASS |
 | 45 | Replay-before-gate idempotency? | Same-key retry after completion replays; different payload refused; 2 real bugs fixed here | `service.ts`, `store.ts`, safety tests | H | PASS |
@@ -158,10 +158,10 @@ Nothing is PASS on confidence alone — every PASS names its artifact.
 
 ## Tally (2026-11-07)
 
-PASS 77 · PARTIAL 19 · FAIL 3 (Q5 hosted demo, Q6 video, Q84 usability
+PASS 81 · PARTIAL 15 · FAIL 3 (Q5 hosted demo, Q6 video, Q84 usability
 test) · UNKNOWN 1 (Q57 multi-tenancy, out of scope for this
 single-tenant build). All FAILs are human/external steps the owner can
 clear before submission: Render deploy, <3-min video, one usability
-session. (Q88 cleared 2026-11-07: screenshots + diagram committed. Q19
-cleared same day: live Channel3 search verified.)
+session. (Q88, Q19, Q1, Q12, Q36, Q42 cleared 2026-11-07: screenshots,
+live Channel3, live PayPal full-loop.)
 

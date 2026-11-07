@@ -59,11 +59,16 @@ export const PayPalOrderWireSchema = z.object({
 });
 export type PayPalOrderWire = z.infer<typeof PayPalOrderWireSchema>;
 
-/** POST /v2/payments/captures/{id}/refund and GET refund response shape. */
+/**
+ * POST /v2/payments/captures/{id}/refund and GET refund response shape.
+ * Live truth (verified 2026-11-07 against api-m.sandbox.paypal.com): the
+ * POST response carries only {id, status, links} — amount is ABSENT.
+ * GET /v2/payments/refunds/{id} carries the full object with amount.
+ */
 export const PayPalRefundWireSchema = z.object({
   id: z.string().min(1),
   status: z.string().min(1),
-  amount: PayPalMoneyWireSchema,
+  amount: PayPalMoneyWireSchema.optional(),
   custom_id: z.string().optional(),
   links: z.array(PayPalLinkSchema).optional(),
 });

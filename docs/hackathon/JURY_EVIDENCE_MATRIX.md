@@ -51,7 +51,7 @@ background).
 
 | Requirement | Evidence | Status |
 |---|---|---|
-| Real PayPal operations | Mock full-loop (16 tests) + live: OAuth/create/get green (`paypal.live.test.ts`), flagship created live order 4FH32915JA251353Y and paused `awaiting-action` correctly; buyer approval needs a personal sandbox account (business self-pay refused by PayPal) | **PARTIAL** — capture/refund live pending personal buyer |
+| Real PayPal operations | Mock full-loop (16 tests) + live full-loop completed 2026-11-07: order 2ER387580K033722V → buyer approval → capture 7R158417X9367771B → partial refund 8DJ895035B173303G (12999 USD, `succeeded`) → Recorder chain-VALID | **PASS** |
 | Idempotency | `PayPal-Request-Id` on writes, fingerprint-on-raw-request replays, duplicate-webhook dedupe; `tests/integration/paypal.safety.test.ts` + same-key concurrency test (1 success + 1 duplicate) | **PASS** (mock) |
 | Permission boundaries | Scoped server tools (`packages/payments/src/scopedTools.ts`, incl. provider-import guard test); AI proposes via Zod-validated outputs, deterministic code decides, human approves | **PASS** |
 | Transaction integrity | Integer minor units, currency-aware decimals, PayPal wire format/parse (`packages/domain/src/money.ts`); 17-state lifecycle with `InvalidTransitionError` (`lifecycle.ts`); totals footing (`offer.ts`) | **PASS** |

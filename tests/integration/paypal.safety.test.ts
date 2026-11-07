@@ -316,6 +316,62 @@ describe("http transport (stubbed fetch)", () => {
     expect(create?.init.headers["Authorization"]).toBe("Bearer tok-9");
   });
 
+  it("accepts amountless POST refund responses (live sandbox truth)", async () => {
+    // Live POST /v2/payments/captures/{id}/refund returns only
+    // {id, status, links} — no amount. The transport must use the
+    // requested amount instead of throwing a ZodError.
+    const { fetchFn } = stub((url) => {
+      if (url.endsWith("/v1/oauth2/token")) {
+        return {
+          status: 200,
+          body: { access_token: "t", expires_in: 3600, token_type: "Bearer" },
+        };
+      }
+      return { status: 201, body: { id: "REF-1", status: "COMPLETED", links: [] } };
+    });
+    const transport = new HttpPayPalTransport(testConfig(), creds, fetchFn);
+    const refund = await transport.refundCapture({
+      captureId: "CAP-1",
+      amount: USD_25,
+      requestId: "req-refund-1",
+    });
+    expect(refund.id).toBe("REF-1");
+    expect(refund.status).toBe("COMPLETED");
+    expect(refund.amount).toEqual(USD_25);
+  });
+
+  it("resolves full-refund amounts with a GET when POST omits them", async () => {
+    // Full refund (no requested amount) + amountless POST: the transport
+    // follows up with GET /v2/payments/refunds/{id}, which carries amount.
+    const { fetchFn, seen } = stub((url) => {
+      if (url.endsWith("/v1/oauth2/token")) {
+        return {
+          status: 200,
+          body: { access_token: "t", expires_in: 3600, token_type: "Bearer" },
+        };
+      }
+      if (url.includes("/v2/payments/refunds/REF-FULL")) {
+        return {
+          status: 200,
+          body: {
+            id: "REF-FULL",
+            status: "COMPLETED",
+            amount: { currency_code: "USD", value: "25.00" },
+          },
+        };
+      }
+      return { status: 201, body: { id: "REF-FULL", status: "COMPLETED", links: [] } };
+    });
+    const transport = new HttpPayPalTransport(testConfig(), creds, fetchFn);
+    const refund = await transport.refundCapture({
+      captureId: "CAP-1",
+      requestId: "req-refund-full",
+    });
+    expect(refund.id).toBe("REF-FULL");
+    expect(refund.amount).toEqual(USD_25);
+    expect(seen.some((s) => s.url.includes("/v2/payments/refunds/REF-FULL"))).toBe(true);
+  });
+
   it("maps provider errors with retryable flags", async () => {
     const { fetchFn } = stub((url) => {
       if (url.endsWith("/v1/oauth2/token")) {
