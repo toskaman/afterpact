@@ -8,7 +8,7 @@ owner, agent = build agent). Re-verify by re-running the stated command.
 
 | Q | Gap | Fix | Owner | Verify |
 |---|---|---|---|---|
-| Q5 | No hosted demo URL | Apply `render.yaml` Blueprint on Render; paste URL into README + Devpost draft | human | `curl $URL/api/health` → 200; flagship via hosted `#/demo` |
+| Q5 | ~~No hosted demo URL~~ CLOSED 2026-11-07 | Vultr VPS live at `https://199.247.9.188.nip.io` (Caddy + production LE cert); health ok + remote flagship `completed` verified; URL pasted in README + Devpost draft | agent | `VULTR_HOSTING.md`; live checks green |
 | Q6 | No <3-min video | Record from `docs/demo/DEMO_SCRIPT.md` shot list; upload unlisted/public to YouTube | human | URL plays <3:00; shows real-vs-simulated badges |
 | Q84 | No third-party usability test | One 30-min session with a non-builder: run flagship + injection, note friction | human | Notes file + fixed issues linked |
 | Q88 | ~~No screenshots/diagram~~ CLOSED 2026-11-07 | Captured 9 shots (command, demo, copilot, tx, recovery, recorder, studio, timeline, discovery) + `docs/architecture/ARCHITECTURE.md`; 0 console errors | agent | `docs/demo/screenshots/` (9 PNG) + diagram verified in repo |

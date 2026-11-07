@@ -19,11 +19,12 @@ Deadline: **Nov 12, 2026, 12:00 PM PT**. Source: `OFFICIAL_RULES_AUDIT.md`
 
 ## Functional demo
 
-- [ ] Hosted demo URL live (Render Blueprint applied) OR complete
-      setup/run instructions in README (both preferred).
-- [ ] Demo stays free + unrestricted until **Dec 15, 2026**.
-- [x] Flagship repro verified locally (`completed`, 9 acts; 155 tests
-      green). Still to re-run on the hosted URL once deployed.
+- [x] Hosted demo URL live: `https://199.247.9.188.nip.io` (Vultr;
+      Render not pursued — card required. README run instructions too).
+- [x] Demo stays free + unrestricted until **Dec 15, 2026** (Vultr box on
+      owner credits; destroy after judging per `VULTR_HOSTING.md`).
+- [x] Flagship repro verified locally (`completed`, 9 acts) AND on the
+      hosted URL (`completed`, 9 acts, verified 2026-11-07).
 - [x] Judges' key instructions documented (`docs/demo/KEY_RETRIEVAL_GUIDE.md`
       — steps only, never the keys themselves).
 
@@ -50,7 +51,7 @@ they land). Repo URL filled; demo + video URLs pending human steps.
       hosting, Postman collection. APIMatic/AG Studio/Bryntum prizes NOT
       claimed.
 - [ ] Public repo URL + demo URL + video URL all present and reachable
-      (repo done; demo + video are human steps).
+      (repo + demo done; video is the owner's step, later).
 
 ## Rules compliance
 

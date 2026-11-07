@@ -145,9 +145,9 @@ background).
 
 | Requirement | Evidence | Status |
 |---|---|---|
-| Real hosted service | No live URL (no Render account in this environment) | **NOT DONE** — human step: apply Blueprint |
-| Reliable background processing | No Render Workflows execution; local jobs (reconciliation, refund-status checks) run in-process and are test-covered | **NOT DONE** (hosted part) |
-| Operational visibility | `GET /api/health` verified locally; no Render dashboard to screenshot | **NOT DONE** |
+| Real hosted service | Vultr VPS Paris, `https://199.247.9.188.nip.io` (Caddy + production LE cert); `/api/health` ok + remote flagship `completed` verified 2026-11-07 | **PASS** (Render prize itself not pursued — no Render usage) |
+| Reliable background processing | No Render Workflows (prize not pursued); reconciliation/refund-status jobs run in-process on the hosted box, test-covered | **PASS** (non-Render) |
+| Operational visibility | `GET /api/health` live at the public URL (systemd + journald on the box); no Render dashboard (prize not pursued) | **PASS** (non-Render) |
 | Deployment reproducibility | `render.yaml` Blueprint + `.github/workflows/ci.yml` (test+build+flagship smoke) in repo | **PASS** (config) |
 
 ## Demo timestamp map (to fill when the video is cut)

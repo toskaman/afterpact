@@ -14,7 +14,7 @@ Nothing is PASS on confidence alone — every PASS names its artifact.
 | 2 | Is AI essential, not decorative? | AI surfaces are deterministic (heuristic parse, rule matching, strict NL) and gate real flows; no LLM runs | README "AI scope", `ai.ts`, `nlparse.ts`, `studio.ts` | H | PARTIAL |
 | 3 | Is the repo public with an OSI license? | MIT LICENSE in repo; repo is local-only, not yet public | `LICENSE`, `git log` | H | PARTIAL |
 | 4 | Are install/test instructions reproducible? | Yes: README quickstart + `.env.example`; clean-install verified on isolated copy | README, `docs/RELEASE_GATE.md` gate 5 | H | PASS |
-| 5 | Is a judge-accessible demo available? | Local only (`npm start` → :3001); no hosted URL, no video yet | `render.yaml` (unapplied), `DEMO_SCRIPT.md` (shot list) | H | FAIL |
+| 5 | Is a judge-accessible demo available? | Yes: `https://199.247.9.188.nip.io` (Vultr, valid TLS, mock one-click demo); health ok + flagship `completed` verified | `docs/demo/VULTR_HOSTING.md` | H | PASS |
 | 6 | Is the demo video <3 min on public YouTube? | Not recorded; narration + shot list ready | `docs/demo/DEMO_SCRIPT.md` | H | FAIL |
 | 7 | Will the project stay free through Dec 15, 2026? | Code is MIT and local-runnable; hosted availability depends on the Render step | `render.yaml`, `RENDER_DEPLOYMENT.md` | M | PARTIAL |
 | 8 | Are submission materials in English? | Yes: README, docs, Devpost draft all English | `docs/demo/DEVPOST_DRAFT.md` | M | PASS |
@@ -158,10 +158,10 @@ Nothing is PASS on confidence alone — every PASS names its artifact.
 
 ## Tally (2026-11-07)
 
-PASS 81 · PARTIAL 15 · FAIL 3 (Q5 hosted demo, Q6 video, Q84 usability
-test) · UNKNOWN 1 (Q57 multi-tenancy, out of scope for this
-single-tenant build). All FAILs are human/external steps the owner can
-clear before submission: Render deploy, <3-min video, one usability
-session. (Q88, Q19, Q1, Q12, Q36, Q42 cleared 2026-11-07: screenshots,
-live Channel3, live PayPal full-loop.)
+PASS 82 · PARTIAL 15 · FAIL 2 (Q6 video, Q84 usability test) ·
+UNKNOWN 1 (Q57 multi-tenancy, out of scope for this single-tenant
+build). Both FAILs are the owner's steps: <3-min video (later, owner),
+one usability session. (Q88, Q19, Q1, Q12, Q36, Q42, Q5 cleared
+2026-11-07: screenshots, live Channel3, live PayPal full-loop, Vultr
+hosting.)
 

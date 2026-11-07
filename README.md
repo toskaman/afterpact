@@ -10,7 +10,7 @@ AI-assisted resolution proposal → operator decision → verified refund.
 Every step is guarded by a deterministic policy engine and recorded in
 an append-only, hash-chained Flight Recorder.
 
-> **Live demo:** `TBD — paste the Render URL here after deploy`
+> **Live demo:** `https://199.247.9.188.nip.io` (Vultr VPS, mock transport — deterministic one-click demo, no secrets on the box; live PayPal/Channel3 paths unlock with keys per `.env.example`)
 > (see `docs/sponsors/RENDER_DEPLOYMENT.md`). Demo video (<3 min):
 > `TBD — paste the YouTube link here`.
 

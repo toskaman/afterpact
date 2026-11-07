@@ -116,5 +116,5 @@ attacks `blocked` with exact policy reasons). Live paths unlock with
 `PAYPAL_CLIENT_ID/SECRET` and `CHANNEL3_API_KEY` in `.env`.
 
 - Demo video (<3 min): `TBD:youtube-url`
-- Hosted demo: `TBD:render-url` (free through judging, Dec 15, 2026)
-- Test credentials/notes: `TBD` (sandbox buyer account for the approval step)
+- Hosted demo: `https://199.247.9.188.nip.io` (Vultr VPS, mock transport — one-click flagship, no login needed; free through judging, Dec 15, 2026)
+- Test credentials/notes: none needed for the hosted demo; live sandbox/Channel3 paths unlock with your own keys per `.env.example` (`docs/demo/KEY_RETRIEVAL_GUIDE.md`)
