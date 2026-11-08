@@ -1,0 +1,152 @@
+[
+ {
+  "id": "L01",
+  "scene": "S1",
+  "text": "An AI agent just bought something for you.",
+  "seconds": 2.52
+ },
+ {
+  "id": "L02",
+  "scene": "S1",
+  "text": "The payment succeeded. But the delivery went wrong.",
+  "seconds": 2.82
+ },
+ {
+  "id": "L03",
+  "scene": "S1",
+  "text": "Who makes it right?",
+  "seconds": 1.07
+ },
+ {
+  "id": "L04",
+  "scene": "S2",
+  "text": "Meet Afterpact ... the assurance layer for agentic commerce.",
+  "seconds": 3.75
+ },
+ {
+  "id": "L05",
+  "scene": "S2",
+  "text": "Every purchase becomes a structured promise: exact items, exact amount, exact merchant ... approved to the version and the hash.",
+  "seconds": 8.17
+ },
+ {
+  "id": "L06",
+  "scene": "S2",
+  "text": "Then PayPal executes. Real orders. Real captures.",
+  "seconds": 3.61
+ },
+ {
+  "id": "L07",
+  "scene": "S3",
+  "text": "Recorded sandbox runs prove the loop end to end.",
+  "seconds": 2.9
+ },
+ {
+  "id": "L08",
+  "scene": "S4",
+  "text": "But here's what nobody shows you.",
+  "seconds": 1.83
+ },
+ {
+  "id": "L09",
+  "scene": "S4",
+  "text": "Three sensor kits were promised. Two arrived.",
+  "seconds": 2.71
+ },
+ {
+  "id": "L10",
+  "scene": "S4",
+  "text": "The Outcome Twin lays it bare: what was promised, what actually happened ... and what's still missing.",
+  "seconds": 5.27
+ },
+ {
+  "id": "L11",
+  "scene": "S4",
+  "text": "One kit. A hundred twenty-nine dollars and ninety-nine cents. Unaccounted for.",
+  "seconds": 4.86
+ },
+ {
+  "id": "L12",
+  "scene": "S5",
+  "text": "So Afterpact goes to work.",
+  "seconds": 1.71
+ },
+ {
+  "id": "L13",
+  "scene": "S5",
+  "text": "AI reads the evidence and proposes a partial refund.",
+  "seconds": 3.54
+ },
+ {
+  "id": "L14",
+  "scene": "S5",
+  "text": "A deterministic policy checks every cent against the capture.",
+  "seconds": 3.67
+ },
+ {
+  "id": "L15",
+  "scene": "S5",
+  "text": "A human approves. And PayPal confirms the refund ... verified at the provider, not just on screen.",
+  "seconds": 6.1
+ },
+ {
+  "id": "L16",
+  "scene": "S6",
+  "text": "Every step lands in the Flight Recorder.",
+  "seconds": 2.11
+ },
+ {
+  "id": "L17",
+  "scene": "S6",
+  "text": "A hash-chained, replayable record you can hand to your ops team ... or your auditor.",
+  "seconds": 4.71
+ },
+ {
+  "id": "L18",
+  "scene": "S6",
+  "text": "This isn't a demo trick. It's the artifact merchants keep.",
+  "seconds": 3.31
+ },
+ {
+  "id": "L19",
+  "scene": "S7",
+  "text": "The same evidence powers real intelligence.",
+  "seconds": 2.52
+ },
+ {
+  "id": "L20",
+  "scene": "S7",
+  "text": "Recorded model runs ... every citation checked ... and a live analytics studio over the same data.",
+  "seconds": 6.04
+ },
+ {
+  "id": "L21",
+  "scene": "S7",
+  "text": "Nothing here is faked. And everything is labeled.",
+  "seconds": 2.75
+ },
+ {
+  "id": "L22",
+  "scene": "S8",
+  "text": "And when something malicious shows up ... a merchant swap, an inflated amount ...",
+  "seconds": 4.16
+ },
+ {
+  "id": "L23",
+  "scene": "S8",
+  "text": "the policy engine refuses. Same input, same refusal. Forever.",
+  "seconds": 4.39
+ },
+ {
+  "id": "L24",
+  "scene": "S9",
+  "text": "AI can buy anything.",
+  "seconds": 1.45
+ },
+ {
+  "id": "L25",
+  "scene": "S9",
+  "text": "Afterpact makes sure the outcome matches the promise.",
+  "seconds": 2.75
+ }
+]

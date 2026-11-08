@@ -26,3 +26,8 @@ APIS.txt
 apps/web/public/vendor/ag-studio.min.js
 # Raw video footage (local only, owner edit)
 /video-rushes/*.webm
+# TITAN IV film intermediates (local only): pre-loudness draft + renderer cache.
+# Committed: FINAL/CLEAN MP4s, SRT, narration, shot map, QA report, metadata,
+# composition sources + exact render-input assets.
+brag-output/paypal-ai-2026/AFTERPACT_DRAFT.mp4
+brag-output/paypal-ai-2026/composition/.hyperframes/
