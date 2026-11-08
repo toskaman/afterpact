@@ -67,6 +67,13 @@ import { DEMO_MERCHANTS, flagshipOffer, offersForIntent } from "./catalog";
 import { detectGaps, type Observation } from "./detect";
 import { parseIntentText, scanInjection } from "./nlparse";
 import { wirePayments, type PayPalWiring, type TransportKind } from "./paypal";
+import {
+  analyzeIncidentForPromise,
+  analyzeIntentText,
+  planRecoveryForIncident,
+  wireAIService,
+} from "./aiTasks";
+import type { AIService, CostLedgerSummary } from "../../../packages/ai/src/index";
 
 /** HTTP-mapped application error. Routes render {error:{code,message,details}}. */
 export class HttpError extends Error {
@@ -262,6 +269,7 @@ export class Ops {
   private readonly env: NodeJS.ProcessEnv;
   private killSwitchEngaged: boolean;
   private channel3: Channel3Client;
+  private ai: AIService;
 
   constructor(options: OpsOptions = {}) {
     this.env = options.processEnv ?? process.env;
@@ -270,6 +278,7 @@ export class Ops {
     this.wiring = wirePayments(this.env);
     this.killSwitchEngaged = this.wiring.env.config.killSwitch;
     this.channel3 = new Channel3Client(channel3ConfigFromEnv(this.env).config);
+    this.ai = wireAIService(this.env);
     this.restorePayments();
   }
 
@@ -913,6 +922,70 @@ export class Ops {
     const incident = this.store.incidents.get(id);
     if (incident === undefined) throw new HttpError(404, "incident-not-found", `incident ${id} not found`);
     return incident;
+  }
+
+  // -- AI tasks --------------------------------------------------------------------
+  // Model-backed analysis with deterministic fallbacks. The model proposes and
+  // explains; gates and policy decide. Nothing here executes payments.
+
+  aiStatus(): {
+    keyed: boolean;
+    provider: string | null;
+    model: string | null;
+    ledger: CostLedgerSummary;
+  } {
+    return {
+      keyed: this.ai.providerId !== null,
+      provider: this.ai.providerId,
+      model: this.ai.model,
+      ledger: this.ai.ledgerSummary(),
+    };
+  }
+
+  async aiAnalyzeIntent(raw: unknown): Promise<Record<string, unknown>> {
+    const input = z
+      .object({
+        rawText: z.string().trim().min(1).max(4000),
+        buyerId: z.string().max(200).default("anonymous"),
+      })
+      .parse(raw);
+    const result = await analyzeIntentText(this.ai, input.rawText, input.buyerId, Date.now());
+    return result as unknown as Record<string, unknown>;
+  }
+
+  async aiAnalyzeIncident(raw: unknown): Promise<Record<string, unknown>> {
+    const input = z
+      .object({
+        promiseId: z.string().min(1),
+        observation: z.object({
+          deliveredQuantity: z.number().int().min(0).optional(),
+          deliveredAt: z.string().max(200).optional(),
+          chargedMinor: z.number().int().min(0).optional(),
+          status: z.string().max(200).optional(),
+          note: z.string().max(2000).optional(),
+        }),
+      })
+      .parse(raw);
+    const record = this.mustRecord(input.promiseId);
+    const citable = this.listOutcomes(input.promiseId).map((o) => ({ id: o.id, summary: o.summary }));
+    const result = await analyzeIncidentForPromise(this.ai, record.promise, input.observation, citable);
+    return result as unknown as Record<string, unknown>;
+  }
+
+  async aiPlanRecovery(raw: unknown): Promise<Record<string, unknown>> {
+    const input = z.object({ incidentId: z.string().min(1) }).parse(raw);
+    const incident = this.getIncident(input.incidentId);
+    const record = this.mustRecord(incident.promiseId);
+    const capture = this.captureForPromise(record.promise.id);
+    if (capture === undefined) {
+      throw new HttpError(409, "no-capture", "no capture recorded for this promise; cannot size a refund");
+    }
+    const already = this.wiring.store.refundedMinorForCapture(capture.id);
+    const result = await planRecoveryForIncident(this.ai, incident, record.promise, {
+      remainingMinor: capture.amount.amountMinor - already,
+      currency: capture.amount.currency,
+    });
+    return result as unknown as Record<string, unknown>;
   }
 
   // -- resolutions ------------------------------------------------------------------

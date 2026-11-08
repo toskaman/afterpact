@@ -74,6 +74,8 @@ const ORIGINS = {
   "not-in-build": { label: "NOT IN THIS BUILD", cls: "bad" },
   "channel3-live": { label: "CHANNEL3 · LIVE", cls: "accent" },
   "channel3-unavailable": { label: "DISCOVERY UNAVAILABLE", cls: "warn" },
+  "ai-live": { label: "AI · LIVE", cls: "accent" },
+  "ai-off": { label: "AI · OFF (HEURISTIC)", cls: "info" },
   "ag-grid-community": { label: "AG GRID COMMUNITY", cls: "ok" },
   "native-table": { label: "NATIVE TABLE FALLBACK", cls: "info" },
   "computed-schedule": { label: "COMPUTED SCHEDULE", cls: "violet" },
@@ -131,7 +133,10 @@ function initTheme() {
 /* ---------- topbar status ---------- */
 async function refreshTopbar() {
   try {
-    const health = await api("/api/health");
+    const [health, aiStatus] = await Promise.all([
+      api("/api/health"),
+      api("/api/ai/status").catch(() => null),
+    ]);
     const transport = $("#transportPill");
     const live = health.transport === "paypal-sandbox-live";
     transport.className = `pill ${live ? "accent" : "warn"}`;
@@ -143,10 +148,23 @@ async function refreshTopbar() {
       chain.textContent += " · KILL-SWITCH ON";
       chain.className = "pill bad";
     }
+    const aiPill = $("#aiPill");
+    if (aiPill) {
+      if (aiStatus && aiStatus.keyed) {
+        aiPill.className = "pill accent";
+        aiPill.textContent = `AI · LIVE ${aiStatus.model ?? ""}`.trim();
+        aiPill.title = `provider ${aiStatus.provider ?? "?"} · model ${aiStatus.model ?? "?"}`;
+      } else {
+        aiPill.className = "pill info";
+        aiPill.textContent = "AI · OFF";
+      }
+    }
   } catch {
     $("#transportPill").textContent = "API UNREACHABLE";
     $("#transportPill").className = "pill bad";
     $("#chainPill").textContent = "—";
+    const aiPill = $("#aiPill");
+    if (aiPill) aiPill.textContent = "—";
   }
 }
 
@@ -255,7 +273,7 @@ function renderCopilot() {
           <div class="field">
             <label for="rawText">Purchase request</label>
             <textarea id="rawText" name="rawText" required maxlength="4000" placeholder="e.g. Purchase three field sensor kits for the Lyon warehouse, budget under $500, delivery within 14 days. Must have IP67 rating.">Purchase three field sensor kits for the Lyon warehouse, budget under $500, delivery within 14 days. Must have IP67 rating.</textarea>
-            <span class="hint">Heuristic extraction finds quantity, budget, deadline, and categories. No LLM runs in this build.</span>
+            <span class="hint">Heuristic extraction is authoritative; the optional AI interpretation below is advisory only. Injection signals block execution either way.</span>
           </div>
           <div class="form-grid two-col">
             <div class="field"><label for="buyerId">Buyer id</label><input type="text" id="buyerId" name="buyerId" value="buyer-demo" maxlength="200" /></div>
@@ -288,7 +306,18 @@ function renderCopilot() {
             <dt>Extraction notes</dt><dd class="small muted">${escapeHtml((p.notes ?? []).join(" · "))}</dd>
             ${p.injectionSignals?.length ? `<dt>Injection scan</dt><dd><span class="pill bad">SIGNALS: ${escapeHtml(p.injectionSignals.join(", "))}</span></dd>` : ""}
           </dl>
-          <div class="button-row"><button class="button" id="toOffers">Compare offers →</button></div>`;
+          <div id="aiIntentBox" class="section-gap"></div>
+          <div class="button-row"><button class="button secondary" id="aiInterpretBtn" type="button">Interpret with AI</button><button class="button" id="toOffers">Compare offers →</button></div>`;
+        $("#aiInterpretBtn").addEventListener("click", async () => {
+          const abox = $("#aiIntentBox");
+          abox.innerHTML = loadingState("Asking the model…");
+          try {
+            const r = await api("/api/ai/analyze-intent", { method: "POST", body: { rawText: payload.rawText, buyerId: payload.buyerId } });
+            abox.innerHTML = aiInterpretationHtml(r);
+          } catch (err) {
+            abox.innerHTML = errorBanner(err.message);
+          }
+        });
         $("#toOffers").addEventListener("click", () => { copilot.step = 2; renderCopilot(); void loadOffers(); });
         toast("Intent parsed", "ok");
       } catch (err) {
@@ -618,6 +647,58 @@ function wireTxActions(v, orders) {
   void orders;
 }
 
+/* ---------- AI interpretation fragments (model proposes, code decides) ---------- */
+function aiOriginPill(origin) {
+  return originPill(String(origin ?? "").startsWith("ai-model:") ? "ai-live" : "ai-off");
+}
+
+function aiProvenanceLine(r) {
+  const prov = r.provenance ?? {};
+  const tokens = (prov.promptTokens ?? 0) + (prov.completionTokens ?? 0);
+  return `${r.origin ?? "?"}${tokens ? ` · ${tokens} tok · ${prov.latencyMs ?? "?"} ms` : ""}`;
+}
+
+function aiInterpretationHtml(r) {
+  const c = r.constraints ?? {};
+  const budget = c.budgetMinor == null ? "no budget" : formatMoney({ currency: c.currency ?? "USD", amountMinor: c.budgetMinor });
+  const list = (arr) => (arr ?? []).length ? escapeHtml(arr.join("; ")) : "—";
+  return `<div class="card" style="border-style:dashed"><h3>AI purchase interpretation ${aiOriginPill(r.origin)}</h3>
+    <dl class="kv">
+      <dt>Constraints</dt><dd class="small">qty ${escapeHtml(String(c.quantity ?? "?"))} · budget ${escapeHtml(budget)} · ${escapeHtml(c.productType ?? "any type")} · ${c.deadlineDays == null ? "no deadline" : `${escapeHtml(String(c.deadlineDays))} day(s)`}</dd>
+      <dt>Requirements</dt><dd class="small">${list(r.requirements)}</dd>
+      <dt>Ambiguities</dt><dd class="small">${list(r.ambiguities)}</dd>
+      <dt>Trade-offs</dt><dd class="small">${list(r.tradeoffs)}</dd>
+      <dt>Provenance</dt><dd class="small muted mono">${escapeHtml(aiProvenanceLine(r))}</dd>
+    </dl>
+    <p class="small muted">Advisory only — the heuristic parse above stays authoritative for offer search, and injection signals still block execution.</p></div>`;
+}
+
+function aiAnalysisHtml(r) {
+  const gaps = (r.gaps ?? []).map((g) => `<span class="pill">${escapeHtml(g.category)} · ${escapeHtml(g.severity)}</span>`).join("");
+  return `<div class="card" style="border-style:dashed"><h3>AI incident analysis ${aiOriginPill(r.origin)}</h3>
+    <p class="small">${escapeHtml(r.interpretation ?? "—")}</p>
+    ${gaps ? `<div class="badge-row">${gaps}</div>` : ""}
+    ${(r.citations ?? []).length ? `<p class="small muted">Cited evidence: ${r.citations.map((x) => `<span class="mono">${escapeHtml(x)}</span>`).join(", ")}</p>` : ""}
+    ${(r.droppedCitations ?? []).length ? `<p class="small"><span class="pill warn">DROPPED ${r.droppedCitations.length} UNGROUNDED CITATION(S)</span></p>` : ""}
+    <p class="small muted">Uncertainty: ${escapeHtml(r.uncertainty ?? "?")} · escalation ${r.escalate ? "recommended" : "not needed"} · deterministic detection stays authoritative</p>
+    <p class="small muted mono">${escapeHtml(aiProvenanceLine(r))}</p></div>`;
+}
+
+function recoveryProposalHtml(r, currency) {
+  const gate = r.gate ?? {};
+  const gateCls = gate.verdict === "approved-as-proposed" ? "ok" : gate.verdict === "needs-human" ? "warn" : "bad";
+  return `<div class="card" style="border-style:dashed"><h3>AI recovery proposal ${aiOriginPill(r.origin)}</h3>
+    <dl class="kv"><dt>Strategy</dt><dd><strong>${escapeHtml(r.strategy ?? "?")}</strong></dd>
+    <dt>Amount</dt><dd>${r.amountMinor == null ? "—" : formatMoney({ currency, amountMinor: r.amountMinor })}</dd>
+    <dt>Rationale</dt><dd class="small">${escapeHtml(r.rationale ?? "")}</dd>
+    <dt>Gate</dt><dd><span class="pill ${gateCls}">${escapeHtml(String(gate.verdict ?? "?").toUpperCase())}</span> <span class="small muted">${escapeHtml(gate.reason ?? "")}</span></dd>
+    <dt>Confidence</dt><dd class="small">${escapeHtml(r.confidence ?? "?")}</dd>
+    ${(r.risks ?? []).length ? `<dt>Risks</dt><dd class="small">${escapeHtml(r.risks.join("; "))}</dd>` : ""}
+    <dt>Approvals</dt><dd class="small">${escapeHtml((r.requiredApprovals ?? []).join(", ") || "—")}</dd>
+    <dt>Provenance</dt><dd class="small muted mono">${escapeHtml(aiProvenanceLine(r))}</dd></dl>
+    <p class="small muted">The model proposes; the gate and your approval decide. Nothing moved yet — approve a proposal below to execute.</p></div>`;
+}
+
 /* ================================================================
    VIEW: Recovery Center
    ================================================================ */
@@ -643,6 +724,11 @@ async function renderRecovery() {
         </div>
         <p>${escapeHtml(i.detail)}</p>
         <p class="small"><a href="#/tx/${encodeURIComponent(i.promiseId)}">Open transaction →</a></p>
+        <div class="button-row">
+          <button class="button small secondary" data-ai-analyze="${escapeHtml(i.id)}" data-promise="${escapeHtml(i.promiseId)}" data-detail="${escapeHtml(i.detail.slice(0, 500))}">Analyze with AI</button>
+          <button class="button small secondary" data-ai-propose="${escapeHtml(i.id)}" data-promise="${escapeHtml(i.promiseId)}">AI recovery proposal</button>
+        </div>
+        <div data-ai-result="${escapeHtml(i.id)}" class="section-gap"></div>
         ${(byIncident.get(i.id) ?? []).map((p) => `
           <div class="table-wrap" style="margin-bottom:0.6rem"><table>
             <tbody><tr>
@@ -709,6 +795,29 @@ async function renderRecovery() {
     };
     document.querySelectorAll("[data-res-approve]").forEach((b) => b.addEventListener("click", () => decide(b.dataset.resApprove, "approved")));
     document.querySelectorAll("[data-res-reject]").forEach((b) => b.addEventListener("click", () => decide(b.dataset.resReject, "rejected")));
+    document.querySelectorAll("[data-ai-analyze]").forEach((b) => b.addEventListener("click", async () => {
+      const box = document.querySelector(`[data-ai-result="${b.dataset.aiAnalyze}"]`);
+      box.innerHTML = loadingState("Asking the model…");
+      try {
+        const r = await api("/api/ai/analyze-incident", { method: "POST", body: { promiseId: b.dataset.promise, observation: { note: b.dataset.detail } } });
+        box.innerHTML = aiAnalysisHtml(r);
+      } catch (err) {
+        box.innerHTML = errorBanner(err.message);
+      }
+    }));
+    document.querySelectorAll("[data-ai-propose]").forEach((b) => b.addEventListener("click", async () => {
+      const box = document.querySelector(`[data-ai-result="${b.dataset.aiPropose}"]`);
+      box.innerHTML = loadingState("Asking the model…");
+      try {
+        const [r, tx] = await Promise.all([
+          api("/api/ai/plan-recovery", { method: "POST", body: { incidentId: b.dataset.aiPropose } }),
+          api(`/api/promises/${encodeURIComponent(b.dataset.promise)}`),
+        ]);
+        box.innerHTML = recoveryProposalHtml(r, tx.promise.total.currency);
+      } catch (err) {
+        box.innerHTML = errorBanner(err.message);
+      }
+    }));
   } catch (err) {
     view().innerHTML = viewHead("Recovery Center", "") + errorBanner(err.message);
   }

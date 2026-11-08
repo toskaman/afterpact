@@ -88,6 +88,14 @@ describe("VultrInferenceProvider (stubbed fetch)", () => {
     expect(fetchFn).toHaveBeenCalledTimes(2);
   });
 
+  it("names the failing field in the invalid-output message", async () => {
+    const fetchFn = vi.fn(async () => okJson(completion(JSON.stringify({ summary: "x" }))));
+    const provider = new VultrInferenceProvider(baseConfig(), fetchFn);
+    const error = await provider.generateStructured(request()).catch((e: unknown) => e);
+    expect(error).toBeInstanceOf(AIInvalidOutputError);
+    expect((error as Error).message).toContain("score");
+  });
+
   it("repairs and succeeds on the second attempt", async () => {
     const fetchFn = vi
       .fn(async () => okJson(completion(JSON.stringify({ summary: "fixed", score: 9 }))))

@@ -59,6 +59,21 @@ export function vultrConfigFromEnv(
 
 type FetchFn = (url: string, init: RequestInit) => Promise<Response>;
 
+/** Compact one-line summary of validation issues for error messages. */
+export function summarizeIssues(issues: unknown): string {
+  if (!Array.isArray(issues)) return "";
+  const parts: string[] = [];
+  for (const issue of issues.slice(0, 3)) {
+    if (typeof issue !== "object" || issue === null) continue;
+    const record = issue as Record<string, unknown>;
+    const path = Array.isArray(record["path"]) ? record["path"].join(".") : "";
+    const message = typeof record["message"] === "string" ? record["message"] : "invalid";
+    parts.push(path === "" ? message : `${path}: ${message}`);
+  }
+  const joined = parts.join("; ");
+  return joined.length > 300 ? `${joined.slice(0, 297)}…` : joined;
+}
+
 interface ChatCompletionsWire {
   model?: unknown;
   choices?: unknown;
@@ -232,8 +247,9 @@ export class VultrInferenceProvider implements AIProvider {
         clearTimeout(timer);
       }
     }
+    const summary = summarizeIssues(lastIssues);
     throw new AIInvalidOutputError(
-      `model output failed schema "${request.schemaName}" after ${attempts} attempt(s)`,
+      `model output failed schema "${request.schemaName}" after ${attempts} attempt(s)${summary === "" ? "" : `: ${summary}`}`,
       lastIssues,
       attempts,
     );

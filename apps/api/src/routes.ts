@@ -188,6 +188,16 @@ async function handleRequest(req: IncomingMessage, res: ServerResponse, ops: Ops
     const id = decodeURIComponent(path.slice("/api/resolutions/".length, -"/decide".length));
     return ok(res, await ops.decideResolution(id, parseJson(await readBody(req))));
   }
+  if (method === "GET" && path === "/api/ai/status") return ok(res, ops.aiStatus());
+  if (method === "POST" && path === "/api/ai/analyze-intent") {
+    return ok(res, await ops.aiAnalyzeIntent(parseJson(await readBody(req))));
+  }
+  if (method === "POST" && path === "/api/ai/analyze-incident") {
+    return ok(res, await ops.aiAnalyzeIncident(parseJson(await readBody(req))));
+  }
+  if (method === "POST" && path === "/api/ai/plan-recovery") {
+    return ok(res, await ops.aiPlanRecovery(parseJson(await readBody(req))));
+  }
   if (method === "POST" && path === "/api/webhooks/paypal") {
     const headers: Record<string, string> = {};
     for (const [key, value] of Object.entries(req.headers)) {
