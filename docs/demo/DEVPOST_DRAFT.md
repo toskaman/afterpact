@@ -39,19 +39,23 @@ of money, and prompt-injection attempts are blocked and preserved as evidence.
 ## How we built it
 
 TypeScript throughout: a zero-dependency Node HTTP API (`apps/api`), a
-static accessible web UI, and three packages — `domain` (money in integer
+static accessible web UI, and four packages — `domain` (money in integer
 minor units, promises, approvals, 17-state lifecycle, audit chain),
 `policy` (deterministic gates), `payments` (sandbox-only PayPal client:
 OAuth caching, `PayPal-Request-Id` idempotency, webhook verification +
-dedupe, kill switch). Money is exact; approvals bind to a promise version +
-hash and expire; material changes invalidate approval. Channel3 discovery,
-AG Grid Community analytics with a strict NL query language, a
-dependency-aware recovery timeline, a 38-request Postman collection, and a
-Render Blueprint round out the build. 155 automated tests green (+1
-live-sandbox probe that skips visibly without credentials), strict `tsc`
-clean on 5 projects. Every on-screen capability carries an origin badge
-(`REAL API`, `PAYPAL SANDBOX · LIVE`, `SIMULATED · MOCK`, …) so judges can
-see exactly what is live and what is labeled simulation.
+dedupe, kill switch), `ai` (Vultr Inference client with model-identity
+verification, cost ledger, strict fallbacks). Money is exact; approvals
+bind to a promise version + hash and expire; material changes invalidate
+approval. Real runtime AI (intent interpretation, evidence-cited incident
+analysis, gated recovery proposals — model proposes, policy + human
+dispose), Channel3 discovery, AG Studio canvas + Agent Framework over live
+data plus AG Grid Community analytics, a dependency-aware recovery
+timeline, a Newman-verified 38-request Postman collection, and Vultr
+hosting round out the build. 245 automated tests green (+33 keyless skips — live probes that skip
+visibly without credentials), strict `tsc` clean on 6 projects,
+5 Playwright E2E green. Every on-screen capability carries an origin badge (`REAL API`,
+`PAYPAL SANDBOX · LIVE`, `SIMULATED · MOCK`, `AI · LIVE` / `AI · OFF`, …)
+so judges can see exactly what is live and what is labeled simulation.
 
 ## Challenges we ran into
 
@@ -60,8 +64,10 @@ implies we can charge that merchant); making idempotency replay-before-gate
 so retries after completion replay instead of throwing; keeping every demo
 path on the same Ops methods as the real routes (no parallel demo backend);
 vendoring AG Grid reproducibly with hash verification; and resisting the
-urge to claim sponsor prizes (AG Studio, Bryntum, APIMatic) for technology
-not actually in the build — each has a filed non-claim and an upgrade path.
+urge to overclaim sponsor usage: Bryntum and APIMatic stay filed
+non-claims with upgrade paths, while AG Studio earned a genuine
+integration (real canvas + Agent Framework, commercial EULA respected —
+no bytes committed, official-CDN-first loading).
 
 ## Accomplishments we're proud of
 
@@ -81,15 +87,17 @@ so we badged everything.
 
 ## What's next
 
-Verify the live-sandbox flagship with real credentials; run a live Channel3
-search on camera; apply the Render Blueprint for a hosted demo; record the
-<3-min video; pilot with one merchant ops team on a single exception
-category; then earn the AG Studio / Bryntum integrations for real.
+Install the AG Studio trial key and confirm judging-window coverage;
+record the <3-min video; run a live Channel3 search on camera; pilot with
+one merchant ops team on a single exception category; per-session demo
+isolation; then a Bryntum evaluation if its trial permits judging use.
 
 ## Built With
 
-TypeScript, Node.js, Zod, Vitest, PayPal REST APIs (Orders v2, Captures,
-Refunds, Webhooks — Sandbox), Channel3, AG Grid Community, Postman, Render.
+TypeScript, Node.js, Zod, Vitest, Playwright, PayPal REST APIs (Orders
+v2, Captures, Refunds, Webhooks — Sandbox), Vultr Inference
+(deepseek-v4.1-flash-1017), Channel3, AG Studio + AG Grid Community,
+Postman/Newman, Vultr (hosting), Caddy.
 
 ## Sponsor integrations (honest status)
 
@@ -99,8 +107,21 @@ Refunds, Webhooks — Sandbox), Channel3, AG Grid Community, Postman, Render.
   adapter, trial watermark until licensed) plus Community tables and strict
   NL queries.
 - **Postman:** 38-request collection (auth, positive, idempotency, negatives).
-- **Render:** Blueprint + CI + health endpoint; hosted deploy is a human step.
+- **Render:** not pursued (no payment card); `render.yaml` kept as a deployment-as-code reference only. Live demo runs on Vultr.
 - **Bryntum / APIMatic:** not in this build; filed non-claims, prizes not pursued.
+
+## AI tools used (how each was used)
+
+- **Vultr Inference `deepseek-v4.1-flash-1017` (runtime):** interprets
+  purchase intent, analyzes incidents against cited evidence, drafts
+  recovery proposals, and drives the Studio agent — every output is
+  schema-validated, policy-gated, and never self-executes payments.
+- **Deterministic engine (runtime):** heuristic parser fallback, rule-based
+  gap detection, exact-money policy gates (Cleared | Hold | Refused),
+  hash-chained audit — authoritative over the model.
+- **LLM coding assistance (authoring time):** implementation and docs were
+  written with AI assistance; all claims above are backed by executed
+  tests and committed evidence, not by the assistant's word.
 
 ## How to test
 
@@ -108,7 +129,7 @@ Refunds, Webhooks — Sandbox), Channel3, AG Grid Community, Postman, Render.
 git clone https://github.com/toskaman/afterpact && cd afterpact
 npm install && cp .env.example .env
 npm run build && npm start   # http://localhost:3001
-npm test                     # 155 passed, 1 skipped (live probe needs creds)
+npm test                     # 245 passed, 33 skipped keyless (live paths need creds)
 ```
 
 Run the flagship: `POST /api/demo/run {"scenario":"flagship"}` or open

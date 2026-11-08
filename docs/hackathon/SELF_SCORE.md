@@ -2,8 +2,8 @@
 
 Internal scoring against the five official criteria. Scores are evidence-based
 and deliberately strict; they are NOT official results. See
-`docs/audit/100_QUESTIONS.md` (114 questions: 98 PASS / 13 PARTIAL / 2 FAIL /
-1 UNKNOWN) for the underlying audit.
+`docs/audit/100_QUESTIONS.md` (114 questions: 96 PASS / 15 PARTIAL / 2 FAIL /
+1 UNKNOWN after the OMEGA II docs-truth pass) for the underlying audit.
 
 | Criterion | Score | Evidence | Deductions |
 |---|---:|---|---|

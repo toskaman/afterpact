@@ -5,7 +5,7 @@ end; the live walkthrough below runs ~10 minutes with Q&A.
 
 ## Setup (before the audience arrives)
 
-1. `npm ci && npm run build && npm start` (or open the Render URL).
+1. `npm ci && npm run build && npm start` (or open the hosted demo `https://199.247.9.188.nip.io`).
 2. Reset to a clean slate: `POST /api/demo/reset` (mock mode) or the
    Demo view's reset button.
 3. Top-bar check: transport pill reads `MOCK · SIMULATED` (keyless) or

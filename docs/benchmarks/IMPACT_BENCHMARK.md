@@ -1,8 +1,9 @@
-# AFTERPACT impact benchmark (skeleton)
+# AFTERPACT impact benchmark
 
-Reproducible timing harness for the "measurable evidence" bar. Numbers
-below are placeholders until recorded with `node scripts/bench.mjs`
-against a stated build + machine. **Never paste numbers by hand.**
+Reproducible timing harness for the "measurable evidence" bar. Rows
+below marked MACHINE-RECORDED came from `node scripts/bench.mjs`
+against the stated build + machine; anything else is an explicit
+estimate. **Never paste numbers by hand.**
 
 ## Method
 

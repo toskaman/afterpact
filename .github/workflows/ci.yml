@@ -53,3 +53,14 @@ jobs:
       - run: npm run vendor:ag-studio
       - run: npx playwright install --with-deps chromium
       - run: npm run test:e2e
+
+  drift:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24.14.1
+      - run: node scripts/check-docs-drift.mjs

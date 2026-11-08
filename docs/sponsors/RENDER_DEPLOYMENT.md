@@ -1,7 +1,12 @@
-# Render deployment
+# [NOT PURSUED] Render deployment — reference only
 
-Date: 2026-11-07. Blueprint + CI are in the repo; the live service is a
-human step (no Render account is reachable from this environment).
+> 2026-11-08 redirect: the Render prize is NOT pursued (no payment card)
+> and no Render service, URL, or dashboard exists. The live demo runs on
+> Vultr — see `docs/demo/VULTR_HOSTING.md`. Everything below is a kept
+> deployment-as-code reference (`render.yaml`), not a claimed deployment.
+
+Date: 2026-11-07. Blueprint + CI are in the repo; no live Render service
+exists or is planned.
 
 ## What exists
 

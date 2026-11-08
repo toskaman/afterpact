@@ -1,5 +1,14 @@
 # AFTERPACT OMEGA final report (2026-11-08)
 
+> OMEGA II addendum (2026-11-08): this report is history. Corrections
+> since: (1) "CI green on every OMEGA push" overstated — four pushes
+> (6b/7/8/9) failed `verify` on a smoke expectation, fixed at `ca51497`,
+> green since; (2) the vendored Studio UMD was removed from the tracked
+> tree (official-CDN-first, no bytes committed); (3) the 2026-11-07
+> Channel3 live claim is retracted to NOT VERIFIED pending a committed
+> artifact; (4) audit tally is now 96/15/2/1. Current truth lives in
+> `docs/hackathon/RELEASE_EVIDENCE_MANIFEST.json`.
+
 Execution report for the TITAN OMEGA directive: autonomous grand-prize
 engineering on the existing repository (no restart, no architecture swap).
 Baseline `b1fd4fb` → HEAD `b5fe636` + deploy fix (this report's commit).

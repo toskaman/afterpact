@@ -1,9 +1,10 @@
 # Frontend + Flight Recorder + Demo Mode — guide
 
-Build: `apps/api` (HTTP API + static host) + `apps/web/public` (SPA with one
-vendored dependency: AG Grid Community UMD for Studio tables). Tests:
-`tests/integration/apps.api.test.ts` + `sponsors.*.test.ts` (API-driven;
-no Playwright in this repo, so the UI contract is verified over HTTP).
+Build: `apps/api` (HTTP API + static host) + `apps/web/public` (SPA with
+AG Grid Community UMD vendored for Studio tables and AG Studio 3.1.0
+loaded from the official CDN with a build-time local fallback). Tests:
+`tests/integration/apps.api.test.ts` + `sponsors.*.test.ts` (API-driven)
+plus 5 Playwright browser specs in `tests/e2e/` (CI `e2e` job, Chromium).
 
 ## Views
 

@@ -1,8 +1,8 @@
 # AG Studio upgrade path (from the Community-edition Studio)
 
-Status: NOT IMPLEMENTED — this is the executable plan a maintainer follows
-when an AG Studio (Pro with AI) license is available. Nothing here is
-claimed as done.
+Status: SUPERSEDED 2026-11-08 — Studio IS integrated (real canvas +
+Agent Framework, `docs/sponsors/AG_GRID_STATUS.md`). What remains is the
+trial-key step below, not the integration.
 
 ## Prerequisites
 

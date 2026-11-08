@@ -46,8 +46,9 @@ Channel3 requires actually CALLING the API or MCP server. This build
 calls the live REST API whenever a key is configured (verify:
 `discovery.search` audit events with `origin: channel3-live`, plus the
 latency column). With no key configured at judging time, the call path
-is real but unexecuted — set the key on the Render service to make the
-live path demoable.
+is real but unexecuted — set the key on the demo host (or a local `.env`)
+to make the live path demoable. Live execution is NOT VERIFIED until a
+keyed run commits its evidence (see manifest `channel3Live`).
 
 ## Files
 

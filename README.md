@@ -62,18 +62,26 @@ every response says which transport served it.
 
 ## AI in this build (honest scope)
 
+Real runtime inference (Vultr Inference, default model
+`deepseek-v4.1-flash-1017`, identity verified on every call) proposes;
+deterministic code + policy gates + human approval dispose. Without a
+`VULTR_INFERENCE_API_KEY` every AI surface falls back honestly
+(`AI · OFF` pill, heuristic/templated output labeled as such).
+
 | Capability | Implementation | Label |
 |---|---|---|
-| Intent extraction | Deterministic heuristic parser (budget, qty, deadline, constraints) | `heuristic-parse` |
-| Offer ranking | Deterministic catalog scoring | `simulated-catalog` |
+| Intent extraction | LLM interpretation (Zod-validated) → heuristic fallback | `ai-model:intent` / `heuristic-parse` |
+| Offer ranking | Deterministic catalog scoring (+ live Channel3 when keyed) | `simulated-catalog` / `channel3-live` |
 | Gap detection | Rule-based promise-vs-outcome matching | `real-api` |
-| Resolution drafting | Templated proposals from incident category + capture bounds | `real-api` |
-| Studio NL commands | Strict filter language (`incidents unresolved refunds >$100`) | `real-api` |
+| Incident analysis | LLM analysis with evidence citations, category-gated | `ai-model:incident` |
+| Resolution drafting | LLM proposal, amount/policy-gated, never self-executing | `ai-model:recovery` |
+| Studio agent | Real AG Studio Agent Framework + own Vultr adapter | `AI · LIVE` / `AI · OFF` |
 
-**No LLM inference runs in this build.** The Devpost "AI tools used"
-section must list these deterministic components as such, plus any LLM
-used at authoring time by the team. Nothing on screen claims model
-inference.
+Measured evidence: 30-scenario live eval `30/30` (citation precision
+`1.000`, ~$0.0135/run) — see `docs/evals/README.md` and the verified
+claims in `docs/hackathon/RELEASE_EVIDENCE_MANIFEST.json`. The Devpost
+"AI tools used" section lists the model, the deterministic components,
+and any LLM used at authoring time.
 
 ## Real vs simulated (labeling policy)
 
@@ -116,10 +124,10 @@ labeled without them):
 ## Test
 
 ```bash
-npm run typecheck        # strict tsc over domain, policy, payments, api, tests
+npm run typecheck        # strict tsc over domain, policy, payments, ai, api, tests (6 projects)
 npm run test:unit        # pure domain/policy unit tests (no creds, no network)
 npm run test:integration # API + PayPal + sponsor suites (live-sandbox skips visibly without creds)
-npm test                 # everything: 155 passed, 1 skipped (2026-11-07)
+npm test                 # everything: 245 passed, 33 skipped keyless (2026-11-08; manifest-verified)
 node --check apps/web/public/app.js
 ```
 
@@ -135,7 +143,8 @@ runs on Ubuntu. See `docs/RELEASE_GATE.md`.
 
 Postman: import `postman/AFTERPACT.postman_collection.json` (38
 requests: auth helper, positive flows, idempotency replays, negatives,
-exact error codes).
+exact error codes). Newman execution verified: 37/37 requests,
+18/18 assertions (`postman/newman-report.json`).
 
 Benchmarks: `node scripts/bench.mjs --base http://localhost:3001`
 (see `docs/benchmarks/IMPACT_BENCHMARK.md`).
@@ -188,7 +197,7 @@ amount-increase attempts are both `blocked` with exact policy reasons.
 | Channel3 | **Live client; calls the API when keyed** | `docs/sponsors/CHANNEL3_INTEGRATION.md` |
 | APIMatic | **Not used; explicitly not claimed** | `docs/sponsors/APIMATIC_EVIDENCE.md` |
 | Bryntum | **Fallback timeline; Bryntum NOT claimed** | `docs/sponsors/BRYNTUM_STATUS.md` (+ `BRYNTUM_UPGRADE_PATH.md`) |
-| Render | **Blueprint + CI; deploy is a human step** | `docs/sponsors/RENDER_DEPLOYMENT.md` |
+| Render | **Blueprint as reference only; live demo runs on Vultr (prize not pursued)** | `docs/sponsors/RENDER_DEPLOYMENT.md` |
 | Postman | Collection shipped (no cash prize; evidence only) | `postman/` |
 
 ## Limitations (disclosed)
@@ -198,8 +207,10 @@ amount-increase attempts are both `blocked` with exact policy reasons.
   policy gates; see `docs/evals/README.md` for measured evidence.
 - Fallback catalog/logistics are simulations (badged); live discovery
   needs a Channel3 key.
-- Live-sandbox flagship path is implemented but unverified without
-  credentials in CI (skips visibly; verify manually before the video).
+- Live-sandbox flagship verified 2026-11-07 (order `2ER387580K033722V`
+  → capture `7R158417X9367771B` → partial refund `8DJ895035B173303G`
+  `succeeded`, Flight Recorder VALID); CI skips the live path visibly
+  without credentials.
 - Persistence is a JSON snapshot, not SQLite; Render disk is 1 GB.
 - Bryntum / APIMatic / Render Workflows are not in this build; upgrade
   paths are documented, prizes not claimed. AG Studio IS integrated

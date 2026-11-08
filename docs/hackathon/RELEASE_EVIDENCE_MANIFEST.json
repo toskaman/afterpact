@@ -1,0 +1,152 @@
+{
+  "schemaVersion": 1,
+  "generatedAt": "2026-11-08T02:14:15.434Z",
+  "verifiedCommit": "2ddd617b3a2b8afc06330bf1180c84d512c85ea6",
+  "verifiedCiRun": "https://github.com/toskaman/afterpact/actions/runs/42437533785",
+  "suite": {
+    "passed": 245,
+    "failed": 0,
+    "skipped": 33
+  },
+  "e2e": {
+    "passed": 5,
+    "total": 5
+  },
+  "statics": {
+    "suiteFiles": [
+      "/tests/unit/ai-provider.test.ts",
+      "/tests/unit/ai-tasks.test.ts",
+      "/tests/unit/ai.test.ts",
+      "/tests/unit/approval.test.ts",
+      "/tests/unit/audit.test.ts",
+      "/tests/unit/idempotency.test.ts",
+      "/tests/unit/lifecycle.test.ts",
+      "/tests/unit/money.test.ts",
+      "/tests/unit/policy.test.ts",
+      "/tests/unit/promise.test.ts",
+      "/tests/unit/refund.test.ts",
+      "/tests/unit/studio-agent.test.ts",
+      "/tests/integration/ai-studio-turn.test.ts",
+      "/tests/integration/ai.live.test.ts",
+      "/tests/integration/ai.tasks.test.ts",
+      "/tests/integration/apps.api.test.ts",
+      "/tests/integration/channel3.live.test.ts",
+      "/tests/integration/frontend.contract.test.ts",
+      "/tests/integration/paypal.flows.test.ts",
+      "/tests/integration/paypal.live.test.ts",
+      "/tests/integration/paypal.safety.test.ts",
+      "/tests/integration/security.test.ts",
+      "/tests/integration/sponsors.discovery.test.ts",
+      "/tests/integration/sponsors.studio.timeline.test.ts"
+    ],
+    "suiteFileCount": 24,
+    "suiteStaticBlocks": 203,
+    "e2eFiles": [
+      "/tests/e2e/dashboard.e2e.ts",
+      "/tests/e2e/studio.e2e.ts",
+      "/tests/e2e/twin.e2e.ts"
+    ],
+    "e2eStaticBlocks": 5,
+    "typecheckProjects": [
+      "packages/domain",
+      "packages/policy",
+      "packages/payments",
+      "packages/ai",
+      "apps/api",
+      "tests"
+    ],
+    "newman": {
+      "report": "postman/newman-report.json",
+      "requestsExecuted": 37,
+      "requestsFailed": 0,
+      "assertions": 18,
+      "assertionsFailed": 0
+    },
+    "evalReports": [
+      {
+        "report": "/docs/evals/report-2026-11-08T01-04-16-487Z.json",
+        "generatedAt": "2026-11-08T01:04:16.487Z",
+        "model": "deepseek-v4.1-flash-1017",
+        "passed": null,
+        "total": null,
+        "citationPrecision": null,
+        "costUsd": null
+      },
+      {
+        "report": "/docs/evals/report-2026-11-08T01-06-49-512Z.json",
+        "generatedAt": "2026-11-08T01:06:49.512Z",
+        "model": "deepseek-v4.1-flash-1017",
+        "passed": null,
+        "total": null,
+        "citationPrecision": null,
+        "costUsd": null
+      },
+      {
+        "report": "/docs/evals/report-2026-11-08T01-08-51-850Z.json",
+        "generatedAt": "2026-11-08T01:08:51.850Z",
+        "model": "deepseek-v4.1-flash-1017",
+        "passed": null,
+        "total": null,
+        "citationPrecision": null,
+        "costUsd": null
+      }
+    ],
+    "screenshots": [
+      "/docs/demo/screenshots/01-command.png",
+      "/docs/demo/screenshots/02-demo.png",
+      "/docs/demo/screenshots/03-copilot.png",
+      "/docs/demo/screenshots/03b-tx.png",
+      "/docs/demo/screenshots/04-recovery.png",
+      "/docs/demo/screenshots/05-recorder.png",
+      "/docs/demo/screenshots/06-studio.png",
+      "/docs/demo/screenshots/07-timeline.png",
+      "/docs/demo/screenshots/08-discovery.png",
+      "/docs/demo/screenshots/studio-agent-trace.png",
+      "/docs/demo/screenshots/studio-canvas-live.png",
+      "/docs/demo/screenshots/studio-unlicensed-probe.png",
+      "/docs/demo/screenshots/twin-smoke.png"
+    ],
+    "agStudio": {
+      "version": "3.1.0",
+      "sha256Pin": "9b83bf50eaf0a21eeb1f78b10e06f237673788c4453907572f4c4d604b324ecc",
+      "bundleTrackedInGit": false,
+      "licenseFiled": true,
+      "noticeFiled": true
+    }
+  },
+  "paypalLiveLoop": {
+    "grade": "asserted",
+    "order": "2ER387580K033722V",
+    "capture": "7R158417X9367771B",
+    "refund": "8DJ895035B173303G",
+    "evidence": null
+  },
+  "channel3Live": {
+    "grade": "not-verified",
+    "evidence": null
+  },
+  "agStudioTrial": {
+    "keyInstalled": false,
+    "consent": "drafted-not-sent",
+    "judgingWindowCovered": "unknown"
+  },
+  "hosting": {
+    "url": "https://199.247.9.188.nip.io",
+    "provider": "vultr",
+    "checkedAt": null
+  },
+  "video": {
+    "url": null,
+    "status": "missing-owner-action"
+  },
+  "devpost": {
+    "status": "draft-not-submitted"
+  },
+  "knownLimitations": [
+    "single-node JSON snapshot persistence",
+    "shared demo state across visitors (sessions land in P1-S)",
+    "no chaos/load campaign yet",
+    "no independent usability test yet",
+    "video missing (owner)"
+  ]
+}

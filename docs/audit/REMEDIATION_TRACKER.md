@@ -1,8 +1,9 @@
 # AFTERPACT — Remediation Tracker
 
-Source: `docs/audit/100_QUESTIONS.md` (2026-11-07). Only PARTIAL/FAIL/
-UNKNOWN items are tracked. Owner: whoever clears the item (human = repo
-owner, agent = build agent). Re-verify by re-running the stated command.
+Source: `docs/audit/100_QUESTIONS.md` (2026-11-07, OMEGA II pass
+2026-11-08). Only PARTIAL/FAIL/ UNKNOWN items are tracked. Owner:
+whoever clears the item (human = repo owner, agent = build agent).
+Re-verify by re-running the stated command.
 
 ## FAIL (must clear before submission)
 
@@ -18,8 +19,9 @@ owner, agent = build agent). Re-verify by re-running the stated command.
 | Q | Gap | Fix | Owner | Verify |
 |---|---|---|---|---|
 | Q1/Q12/Q36/Q42 | ~~Live PayPal partially executed~~ CLOSED 2026-11-07 | Full live loop completed: order 2ER387580K033722V → capture 7R158417X9367771B → refund 8DJ895035B173303G (`succeeded`, 12999 USD) → Recorder VALID. Also fixed: amountless POST-refund responses (wire schema + fallback + 2 regression tests) | agent | Gate 15 PASS; IDs verified at provider |
-| Q18 | AG Studio not integrated | Only if Studio access obtained: embed per `AG_STUDIO_UPGRADE_PATH.md`; else keep honest Community claim | human | Studio dashboard on live data or unchanged non-claim |
-| Q19 | No live Channel3 call | Set `CHANNEL3_API_KEY`, re-run Act 2 / `#/discovery` | human | `CHANNEL3 · LIVE` badge + logged request in Recorder |
+| Q18 | ~~AG Studio not integrated~~ CLOSED 2026-11-08 | Real canvas + Agent Framework integrated over live data (official-CDN-first, no bytes committed); trial key + consent still open (Q10/Q112) | agent | `AG_GRID_STATUS.md`; `#/studio` canvas + agent trace |
+| Q19 | No live Channel3 call | Keyed re-run with COMMITTED evidence (redacted log/report); until then the 2026-11-07 claim stays retracted | agent/human | Committed artifact + manifest `channel3Live.grade=artifact` |
+| Q10 | AG Grid consent pending | Owner sends the drafted cl.16.1 consent request; file the reply in `ag-studio-trial.md` | human | Filed reply covering demo + history; judging window confirmed |
 | Q20/Q69 | Render/CI unverified | Push to GitHub (public), watch CI green, apply Blueprint | human | CI badge green; live URL |
 | Q70 | Postman never executed in Postman | Import + run collection (or Newman) against local + hosted | human/agent | Runner output, 0 failures |
 | Q2 | No LLM anywhere | Optional: add one strict-output LLM call (intent extraction) behind `AI_PROVIDER_KEY`; keep deterministic fallback | agent | Eval: valid-output rate on fixtures; fallback test still green |

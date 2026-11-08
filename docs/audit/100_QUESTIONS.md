@@ -1,7 +1,8 @@
 # AFTERPACT — 100-Question Self-Audit
 
-Date: 2026-11-07. Baseline: commit `2a26d05`, 155 passed + 1 skipped,
-`tsc` clean (5 projects). Status: **PASS** (evidence in repo),
+Date: 2026-11-07, re-verified 2026-11-08. Baseline: 245 passed +
+33 skipped, `tsc` clean (6 projects), CI green at HEAD (the 2026-11-07
+run recorded 155+1 at `2a26d05`). Status: **PASS** (evidence in repo),
 **PARTIAL** (works with a noted gap), **FAIL** (missing/red),
 **UNKNOWN** (could not verify here). Severity: **H**igh/**M**edium/**L**ow.
 Nothing is PASS on confidence alone — every PASS names its artifact.
@@ -19,7 +20,7 @@ Nothing is PASS on confidence alone — every PASS names its artifact.
 | 7 | Will the project stay free through Dec 15, 2026? | Code is MIT and local-runnable; hosted demo is the owner's Vultr box (kept until Dec 15, then destroyed); no judge-facing fees | `VULTR_HOSTING.md`, `LICENSE` | M | PARTIAL |
 | 8 | Are submission materials in English? | Yes: README, docs, Devpost draft all English | `docs/demo/DEVPOST_DRAFT.md` | M | PASS |
 | 9 | Is the 1-grand + 1-sponsor limit respected in strategy? | Yes: Grand-1st primary, AG Grid 1st primary sponsor, rest secondary/fallback | `docs/hackathon/PRIZE_STRATEGY.md` | M | PASS |
-| 10 | Any IP/license redistribution risk? | AG Studio commercial trial bundle vendored WITH its LICENSE.html under the documented evaluation path; full license needed for production; rest MIT | `ag-studio.LICENSE.html`, `AG_GRID_STATUS.md` | H | PASS |
+| 10 | Any IP/license redistribution risk? | AG Studio commercial bytes NOT committed (official-CDN-first + build-time fallback); EULA + notice filed for attribution; LICENSE carve-out; consent request drafted (owner sends); rest MIT | `ag-studio.NOTICE.txt`, `ag-studio-trial.md`, `LICENSE` | H | PARTIAL |
 
 ## 2. Judges and professional evaluation
 
@@ -33,7 +34,7 @@ Nothing is PASS on confidence alone — every PASS names its artifact.
 | 16 | Is the customer segment crisp for a PM judge? | Merchant ops teams/marketplaces, single persona | README, `COMMERCIAL_STRATEGY.md` | M | PASS |
 | 17 | Is differentiation provable vs named competitors? | 10-entry landscape + 6-point checklist; Acts 5–8 have no pre-auth equivalent | `COMPETITIVE_LANDSCAPE.md` | M | PASS |
 | 18 | Is AG Grid usage real for the sponsor judge? | Real Studio canvas + Agent Framework (own LLM adapter) over live rows; Community tables kept; NL prompt → widget verified | `ag-studio-adapter.js`, `studio-agent-trace.png` | H | PASS |
-| 19 | Is Channel3 usage real for its judge? | Keyed live search green (`channel3.live.test.ts`) + live search inside flagship Act 2; normalization/attribution asserted on real payloads | `channel3.ts`, `channel3.live.test.ts` | H | PASS |
+| 19 | Is Channel3 usage real for its judge? | Live execution retracted to NOT VERIFIED (no committed artifact); client + fail-closed + normalization asserted on stubbed payloads; keyed re-run with evidence pending | `channel3.ts`, manifest `channel3Live` | H | PARTIAL |
 | 20 | Can Postman/Render judges verify their slice? | Postman: Newman 37/37 reqs, 18/18 assertions, report committed; Render: config only (Vultr hosts instead) | `newman-report.json`, `render.yaml` | M | PARTIAL |
 
 ## 3. User problem and measurable impact
@@ -179,6 +180,13 @@ Nothing is PASS on confidence alone — every PASS names its artifact.
 
 PASS 98 · PARTIAL 13 · FAIL 2 (Q6 video, Q84 usability test) ·
 UNKNOWN 1 (Q112 trial-window coverage, owner action).
+
+## Tally (2026-11-08 OMEGA II docs-truth pass)
+
+PASS 96 · PARTIAL 15 · FAIL 2 (Q6 video, Q84 usability test) ·
+UNKNOWN 1 (Q112). Changes: Q10 → PARTIAL (consent drafted, not sent),
+Q19 → PARTIAL (Channel3 live retracted pending artifact). Both flip back
+to PASS only with the filed reply / committed live evidence.
 
 Delta since 2026-11-07: Q2, Q3, Q11, Q18, Q70, Q76 → PASS (runtime AI,
 public repo, hosted one-click, real Studio, Newman evidence, Playwright

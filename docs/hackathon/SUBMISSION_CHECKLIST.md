@@ -6,16 +6,20 @@ Deadline: **Nov 12, 2026, 12:00 PM PT**. Source: `OFFICIAL_RULES_AUDIT.md`
 ## Repo (public, open-source)
 
 - [x] Repo is PUBLIC: `https://github.com/toskaman/afterpact` (`main`,
-      pushed 2026-11-07; GitHub Actions CI `success`).
+      pushed 2026-11-08; GitHub Actions CI `success` at HEAD).
 - [x] OSI-approved license file at top level (`LICENSE`, MIT).
 - [x] Dependency licenses reviewed: runtime `zod` (MIT); vendored AG Grid
-      Community (MIT + license file); dev-only TypeScript/Vitest (Apache/MIT).
+      Community (MIT + license file); AG Studio commercial (EULA + notice
+      filed, zero bytes committed, LICENSE carve-out); dev-only
+      TypeScript/Vitest (Apache/MIT).
 - [x] No secrets anywhere: `.env` absent/untracked, `.env.example`
       placeholders only, key-material scan clean (release gate 13).
 - [x] README has: problem, differentiation, PayPal, AI scope, real-vs-simulated,
       install, test, flagship repro, proofs, sponsors, limitations, license.
 - [x] `SECURITY.md`, `CONTRIBUTING.md` present.
-- [x] Proprietary sponsor files: NONE redistributed (release gate 14).
+- [x] No commercial bytes redistributed: AG Studio EULA + notice filed
+      for attribution only; bundle loads from the official CDN / is
+      fetched at build time (release gate 14).
 
 ## Functional demo
 
@@ -47,9 +51,11 @@ they land). Repo URL filled; demo + video URLs pending human steps.
 - [x] Real-vs-simulated disclosure (what is live, what is simulated, what
       needs keys).
 - [x] Sponsor usage stated exactly: AG Studio canvas + agent (trial
-      watermark until licensed) + Community tables, Channel3
-      live-when-keyed, Bryntum fallback (not Bryntum), Render
-      hosting, Postman collection. APIMatic/AG Studio/Bryntum prizes NOT
+      watermark until licensed; no bytes committed) + Community tables,
+      Channel3 live-when-keyed (live execution NOT VERIFIED pending
+      artifact), Bryntum fallback (not Bryntum), Render blueprint
+      reference only (not pursued), Postman collection + Newman evidence.
+      Sponsor prize pursued: AG Grid only; APIMatic/Bryntum/Render NOT
       claimed.
 - [ ] Public repo URL + demo URL + video URL all present and reachable
       (repo + demo done; video is the owner's step, later).
