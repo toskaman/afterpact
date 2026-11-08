@@ -18,12 +18,14 @@
     "start": "node apps/api/dist/apps/api/src/index.js",
     "bench": "node scripts/bench.mjs",
     "vendor:ag-grid": "node scripts/vendor-ag-grid.mjs",
-    "vendor:ag-studio": "node scripts/vendor-ag-studio.mjs"
+    "vendor:ag-studio": "node scripts/vendor-ag-studio.mjs",
+    "test:e2e": "playwright test"
   },
   "dependencies": {
     "zod": "4.6.7"
   },
   "devDependencies": {
+    "@playwright/test": "^1.65.0",
     "@types/node": "26.6.6",
     "typescript": "5.9.3",
     "vitest": "5.1.0"

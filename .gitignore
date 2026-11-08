@@ -10,6 +10,11 @@ coverage/
 data/
 .DS_Store
 Thumbs.db
+# Playwright E2E artifacts (local browsers live in .browsers/)
+test-results/
+playwright-report/
+playwright/.cache/
+.browsers/
 # Local secret holders (user-provided, never commit)
 APIS.txt
 *.key

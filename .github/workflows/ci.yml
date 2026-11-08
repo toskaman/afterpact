@@ -27,9 +27,26 @@ jobs:
             curl -fsS http://localhost:3101/api/health && break
             sleep 1
           done
-          curl -fsS http://localhost:3101/api/config | grep -o 'ag-grid-community'
+          curl -fsS http://localhost:3101/api/config | grep -o '"agStudio":"ag-studio"'
           curl -fsS http://localhost:3101/vendor/ag-grid-community.min.js -o /tmp/ag-grid.js
           test "$(stat -c%s /tmp/ag-grid.js)" -gt 1000000
+          curl -fsS http://localhost:3101/vendor/ag-studio.min.js -o /tmp/ag-studio.js
+          test "$(stat -c%s /tmp/ag-studio.js)" -gt 5000000
+          curl -fsS http://localhost:3101/ag-studio-adapter.js | grep -o 'AfterpactStudioAdapter'
           curl -fsS -X POST http://localhost:3101/api/demo/run \
             -H 'content-type: application/json' \
             -d '{"scenario":"flagship","label":"ci"}' | grep -o '"status":"completed"'
+          test "$(curl -s -o /dev/null -w '%{http_code}' -X POST http://localhost:3101/api/ai/studio-turn -H 'content-type: application/json' -d '{"input":[{"type":"message"}]}')" = "503"
+
+  e2e:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24.14.1
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+      - run: npx playwright install --with-deps chromium
+      - run: npm run test:e2e
