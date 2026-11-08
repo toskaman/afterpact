@@ -23,6 +23,16 @@ Financial safety is never weakened to accelerate development.
 - **Dependencies**: permissive licenses only (MIT/ISC/Apache-2.0 compatible
   with the repo MIT license). Review `npm ls` output before adding a
   dependency with a reciprocal or proprietary license.
+- **Public demo boundaries**: the hosted jury demo runs the mock payment
+  transport (no PayPal credentials on the box) and sets `OPERATOR_TOKEN`,
+  which gates `POST /api/demo/reset` and `POST /api/admin/kill-switch`
+  behind `Authorization: Bearer`. Mutations are rate-limited per IP
+  (120/min default, `Retry-After` on 429); request bodies are capped at
+  1 MB (413); unexpected errors render a generic 500 with no message leak.
+  Real PayPal Sandbox operations happen only from explicitly authorized
+  local runs, never from the public demo.
+- **Static root confinement**: URL paths resolve inside the web root only
+  (`resolveStaticPath` rejects escapes including prefix-sibling paths).
 
 ## Sponsor integrations
 

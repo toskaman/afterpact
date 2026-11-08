@@ -45,8 +45,11 @@ npm test 2>&1 | tail -4
 mkdir -p /opt/afterpact/repo/data
 chown -R www-data:www-data /opt/afterpact/repo/data
 
-# systemd service (mock transport: no credentials in env)
-cat > /etc/systemd/system/afterpact.service <<'EOF'
+# Operator token for destructive routes (printed once, stored only on the box)
+OPERATOR_TOKEN="$(openssl rand -hex 24)"
+
+# systemd service (mock transport: no payment credentials in env)
+cat > /etc/systemd/system/afterpact.service <<EOF
 [Unit]
 Description=AFTERPACT demo (mock transport, no secrets)
 After=network.target
@@ -56,6 +59,7 @@ WorkingDirectory=/opt/afterpact/repo
 Environment=PORT=3001
 Environment=LOG_LEVEL=info
 Environment=PAYPAL_MODE=sandbox
+Environment=OPERATOR_TOKEN=$OPERATOR_TOKEN
 ExecStart=/usr/bin/node /opt/afterpact/repo/apps/api/dist/apps/api/src/index.js
 Restart=on-failure
 RestartSec=5
@@ -81,3 +85,4 @@ sleep 5
 curl -sf http://127.0.0.1:3001/api/health
 echo
 echo "DEPLOY_OK $DOMAIN"
+echo "OPERATOR_TOKEN=$OPERATOR_TOKEN (save it: required for /api/demo/reset and /api/admin/kill-switch)"
