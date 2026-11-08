@@ -19,3 +19,7 @@ playwright/.cache/
 APIS.txt
 *.key
 *.pem
+# AG Studio commercial bundle: fetched at build time from the official AG
+# Grid channel (npm run vendor:ag-studio), never committed (EULA forbids
+# redistribution). See apps/web/public/vendor/ag-studio.NOTICE.txt.
+apps/web/public/vendor/ag-studio.min.js

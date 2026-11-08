@@ -1,3 +1,4 @@
+import { execSync } from "node:child_process";
 import { existsSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
@@ -292,20 +293,54 @@ describe("AG Grid vendor bundle", () => {
   });
 });
 
-describe("AG Studio vendor bundle", () => {
-  it("ships the pinned commercial Studio UMD lazily (not in the shell)", () => {
+describe("AG Studio commercial bundle (no redistribution)", () => {
+  const CDN_HOST_PATH = "https://cdn.jsdelivr.net/npm/ag-studio@";
+  const CDN_UMD_PATH = "/dist/umd/ag-studio.min.js";
+  const CDN_FULL = "https://cdn.jsdelivr.net/npm/ag-studio@3.1.0/dist/umd/ag-studio.min.js";
+  it("loads the pinned bytes from the official channel, lazily, with attribution", () => {
+    // Licence text + notice are tracked for attribution; the commercial
+    // bytes themselves must NOT be committed (EULA forbids redistribution).
+    expect(existsSync(join(REPO_ROOT, "apps", "web", "public", "vendor", "ag-studio.LICENSE.html"))).toBe(true);
+    expect(existsSync(join(REPO_ROOT, "apps", "web", "public", "vendor", "ag-studio.NOTICE.txt"))).toBe(true);
+    let insideGit = false;
+    try {
+      insideGit = execSync("git rev-parse --is-inside-work-tree", { cwd: REPO_ROOT, encoding: "utf8" }).trim() === "true";
+    } catch {
+      // No git available (archive checkout): the fetch script is the
+      // backstop, asserted below.
+    }
+    if (insideGit) {
+      const tracked = execSync("git ls-files apps/web/public/vendor/", { cwd: REPO_ROOT, encoding: "utf8" });
+      expect(tracked).not.toContain("ag-studio.min.js");
+    }
+    const app = readFileSync(join(REPO_ROOT, "apps", "web", "public", "app.js"), "utf8");
+    expect(app).toContain(CDN_HOST_PATH);
+    expect(app).toContain(CDN_UMD_PATH);
+    expect(app).toContain('AG_STUDIO_VERSION = "3.1.0"');
+    expect(app).toContain("sha384-");
+    expect(app).toContain("/vendor/ag-studio.min.js"); // local fallback only
+    // Lazy-loaded by the /studio view only: the ~6.4 MB bundle must not
+    // slow down every other page.
+    const shell = readFileSync(join(REPO_ROOT, "apps", "web", "public", "index.html"), "utf8");
+    expect(shell).not.toContain("ag-studio.min.js");
+    expect(shell).toContain("copyright 2015-2026 by AG Grid Ltd");
+    // Build-time fetch path reproduces the pinned bytes.
+    const fetchScript = readFileSync(join(REPO_ROOT, "scripts", "vendor-ag-studio.mjs"), "utf8");
+    expect(fetchScript).toContain(CDN_HOST_PATH);
+    expect(fetchScript).toContain(CDN_UMD_PATH);
+    expect(fetchScript).toContain(CDN_FULL);
+    expect(fetchScript).toContain("9b83bf50eaf0a21eeb1f78b10e06f237673788c4453907572f4c4d604b324ecc");
+  });
+  it("uses the local build artifact when present (CI/dev fallback)", () => {
     const bundle = join(REPO_ROOT, "apps", "web", "public", "vendor", "ag-studio.min.js");
-    expect(existsSync(bundle)).toBe(true);
+    if (!existsSync(bundle)) {
+      // Clean checkout without a build step: the CDN path above covers it.
+      expect(true).toBe(true);
+      return;
+    }
     const source = readFileSync(bundle, "utf8");
     expect(source.length).toBeGreaterThan(5_000_000);
     expect(source).toContain("3.1.0");
     expect(source).toContain("agStudio");
-    expect(existsSync(join(REPO_ROOT, "apps", "web", "public", "vendor", "ag-studio.LICENSE.html"))).toBe(true);
-    // Lazy-loaded by the /studio view only: the 6.4 MB bundle must not slow
-    // down every other page.
-    const shell = readFileSync(join(REPO_ROOT, "apps", "web", "public", "index.html"), "utf8");
-    expect(shell).not.toContain("/vendor/ag-studio.min.js");
-    const app = readFileSync(join(REPO_ROOT, "apps", "web", "public", "app.js"), "utf8");
-    expect(app).toContain("/vendor/ag-studio.min.js");
   });
 });

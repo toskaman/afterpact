@@ -11,7 +11,7 @@ Every step is guarded by a deterministic policy engine and recorded in
 an append-only, hash-chained Flight Recorder.
 
 > **Live demo:** `https://199.247.9.188.nip.io` (Vultr VPS, mock transport — deterministic one-click demo, no secrets on the box; live PayPal/Channel3 paths unlock with keys per `.env.example`)
-> (see `docs/sponsors/RENDER_DEPLOYMENT.md`). Demo video (<3 min):
+> (see `docs/demo/VULTR_HOSTING.md`). Demo video (<3 min):
 > `TBD — paste the YouTube link here`.
 
 ## The problem
@@ -208,9 +208,13 @@ amount-increase attempts are both `blocked` with exact policy reasons.
 
 ## License
 
-MIT — see [LICENSE](LICENSE). Runtime dependency: `zod` (MIT).
-Vendored frontend: AG Grid Community 36.3.0 (MIT,
-`apps/web/public/vendor/ag-grid-community.LICENSE.txt`) and AG Studio
-3.1.0 (Commercial trial,
-`apps/web/public/vendor/ag-studio.LICENSE.html`) — full license needed
-for production use beyond evaluation.
+MIT — see [LICENSE](LICENSE), including the AG Studio commercial
+carve-out. Runtime dependency: `zod` (MIT).
+Frontend: AG Grid Community 36.3.0 is vendored (MIT,
+`apps/web/public/vendor/ag-grid-community.LICENSE.txt`).
+AG Studio 3.1.0 (Commercial trial,
+`apps/web/public/vendor/ag-studio.LICENSE.html`) is NOT vendored: the
+browser loads the SHA-pinned bytes from the official AG Grid CDN first,
+with a build-time-fetched local copy (`npm run vendor:ag-studio`,
+gitignored) as fallback — full license needed for production use beyond
+evaluation. Portions of this software are copyright 2015-2026 by AG Grid Ltd.

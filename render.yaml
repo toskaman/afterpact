@@ -9,7 +9,7 @@ services:
     name: afterpact
     runtime: node
     plan: starter
-    buildCommand: npm ci && npm run build
+    buildCommand: npm ci && npm run build && npm run vendor:ag-studio
     startCommand: npm start
     healthCheckPath: /api/health
     autoDeploy: true
@@ -37,6 +37,8 @@ services:
       - key: PAYPAL_WEBHOOK_ID
         sync: false
       - key: CHANNEL3_API_KEY
+        sync: false
+      - key: AG_STUDIO_LICENSE_KEY
         sync: false
       - key: CHANNEL3_COUNTRY
         value: US

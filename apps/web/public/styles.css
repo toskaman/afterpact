@@ -141,6 +141,8 @@ body {
 .sidenav a[aria-current="page"] { background: var(--accent-soft); color: var(--text); }
 .nav-glyph { width: 1.4em; text-align: center; color: var(--accent); }
 .sidenav-note { color: var(--text-faint); font-size: 0.78rem; margin: 0.8rem 0.2rem 0; }
+.license-note { color: var(--text-faint); font-size: 0.72rem; margin: 0.5rem 0.2rem 0; }
+.license-note a { color: inherit; }
 @media (min-width: 1024px) {
   .app { grid-template-columns: 248px 1fr; grid-template-rows: auto 1fr; }
   .topbar { grid-column: 1 / -1; }

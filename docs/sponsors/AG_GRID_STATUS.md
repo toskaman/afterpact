@@ -5,8 +5,9 @@ Date: 2026-11-08. Authoritative for the question "did this project use AG Grid /
 ## Short answer
 
 - **AG Studio 3.1.0 (Commercial, trial): USED.** The `#/studio` view hosts a
-  real AG Studio canvas (vendored UMD, SHA-256 pinned, commercial license
-  filed) over the live promises/incidents/captures/refunds datasets, with
+  real AG Studio canvas (official CDN, SHA-256 pinned + SRI, commercial
+  license filed, no bytes committed) over the live
+  promises/incidents/captures/refunds datasets, with
   the real Agent Framework loop driven by our own Vultr-backed LLM adapter
   (`POST /api/ai/studio-turn`, key server-side). Verified live: an NL
   prompt produced a configured bar chart from live rows
@@ -31,32 +32,34 @@ Date: 2026-11-08. Authoritative for the question "did this project use AG Grid /
 | Licensed cleanly | MIT bundle vendored with license file + pinned SHA-256 + reproduce script | `apps/web/public/vendor/`, `scripts/vendor-ag-grid.mjs` |
 | Degrades honestly | If the bundle is missing, native tables render with a `NATIVE TABLE FALLBACK` badge | `renderStudioGrid` fallback branch |
 
-## Why not AG Studio
+## AG Studio licensing posture (updated 2026-11-08)
 
-AG Studio (`ag-studio` on npm, verified v3.1.0) was evaluated against docs
-at ag-grid.com/studio:
+The "Why not AG Studio" evaluation below is superseded: Studio IS used
+(see Short answer). Current posture:
 
-1. **License gate.** Studio runs unlicensed only for local testing
-   (watermark + console warnings). A production/judging demo needs a trial
-   license (human registration), and the AI Assistant / Agent Framework
-   path needs an **AG Studio Pro with AI** license. Neither is obtainable
-   autonomously, and a watermarked judging demo would violate the
-   "functional demo" quality bar.
-2. **Stack fit.** This build is a zero-build static frontend; Studio is an
-   npm component that expects a bundler workflow. The integration risk
-   inside the submission window exceeded the prize value versus a working
-   Community edition.
-3. **Honesty.** Claiming "Best Use of AG Studio" without Studio would be a
-   disqualification-grade misrepresentation. The Community edition is
-   labeled exactly as such everywhere.
+- **No redistribution.** The commercial UMD bytes are NOT committed to
+  this MIT repo. The browser loads the SHA-pinned build from the official
+  AG Grid CDN first; a build-time-fetched local copy (`npm run
+  vendor:ag-studio`, gitignored) is fallback only. EULA text is filed for
+  attribution at `apps/web/public/vendor/ag-studio.LICENSE.html` with a
+  carve-out in `LICENSE` + `ag-studio.NOTICE.txt`.
+- **Trial key pending (owner).** Until `AG_STUDIO_LICENSE_KEY` is
+  installed, the canvas shows the AG trial watermark (disclosed in-UI).
+- **Consent pending (owner sends).** A written-consent request for
+  hackathon-demo use is drafted in `docs/sponsors/ag-studio-trial.md`
+  (not yet sent); judging-window coverage (Dec 1–15) is UNKNOWN until
+  AG Grid confirms.
+- **Prize intent: pursue Best Use of AG Studio** as the single sponsor
+  prize, on genuine usage (real canvas + real Agent Framework over live
+  data). If consent is declined, the entry falls back to the honestly
+  labeled Community edition before judging.
 
 ## Prize implication
 
 The AG Grid sponsor prize is judged as "Best Use of AG Studio" (rules
-audit §Sponsor criteria). With Community-only usage, an AG Grid sponsor
-win is **unlikely**; the Studio still strengthens the Grand-prize case
-(Technological Implementation + Design) and keeps the AG Studio upgrade
-path executable — see `AG_STUDIO_UPGRADE_PATH.md`.
+audit §Sponsor criteria). With real Studio usage plus the Community
+foundation, the entry claims this prize; the Studio also strengthens the
+Grand-prize case (Technological Implementation + Design).
 
 ## Files
 

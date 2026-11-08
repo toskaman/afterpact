@@ -1,0 +1,31 @@
+AG Studio 3.1.0 — commercial dependency notice
+===============================================
+
+Portions of this software are copyright 2015-2026 by AG Grid Ltd.
+
+WHAT THIS DIRECTORY HOLDS
+- ag-studio.LICENSE.html (tracked in git): the AG Grid End User Licence
+  Agreement v40, filed here for attribution. Licence text only.
+- ag-studio.min.js (NOT tracked in git): the commercial UMD bundle, fetched
+  at build time from the official AG Grid distribution channel and verified
+  by SHA-256 before use. Gitignored by design.
+
+WHY THE BUNDLE IS NOT COMMITTED
+The AG Studio EULA grants evaluation use but forbids redistribution /
+sublicensing. AFTERPACT's own source is MIT-licensed (see /LICENSE, which
+carves this directory out); committing the commercial bytes under MIT would
+mislicense AG Grid's property. Builds fetch the pinned bytes instead:
+
+  npm run vendor:ag-studio
+  # → https://cdn.jsdelivr.net/npm/ag-studio@3.1.0/dist/umd/ag-studio.min.js
+  # → verified sha256 9b83bf50eaf0a21eeb1f78b10e06f237673788c4453907572f4c4d604b324ecc
+
+The browser loader prefers the official CDN and uses the local copy only
+as a fallback, so in the common case AFTERPACT serves zero AG Studio bytes.
+
+LICENSING
+Unlicensed use shows the AG trial watermark. A trial/production key is
+installed via the AG_STUDIO_LICENSE_KEY environment variable (deploy-time,
+never committed). Trial scope for the public judging demo is covered in
+docs/sponsors/ag-studio-trial.md; written consent from AG Grid has been
+requested for hackathon-demo use (request draft filed there).

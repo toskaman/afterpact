@@ -40,6 +40,7 @@ fi
 cd /opt/afterpact/repo
 npm ci --no-audit --no-fund
 npm run build
+npm run vendor:ag-studio
 npm test 2>&1 | tail -4
 # Writable snapshot dir for the www-data service (store resolves <repo>/data)
 mkdir -p /opt/afterpact/repo/data
