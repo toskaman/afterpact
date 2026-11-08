@@ -6,10 +6,12 @@ direct Devpost fetch blocked by 403 bot protection — owner to confirm on the e
 
 ## Position
 
-- Branch: `main`. HEAD: `d6bd7e2` (video deliverables).
-- Working tree: clean except in-progress Phase 0/1 doc-sync (uncommitted at write time).
+- Branch: `main`. HEAD: `7ed5cb8` (Phase 0 sync).
+- Working tree: clean except in-progress test-pass update (uncommitted at write time).
 - CI: `42490075428` success (latest). Deployed: `d1e79f2`, `/api/health` ok,
   transport `mock-simulated`, audit chain valid.
+- Local suite 2026-11-08: typecheck clean, vitest 288 passed/33 skipped,
+  playwright 7/7 (after installing Chromium to `.pw-browsers/`, gitignored).
 - Video: `AFTERPACT_PAYPAL_AI_FINAL.mp4` (165.1 s, 1080p30, subs burned, QA PASS).
   File built; YouTube upload + Devpost submit = owner steps.
 
@@ -25,13 +27,12 @@ direct Devpost fetch blocked by 403 bot protection — owner to confirm on the e
 
 ## Active / next (Phase 1, ranked)
 
-1. Commit Phase 0/1 doc-sync (this change).
-2. AG Grid compliance decision: re-read trial/EULA status, confirm cutoff Nov 11
-   EOD fallback (`AG_STUDIO_DISABLED=1`) if no written consent.
-3. Full test suite re-run (vitest + playwright + newman) on HEAD.
-4. Devpost draft final polish vs film (claims match verified footage).
-5. Usability: protocol ready; participants = owner blocker (document honestly).
-6. Final evidence manifest regen at lock time; submission snapshot after owner submit.
+1. Devpost draft final polish vs film (claims match verified footage).
+2. AG Grid: cutoff Nov 11 EOD — fallback `AG_STUDIO_DISABLED=1` + Community-only
+   claims if no written consent by then (fallback test green).
+3. Usability: protocol ready; participants = owner blocker (document honestly).
+4. Final evidence manifest regen at lock time; submission snapshot after owner submit.
+5. Newman collection re-run (CI covers; local optional).
 
 ## Blockers (owner-only)
 

@@ -31,3 +31,5 @@ apps/web/public/vendor/ag-studio.min.js
 # composition sources + exact render-input assets.
 brag-output/paypal-ai-2026/AFTERPACT_DRAFT.mp4
 brag-output/paypal-ai-2026/composition/.hyperframes/
+# Local Playwright browser binaries (PLAYWRIGHT_BROWSERS_PATH)
+.pw-browsers/
