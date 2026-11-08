@@ -1,0 +1,42 @@
+{
+  "generatedAt": "2026-11-08T02:21:42.296Z",
+  "endpoint": "POST https://api.trychannel3.com/v1/search",
+  "origin": "channel3-live",
+  "query": "mechanical keyboard",
+  "latencyMs": 1187,
+  "candidateCount": 3,
+  "candidates": [
+    {
+      "productId": "FWze3tu",
+      "title": "C2 Pro Wired Full Size 8K Mechanical Keyboard",
+      "offerCount": 1,
+      "merchants": [
+        "bestbuy.com"
+      ],
+      "attributionSource": "channel3",
+      "hasCheckoutNote": true
+    },
+    {
+      "productId": "RVZfdKa",
+      "title": "Lemokey X6 Qmk Wired Mechanical Keyboard",
+      "offerCount": 1,
+      "merchants": [
+        "keychron.com"
+      ],
+      "attributionSource": "channel3",
+      "hasCheckoutNote": true
+    },
+    {
+      "productId": "3nA7fNo",
+      "title": "C3 Pro 8K QMK Wired Custom Mechanical Keyboard",
+      "offerCount": 1,
+      "merchants": [
+        "keychron.com"
+      ],
+      "attributionSource": "channel3",
+      "hasCheckoutNote": true
+    }
+  ],
+  "keyPresent": true,
+  "keyRedacted": true
+}

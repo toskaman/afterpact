@@ -1,5 +1,6 @@
 import { join } from "node:path";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
+import { Ops } from "../../apps/api/src/ops";
 import { createApp, type App } from "../../apps/api/src/routes";
 
 /**
@@ -84,6 +85,14 @@ describe("health + static shell", () => {
     expect(health["transport"]).toBe("mock-simulated");
     expect(health["auditChainValid"]).toBe(true);
     expect(health["resetAllowed"]).toBe(true);
+    expect(typeof health["build"]).toBe("string");
+  });
+
+  it("exposes the deploy build SHA for version verification", () => {
+    const def = new Ops({ dataDir: ":memory:", processEnv: { ...process.env, AFTERPACT_BUILD_SHA: "" } });
+    expect(def.health()["build"]).toBe("dev");
+    const keyed = new Ops({ dataDir: ":memory:", processEnv: { ...process.env, AFTERPACT_BUILD_SHA: "abc123def456" } });
+    expect(keyed.health()["build"]).toBe("abc123def456");
   });
 
   it("serves the SPA shell and assets", async () => {

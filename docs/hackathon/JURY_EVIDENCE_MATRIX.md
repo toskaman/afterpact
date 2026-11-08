@@ -11,7 +11,7 @@ noted gap), **NOT VERIFIED** (real path, unexecuted — needs creds/humans),
 
 Verification baseline (2026-11-08; supersedes the 2026-11-07 baseline at
 `2a26d05`): `tsc --noEmit` exit 0 on all 6 projects; `vitest run` →
-**245 passed, 33 skipped** (skips = keyless live probes + live evals);
+**249 passed, 33 skipped** (skips = keyless live probes + live evals);
 `tsc -p apps/api` build exit 0; `node --check` on
 `apps/web/public/app.js` exit 0; Newman executed (37/37 requests, 18/18
 assertions); Playwright E2E 5/5 in CI; no secrets in repo (`.env` absent,
@@ -60,7 +60,7 @@ background).
 | Correct failure recovery | Webhook redelivery/dedupe/replay refusal, tampered-signature rejection, provider-state reconciliation (`reconcile.ts`), restart restores hash-chained audit log (verified in `apps.api.test.ts`) | **PASS** (mock) |
 | Safe concurrency | Concurrent same-key capture+refund serialize to 1 success + 1 duplicate; kill switch refuses new ops while reads/webhooks stay open | **PASS** (mock) |
 | Comprehensive logging | Append-only hash-chained `AuditEvent` log, no update/delete (`packages/domain/src/audit.ts`); Flight Recorder replay + redacted export (`apps/web` `#/recorder`, export test) | **PASS** |
-| Automated tests | 245 passed + 33 skipped across 26 files; `tsc` clean on 6 projects; CI `verify`+`e2e` green at HEAD (`actions/runs/42437533785`) | **PASS** |
+| Automated tests | 249 passed + 33 skipped across 28 files; `tsc` clean on 6 projects; CI `verify`+`e2e`+`drift` green at HEAD (`actions/runs/42437989920`) | **PASS** |
 
 ### AI platform reliability (Ravi / Cosmos.AI lens)
 
@@ -119,10 +119,10 @@ background).
 
 | Requirement | Evidence | Status |
 |---|---|---|
-| Real product search requests | Live execution claimed 2026-11-07 but WITHOUT a committed artifact — retracted to **NOT VERIFIED** pending a keyed re-run with committed evidence (see manifest `channel3Live`); client + fail-closed path test-verified | **NOT VERIFIED** |
+| Real product search requests | Keyed live `POST /v1/search` 2026-11-08 ("mechanical keyboard", 3 candidates, 1187 ms, origin `channel3-live`); redacted report committed (`docs/sponsors/channel3-live-report.json`) + test-pinned (`channel3.report.test.ts`); manifest `channel3Live.grade=artifact`; client + fail-closed path test-verified | **PASS** |
 | Normalization + comparison | Minor-unit normalization, unknowns-stay-unknown, per-currency comparison, ranking explanations (`channel3.ts` + 18 tests in `sponsors.discovery.test.ts`) | **PASS** (against stubs) |
 | Source transparency | Merchant/source attribution per offer + checkout disclaimer (discovery ≠ chargeable merchant) | **PASS** |
-| AI selection on real results | Routing to the authorized sandbox offer verified on stubbed discovery payloads; live-payload tracing NOT VERIFIED with the live call above; keyless fallback tested and labeled | **PARTIAL** |
+| AI selection on real results | Routing to the authorized sandbox offer verified on stubbed discovery payloads; the 3 live candidates above are not yet traced through AI selection inside a test; keyless fallback tested and labeled | **PARTIAL** |
 | Failure isolation | Unconfigured → HTTP 503 fail-closed verified over HTTP; never fabricates availability | **PASS** |
 
 ### Elastic (Richmond)

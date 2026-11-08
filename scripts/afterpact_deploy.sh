@@ -48,6 +48,7 @@ chown -R www-data:www-data /opt/afterpact/repo/data
 
 # Operator token for destructive routes (printed once, stored only on the box)
 OPERATOR_TOKEN="$(openssl rand -hex 24)"
+BUILD_SHA="$(git -C /opt/afterpact/repo rev-parse --short HEAD)"
 
 # systemd service (mock transport: no payment credentials in env)
 cat > /etc/systemd/system/afterpact.service <<EOF
@@ -61,6 +62,7 @@ Environment=PORT=3001
 Environment=LOG_LEVEL=info
 Environment=PAYPAL_MODE=sandbox
 Environment=OPERATOR_TOKEN=$OPERATOR_TOKEN
+Environment=AFTERPACT_BUILD_SHA=$BUILD_SHA
 ExecStart=/usr/bin/node /opt/afterpact/repo/apps/api/dist/apps/api/src/index.js
 Restart=on-failure
 RestartSec=5

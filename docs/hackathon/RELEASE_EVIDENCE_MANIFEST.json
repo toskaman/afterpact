@@ -1,10 +1,10 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-11-08T02:14:15.434Z",
-  "verifiedCommit": "2ddd617b3a2b8afc06330bf1180c84d512c85ea6",
-  "verifiedCiRun": "https://github.com/toskaman/afterpact/actions/runs/42437533785",
+  "generatedAt": "2026-11-08T02:25:30.092Z",
+  "verifiedCommit": "9cd917ec649f1cac52ae285e6c8714177974aa4d",
+  "verifiedCiRun": "https://github.com/toskaman/afterpact/actions/runs/42437989920",
   "suite": {
-    "passed": 245,
+    "passed": 249,
     "failed": 0,
     "skipped": 33
   },
@@ -31,16 +31,18 @@
       "/tests/integration/ai.tasks.test.ts",
       "/tests/integration/apps.api.test.ts",
       "/tests/integration/channel3.live.test.ts",
+      "/tests/integration/channel3.report.test.ts",
       "/tests/integration/frontend.contract.test.ts",
       "/tests/integration/paypal.flows.test.ts",
       "/tests/integration/paypal.live.test.ts",
+      "/tests/integration/paypal.receipts.test.ts",
       "/tests/integration/paypal.safety.test.ts",
       "/tests/integration/security.test.ts",
       "/tests/integration/sponsors.discovery.test.ts",
       "/tests/integration/sponsors.studio.timeline.test.ts"
     ],
-    "suiteFileCount": 24,
-    "suiteStaticBlocks": 203,
+    "suiteFileCount": 26,
+    "suiteStaticBlocks": 206,
     "e2eFiles": [
       "/tests/e2e/dashboard.e2e.ts",
       "/tests/e2e/studio.e2e.ts",
@@ -115,15 +117,15 @@
     }
   },
   "paypalLiveLoop": {
-    "grade": "asserted",
+    "grade": "artifact",
     "order": "2ER387580K033722V",
     "capture": "7R158417X9367771B",
     "refund": "8DJ895035B173303G",
-    "evidence": null
+    "evidence": "docs/demo/paypal-live-receipts.json"
   },
   "channel3Live": {
-    "grade": "not-verified",
-    "evidence": null
+    "grade": "artifact",
+    "evidence": "docs/sponsors/channel3-live-report.json"
   },
   "agStudioTrial": {
     "keyInstalled": false,

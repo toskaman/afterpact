@@ -48,10 +48,10 @@ verification, cost ledger, strict fallbacks). Money is exact; approvals
 bind to a promise version + hash and expire; material changes invalidate
 approval. Real runtime AI (intent interpretation, evidence-cited incident
 analysis, gated recovery proposals — model proposes, policy + human
-dispose), Channel3 discovery, AG Studio canvas + Agent Framework over live
+dispose), Channel3 discovery (live search artifact committed), AG Studio canvas + Agent Framework over live
 data plus AG Grid Community analytics, a dependency-aware recovery
 timeline, a Newman-verified 38-request Postman collection, and Vultr
-hosting round out the build. 245 automated tests green (+33 keyless skips — live probes that skip
+hosting round out the build. 249 automated tests green (+33 keyless skips — live probes that skip
 visibly without credentials), strict `tsc` clean on 6 projects,
 5 Playwright E2E green. Every on-screen capability carries an origin badge (`REAL API`,
 `PAYPAL SANDBOX · LIVE`, `SIMULATED · MOCK`, `AI · LIVE` / `AI · OFF`, …)
@@ -129,7 +129,7 @@ Postman/Newman, Vultr (hosting), Caddy.
 git clone https://github.com/toskaman/afterpact && cd afterpact
 npm install && cp .env.example .env
 npm run build && npm start   # http://localhost:3001
-npm test                     # 245 passed, 33 skipped keyless (live paths need creds)
+npm test                     # 249 passed, 33 skipped keyless (live paths need creds)
 ```
 
 Run the flagship: `POST /api/demo/run {"scenario":"flagship"}` or open

@@ -1,6 +1,6 @@
 # AFTERPACT — 100-Question Self-Audit
 
-Date: 2026-11-07, re-verified 2026-11-08. Baseline: 245 passed +
+Date: 2026-11-07, re-verified 2026-11-08. Baseline: 249 passed +
 33 skipped, `tsc` clean (6 projects), CI green at HEAD (the 2026-11-07
 run recorded 155+1 at `2a26d05`). Status: **PASS** (evidence in repo),
 **PARTIAL** (works with a noted gap), **FAIL** (missing/red),
@@ -34,7 +34,7 @@ Nothing is PASS on confidence alone — every PASS names its artifact.
 | 16 | Is the customer segment crisp for a PM judge? | Merchant ops teams/marketplaces, single persona | README, `COMMERCIAL_STRATEGY.md` | M | PASS |
 | 17 | Is differentiation provable vs named competitors? | 10-entry landscape + 6-point checklist; Acts 5–8 have no pre-auth equivalent | `COMPETITIVE_LANDSCAPE.md` | M | PASS |
 | 18 | Is AG Grid usage real for the sponsor judge? | Real Studio canvas + Agent Framework (own LLM adapter) over live rows; Community tables kept; NL prompt → widget verified | `ag-studio-adapter.js`, `studio-agent-trace.png` | H | PASS |
-| 19 | Is Channel3 usage real for its judge? | Live execution retracted to NOT VERIFIED (no committed artifact); client + fail-closed + normalization asserted on stubbed payloads; keyed re-run with evidence pending | `channel3.ts`, manifest `channel3Live` | H | PARTIAL |
+| 19 | Is Channel3 usage real for its judge? | Keyed live `POST /v1/search` 2026-11-08 ("mechanical keyboard", 3 candidates, 1187 ms, origin `channel3-live`); redacted report committed + test-pinned; client + fail-closed + normalization asserted | `channel3-live-report.json`, `channel3.report.test.ts`, manifest `channel3Live` | H | PASS |
 | 20 | Can Postman/Render judges verify their slice? | Postman: Newman 37/37 reqs, 18/18 assertions, report committed; Render: config only (Vultr hosts instead) | `newman-report.json`, `render.yaml` | M | PARTIAL |
 
 ## 3. User problem and measurable impact
@@ -118,7 +118,7 @@ Nothing is PASS on confidence alone — every PASS names its artifact.
 |---|---|---|---|---|---|
 | 71 | Are module boundaries clean? | domain/policy/payments/api/web packages; demo uses same Ops methods as routes | repo layout, gate deliberates | M | PASS |
 | 72 | Zero `tsc` errors on strict settings? | Exit 0 on 6 projects (strict + noUncheckedIndexedAccess) | OMEGA run 2026-11-08 | H | PASS |
-| 73 | Full suite green? | 245 passed + 33 skipped (30 live-eval + 3 probes, keys absent) + 5 Playwright E2E | OMEGA run 2026-11-08 | H | PASS |
+| 73 | Full suite green? | 249 passed + 33 skipped (30 live-eval + 3 probes, keys absent) + 5 Playwright E2E | OMEGA II run 2026-11-08 | H | PASS |
 | 74 | Concurrency suite exists? | Same-key serialization + duplicate capture/refund + webhook dedupe | safety + flows tests | M | PASS |
 | 75 | Adversarial suite exists? | Injection double-block, replay/tamper/mismatch/over-refund/expired negatives | `apps.api`, safety tests | M | PASS |
 | 76 | E2E beyond unit/integration? | Playwright chromium in CI: dashboard, copilot, twin, recovery, studio mount; 5 specs green, 0 page errors | `tests/e2e/`, `ci.yml` e2e job | M | PASS |
@@ -187,6 +187,14 @@ PASS 96 · PARTIAL 15 · FAIL 2 (Q6 video, Q84 usability test) ·
 UNKNOWN 1 (Q112). Changes: Q10 → PARTIAL (consent drafted, not sent),
 Q19 → PARTIAL (Channel3 live retracted pending artifact). Both flip back
 to PASS only with the filed reply / committed live evidence.
+
+## Tally (2026-11-08 OMEGA II live-artifacts pass)
+
+PASS 97 · PARTIAL 14 · FAIL 2 (Q6 video, Q84 usability test) ·
+UNKNOWN 1 (Q112). Change: Q19 → PASS (keyed live Channel3 call with
+committed redacted artifact + test pin, manifest `channel3Live.grade=artifact`).
+PayPal loop re-verified same day (`paypal-live-receipts.json`,
+manifest `paypalLiveLoop.grade=artifact`).
 
 Delta since 2026-11-07: Q2, Q3, Q11, Q18, Q70, Q76 → PASS (runtime AI,
 public repo, hosted one-click, real Studio, Newman evidence, Playwright

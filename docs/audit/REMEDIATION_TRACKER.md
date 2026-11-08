@@ -20,7 +20,7 @@ Re-verify by re-running the stated command.
 |---|---|---|---|---|
 | Q1/Q12/Q36/Q42 | ~~Live PayPal partially executed~~ CLOSED 2026-11-07 | Full live loop completed: order 2ER387580K033722V → capture 7R158417X9367771B → refund 8DJ895035B173303G (`succeeded`, 12999 USD) → Recorder VALID. Also fixed: amountless POST-refund responses (wire schema + fallback + 2 regression tests) | agent | Gate 15 PASS; IDs verified at provider |
 | Q18 | ~~AG Studio not integrated~~ CLOSED 2026-11-08 | Real canvas + Agent Framework integrated over live data (official-CDN-first, no bytes committed); trial key + consent still open (Q10/Q112) | agent | `AG_GRID_STATUS.md`; `#/studio` canvas + agent trace |
-| Q19 | No live Channel3 call | Keyed re-run with COMMITTED evidence (redacted log/report); until then the 2026-11-07 claim stays retracted | agent/human | Committed artifact + manifest `channel3Live.grade=artifact` |
+| Q19 | ~~No live Channel3 call~~ CLOSED 2026-11-08 | Keyed `POST /v1/search` ("mechanical keyboard", 3 candidates, 1187 ms, origin `channel3-live`); redacted report committed + test-pinned | agent | `docs/sponsors/channel3-live-report.json`; manifest `channel3Live.grade=artifact` |
 | Q10 | AG Grid consent pending | Owner sends the drafted cl.16.1 consent request; file the reply in `ag-studio-trial.md` | human | Filed reply covering demo + history; judging window confirmed |
 | Q20/Q69 | Render/CI unverified | Push to GitHub (public), watch CI green, apply Blueprint | human | CI badge green; live URL |
 | Q70 | Postman never executed in Postman | Import + run collection (or Newman) against local + hosted | human/agent | Runner output, 0 failures |

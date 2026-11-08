@@ -1,0 +1,31 @@
+{
+  "provider": "api-m.sandbox.paypal.com",
+  "fetchedAt": "2026-11-08T02:24:33.556Z",
+  "loop": "order → capture → partial refund (flagship sandbox evidence)",
+  "order": {
+    "id": "2ER387580K033722V",
+    "status": "COMPLETED",
+    "amount": {
+      "currency": "USD",
+      "amountMinor": 38997
+    }
+  },
+  "capture": {
+    "id": "7R158417X9367771B",
+    "status": "PARTIALLY_REFUNDED",
+    "amount": {
+      "currency": "USD",
+      "amountMinor": 38997
+    }
+  },
+  "refund": {
+    "id": "8DJ895035B173303G",
+    "status": "COMPLETED",
+    "amount": {
+      "currency": "USD",
+      "amountMinor": 12999
+    },
+    "partial": true
+  },
+  "credentialsRedacted": true
+}

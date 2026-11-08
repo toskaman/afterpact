@@ -358,10 +358,20 @@ export class Ops {
 
   // -- health / config -------------------------------------------------------
 
+  /** Short build SHA for deployment verification (safe, non-sensitive). */
+  buildSha(): string {
+    const explicit = (this.env["AFTERPACT_BUILD_SHA"] ?? "").trim();
+    if (explicit !== "") return explicit.slice(0, 40);
+    const render = (this.env["RENDER_GIT_COMMIT"] ?? "").trim();
+    if (render !== "") return render.slice(0, 40);
+    return "dev";
+  }
+
   health(): Record<string, unknown> {
     return {
       status: "ok",
       version: OPS_VERSION,
+      build: this.buildSha(),
       time: this.now(),
       transport: this.wiring.kind,
       paypalMode: this.wiring.env.config.mode,
