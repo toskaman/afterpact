@@ -7,6 +7,7 @@ Labels: `UNVERIFIED` / `HYPOTHESIS` / `ESTIMATE` / `NOT MEASURED` where applicab
 |---|---|---|---|
 | 1 | Demo video <3 min exists, shows real app | `brag-output/paypal-ai-2026/AFTERPACT_PAYPAL_AI_FINAL.mp4` (165.1 s) + `VIDEO_QA_REPORT.md` | PASS |
 | 2 | Sandbox loop order→capture→refund verified | `docs/demo/paypal-live-receipts.json`: `2ER387580K033722V` / `7R158417X9367771B` / `8DJ895035B173303G` | PASS |
+| 2b | Second loop incl. FULL refund | `docs/demo/paypal-live-receipts-2.json` (2026-11-08): `59A94150344824111` / `72S38593LS000452A` / `15T12360RX6158212`, capture REFUNDED | PASS |
 | 3 | Film refund ID correct | s3 scene source + receipts + inspected frame @43 s | PASS |
 | 4 | Live demo reachable, chain valid | `https://199.247.9.188.nip.io/api/health` (ok, build `d1e79f2`, auditChainValid) | PASS |
 | 5 | CI green on HEAD | run `42490075428` success | PASS |

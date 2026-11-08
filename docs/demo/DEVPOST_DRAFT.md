@@ -79,8 +79,10 @@ so retries after completion replay instead of double-executing, provider
 status reconciliation before any case closes, and a kill switch. Real
 sandbox loop committed as redacted evidence: order `2ER387580K033722V` →
 capture `7R158417X9367771B` → partial refund `8DJ895035B173303G`
-(`docs/demo/paypal-live-receipts.json`, test-pinned). No live-money code
-paths exist.
+(`docs/demo/paypal-live-receipts.json`, test-pinned). A second independent loop
+(order `59A94150344824111` → capture `72S38593LS000452A` → FULL refund
+`15T12360RX6158212`, `docs/demo/paypal-live-receipts-2.json`) exercises the
+full-refund path against the same provider. No live-money code paths exist.
 
 ## Sponsor integrations (honest status)
 

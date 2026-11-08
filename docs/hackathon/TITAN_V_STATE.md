@@ -31,6 +31,8 @@ direct Devpost fetch blocked by 403 bot protection — owner to confirm on the e
 - [x] Newman re-run 37/37 + 18/18, report refreshed (`7748743`).
 - [x] Secret scan + `npm audit` prod clean.
 - [x] Owner checklist, jury scorecard (38/50), final report written.
+- [x] Second sandbox loop order→capture→FULL refund executed 2026-11-08
+  (`59A94150344824111`/`72S38593LS000452A`/`15T12360RX6158212`, receipts-2).
 - AG Grid: cutoff Nov 11 EOD — fallback `AG_STUDIO_DISABLED=1` + Community-only
   claims if no written consent by then (fallback test green).
 - Usability: protocol ready; participants = owner blocker (document honestly).

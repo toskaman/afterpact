@@ -44,6 +44,8 @@ webhook live-delivery log excerpt (redacted).
 
 **Corrective action.** Record one more sandbox loop (e.g. full refund or
 second partial) and pin it — doubles provider evidence for ~30 min of work.
+**DONE 2026-11-08:** full-refund loop `59A94150344824111` → `72S38593LS000452A`
+→ `15T12360RX6158212` in `docs/demo/paypal-live-receipts-2.json`.
 
 ## Reviewer 3 — AI Research / Safety Expert — 8/10
 

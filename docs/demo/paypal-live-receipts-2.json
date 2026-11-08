@@ -1,0 +1,31 @@
+{
+  "provider": "api-m.sandbox.paypal.com",
+  "fetchedAt": "2026-11-08T20:45:40.611Z",
+  "loop": "order → capture → FULL refund (second sandbox loop, TITAN V)",
+  "order": {
+    "id": "59A94150344824111",
+    "status": "COMPLETED",
+    "amount": {
+      "currency": "USD",
+      "amountMinor": 500
+    }
+  },
+  "capture": {
+    "id": "72S38593LS000452A",
+    "status": "REFUNDED",
+    "amount": {
+      "currency": "USD",
+      "amountMinor": 500
+    }
+  },
+  "refund": {
+    "id": "15T12360RX6158212",
+    "status": "COMPLETED",
+    "amount": {
+      "currency": "USD",
+      "amountMinor": 500
+    },
+    "partial": false
+  },
+  "credentialsRedacted": true
+}
