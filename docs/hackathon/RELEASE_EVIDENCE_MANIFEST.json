@@ -1,10 +1,10 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-11-08T02:35:09.938Z",
-  "verifiedCommit": "4294c33297ce2f5bc4da73c7e03b8eb1145862dd",
-  "verifiedCiRun": "https://github.com/toskaman/afterpact/actions/runs/42439072722",
+  "generatedAt": "2026-11-08T02:40:44.077Z",
+  "verifiedCommit": "52a1fb0b1e327c82cd4b14511d18565aab48b803",
+  "verifiedCiRun": "https://github.com/toskaman/afterpact/actions/runs/42439189625",
   "suite": {
-    "passed": 255,
+    "passed": 263,
     "failed": 0,
     "skipped": 33
   },
@@ -33,6 +33,7 @@
       "/tests/integration/apps.api.test.ts",
       "/tests/integration/channel3.live.test.ts",
       "/tests/integration/channel3.report.test.ts",
+      "/tests/integration/demo.sessions.test.ts",
       "/tests/integration/frontend.contract.test.ts",
       "/tests/integration/paypal.flows.test.ts",
       "/tests/integration/paypal.live.test.ts",
@@ -42,8 +43,8 @@
       "/tests/integration/sponsors.discovery.test.ts",
       "/tests/integration/sponsors.studio.timeline.test.ts"
     ],
-    "suiteFileCount": 27,
-    "suiteStaticBlocks": 212,
+    "suiteFileCount": 28,
+    "suiteStaticBlocks": 220,
     "e2eFiles": [
       "/tests/e2e/dashboard.e2e.ts",
       "/tests/e2e/gallery.e2e.ts",
@@ -148,7 +149,7 @@
   },
   "knownLimitations": [
     "single-node JSON snapshot persistence",
-    "shared demo state across visitors (sessions land in P1-S)",
+    "demo runs share global lists/audit views; per-run token-gated reset + 50-run cap landed in P1-S (full per-session data isolation NOT implemented)",
     "no chaos/load campaign yet",
     "no independent usability test yet",
     "video missing (owner)"

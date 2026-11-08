@@ -1,4 +1,4 @@
-import { timingSafeEqual } from "node:crypto";
+import { createHmac, randomBytes, timingSafeEqual } from "node:crypto";
 import { createServer, type IncomingMessage, type Server, type ServerResponse } from "node:http";
 import { existsSync, readFileSync, statSync } from "node:fs";
 import { extname, join, normalize, resolve, sep } from "node:path";
@@ -78,9 +78,13 @@ export function createApp(options: ServerOptions = {}): App {
   const operatorToken = (env["OPERATOR_TOKEN"] ?? "").trim();
   const rateLimit = options.rateLimit ?? DEFAULT_RATE_LIMIT;
   const buckets = new Map<string, { count: number; resetAt: number }>();
+  // Per-boot secret for demo-run reset tokens. Tokens do not survive a
+  // restart by design: runs created before the boot cannot be reset
+  // per-run (global operator reset still applies).
+  const demoSecret = randomBytes(32).toString("hex");
 
   const server = createServer((req, res) => {
-    void handleRequest(req, res, { ops, webDir, operatorToken, rateLimit, buckets }).catch((error: unknown) => {
+    void handleRequest(req, res, { ops, webDir, operatorToken, rateLimit, buckets, demoSecret }).catch((error: unknown) => {
       const http = toHttpError(error);
       send(res, http.status, { error: { code: http.code, message: http.message, details: http.details ?? null } });
     });
@@ -115,6 +119,7 @@ interface RequestContext {
   operatorToken: string;
   rateLimit: { windowMs: number; max: number };
   buckets: Map<string, { count: number; resetAt: number }>;
+  demoSecret: string;
 }
 
 function clientIp(req: IncomingMessage): string {
@@ -155,6 +160,11 @@ function tokensEqual(a: string, b: string): boolean {
   const bb = Buffer.from(b, "utf8");
   if (ab.length !== bb.length || ab.length === 0) return false;
   return timingSafeEqual(ab, bb);
+}
+
+/** Per-run demo reset token: HMAC of the run id under the per-boot secret. */
+function demoResetToken(secret: string, runId: string): string {
+  return createHmac("sha256", secret).update(`demo-run-reset:${runId}`).digest("hex");
 }
 
 function requireOperator(req: IncomingMessage, ctx: RequestContext): void {
@@ -285,8 +295,12 @@ async function handleRequest(req: IncomingMessage, res: ServerResponse, ctx: Req
   }
   if (method === "POST" && path === "/api/demo/run") {
     const input = z.object({ scenario: z.enum(["flagship", "injection"]), label: z.string().max(200).default("jury-demo") }).parse(parseJson(await readBody(req)));
+    const maxRuns = ops.maxDemoRuns();
+    if (ops.store.demoRuns.size >= maxRuns) {
+      throw new HttpError(429, "demo-capacity", `demo run capacity reached (${maxRuns} runs); reset a run to free a slot`);
+    }
     const run = input.scenario === "flagship" ? await runFlagship(ops, input.label) : await runInjection(ops, input.label);
-    return ok(res, run, 201);
+    return ok(res, { ...run, resetToken: demoResetToken(ctx.demoSecret, run.id) }, 201);
   }
   if (method === "POST" && path.endsWith("/continue") && path.startsWith("/api/demo/runs/")) {
     const id = decodeURIComponent(path.slice("/api/demo/runs/".length, -"/continue".length));
@@ -295,6 +309,14 @@ async function handleRequest(req: IncomingMessage, res: ServerResponse, ctx: Req
   if (method === "POST" && path === "/api/demo/reset") {
     requireOperator(req, ctx);
     return ok(res, ops.resetAll());
+  }
+  if (method === "POST" && path.endsWith("/reset") && path.startsWith("/api/demo/runs/")) {
+    const id = decodeURIComponent(path.slice("/api/demo/runs/".length, -"/reset".length));
+    const body = z.object({ token: z.string().min(1).max(256) }).parse(parseJson(await readBody(req)));
+    if (!tokensEqual(body.token, demoResetToken(ctx.demoSecret, id))) {
+      throw new HttpError(401, "demo-token-invalid", "valid per-run reset token required");
+    }
+    return ok(res, ops.resetDemoRun(id));
   }
   if (method === "POST" && path === "/api/discovery/search") return ok(res, await ops.searchDiscovery(parseJson(await readBody(req))), 201);
   if (method === "POST" && path === "/api/discovery/compare") return ok(res, await ops.compareDiscovery(parseJson(await readBody(req))));

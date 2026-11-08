@@ -19,7 +19,7 @@ plus 5 Playwright browser specs in `tests/e2e/` (CI `e2e` job, Chromium).
 | `#/timeline` | Recovery Timeline | Dependency-aware schedule (fallback renderer, no Bryntum); incident shifts recomputed from state |
 | `#/recorder` | Flight Recorder | Filterable hash-chained timeline, step replay, chain-validity badge, redacted export download |
 | `#/developer` | Developer Center | API health, sandbox config (redacted), integration status, kill-switch test tool, endpoint reference |
-| `#/demo` | Demo / Jury Mode | Reproducible flagship + injection scenarios, provenance legend, safe reset |
+| `#/demo` | Demo / Jury Mode | Reproducible flagship + injection scenarios, provenance legend, per-run reset (token-gated) + operator global reset, run cap |
 | `#/ai-gallery` | AI Evidence Gallery | RECORDED VERIFIED AI RUNs: run totals, featured model outputs with latency/cost/citations/gate verdicts, reproduce recipe — no inference on the page |
 
 ## Jury script — “The Purchase That Went Wrong” (~3 min)
@@ -46,7 +46,11 @@ plus 5 Playwright browser specs in `tests/e2e/` (CI `e2e` job, Chromium).
    both `blocked` with exact policy reason codes; filter the recorder by
    `policy.blocked` to show the preserved evidence.
 6. Reset is offered only in mock mode; in live mode the button is disabled
-   with the reason stated.
+   with the reason stated. Each run you start returns a reset token: “Reset
+   this run” deletes only that run’s records (exact-id sweep, other
+   visitors’ runs untouched, audit entries retained append-only). Global
+   reset still needs the operator token on shared boxes. Runs are capped
+   (`AFTERPACT_MAX_DEMO_RUNS`, default 50) with an explicit 429.
 
 ## Real vs simulated — labeling policy
 

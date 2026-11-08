@@ -334,6 +334,116 @@ export class Ops {
     return { cleared };
   }
 
+  maxDemoRuns(): number {
+    const raw = this.env["AFTERPACT_MAX_DEMO_RUNS"];
+    if (raw === undefined || raw.trim() === "") return 50;
+    const parsed = Number.parseInt(raw, 10);
+    if (!Number.isSafeInteger(parsed) || parsed <= 0) {
+      throw new HttpError(500, "config", "AFTERPACT_MAX_DEMO_RUNS must be a positive integer");
+    }
+    return parsed;
+  }
+
+  /**
+   * Delete one demo run and every operational record it created (intents,
+   * offers, promises, outcomes + linked evidence, incidents, proposals +
+   * approvals, payment orders/captures/refunds/operations, idempotency
+   * entries). Records are located by exact id from the run context, act
+   * refs, and the promise relation index — never by fuzzy matching, so a
+   * concurrent run's records cannot be touched. The audit chain stays
+   * append-only: the reset itself is recorded as `demo.run-reset` and
+   * earlier entries are retained by design. Same guard as resetAll: mock
+   * transport only, never live-sandbox records.
+   */
+  resetDemoRun(runId: string): { runId: string; cleared: Record<string, number> } {
+    if (!this.resetAllowed()) {
+      throw new HttpError(403, "reset-refused", "demo reset is only available in mock-simulated mode with AFTERPACT_ALLOW_DEMO_RESET != 0");
+    }
+    const run = this.store.demoRuns.get(runId);
+    if (run === undefined) throw new HttpError(404, "demo-not-found", `demo run ${runId} not found`);
+    const ids = new Set<string>(Object.values(run.context));
+    for (const a of run.acts) {
+      for (const v of Object.values(a.refIds)) ids.add(v);
+    }
+    if (run.needsAction !== undefined) ids.add(run.needsAction.orderId);
+    for (const id of [...ids]) {
+      const record = this.store.promises.get(id);
+      if (record === undefined) continue;
+      ids.add(record.promise.intentId);
+      ids.add(record.promise.offerId);
+      for (const oid of record.orderIds) ids.add(oid);
+      for (const oid of record.outcomeIds) ids.add(oid);
+      for (const iid of record.incidentIds) ids.add(iid);
+    }
+    const cleared: Record<string, number> = {
+      intents: 0, offers: 0, promises: 0, outcomes: 0, evidence: 0, incidents: 0,
+      proposals: 0, approvals: 0, orders: 0, captures: 0, refunds: 0,
+      operations: 0, idempotency: 0, demoRuns: 0,
+    };
+    const deadOutcomes = new Set<string>();
+    const deadProposals = new Set<string>();
+    const deadPayments = new Set<string>();
+    const pay = this.wiring.store;
+    for (const id of ids) {
+      if (this.store.intents.delete(id)) cleared["intents"]! += 1;
+      if (this.store.offers.delete(id)) cleared["offers"]! += 1;
+      if (this.store.promises.delete(id)) cleared["promises"]! += 1;
+      if (this.store.outcomes.delete(id)) { cleared["outcomes"]! += 1; deadOutcomes.add(id); }
+      if (this.store.incidents.delete(id)) cleared["incidents"]! += 1;
+      if (this.store.proposals.delete(id)) { cleared["proposals"]! += 1; deadProposals.add(id); }
+      const order = pay.orders.get(id);
+      if (order !== undefined) {
+        pay.orders.delete(id);
+        if (order.providerOrderId !== undefined) pay.ordersByProviderId.delete(order.providerOrderId);
+        cleared["orders"]! += 1;
+        deadPayments.add(id);
+      }
+      const capture = pay.captures.get(id);
+      if (capture !== undefined) {
+        pay.captures.delete(id);
+        pay.capturesByProviderId.delete(capture.providerCaptureId);
+        cleared["captures"]! += 1;
+        deadPayments.add(id);
+      }
+      const refund = pay.refunds.get(id);
+      if (refund !== undefined) {
+        pay.refunds.delete(id);
+        if (refund.providerRefundId !== undefined) pay.refundsByProviderId.delete(refund.providerRefundId);
+        cleared["refunds"]! += 1;
+        deadPayments.add(id);
+      }
+      const op = pay.operations.get(id);
+      if (op !== undefined) {
+        pay.operations.delete(id);
+        pay.operationsByKey.delete(op.idempotencyKey);
+        cleared["operations"]! += 1;
+      }
+    }
+    for (const [eid, ev] of this.store.evidence) {
+      if (ev.outcomeEventIds.some((oid) => deadOutcomes.has(oid))) {
+        this.store.evidence.delete(eid);
+        cleared["evidence"]! += 1;
+      }
+    }
+    for (const [aid, approval] of this.store.resolutionApprovals) {
+      if (deadProposals.has(approval.proposalId)) {
+        this.store.resolutionApprovals.delete(aid);
+        cleared["approvals"]! += 1;
+      }
+    }
+    for (const [key, entry] of pay.idempotency) {
+      const ownerId = entry.owner.includes(":") ? entry.owner.slice(entry.owner.indexOf(":") + 1) : entry.owner;
+      if (deadPayments.has(ownerId)) {
+        pay.idempotency.delete(key);
+        cleared["idempotency"]! += 1;
+      }
+    }
+    if (this.store.demoRuns.delete(runId)) cleared["demoRuns"]! += 1;
+    this.record({ type: "demo.run-reset", actor: "demo-operator", payload: { runId, cleared } });
+    this.persist();
+    return { runId, cleared };
+  }
+
   get transport(): TransportKind {
     return this.wiring.kind;
   }

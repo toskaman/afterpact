@@ -971,7 +971,7 @@ async function renderDeveloper() {
           <h3 class="section-gap">Endpoint reference</h3>
           <div class="table-wrap"><table>
             <thead><tr><th>Method</th><th>Path</th></tr></thead>
-            <tbody>${["GET /api/health", "GET /api/config", "GET /api/metrics", "POST /api/intents", "GET /api/offers?intentId=", "POST /api/promises", "POST /api/promises/:id/approve", "POST /api/payments/orders", "POST /api/payments/orders/:id/capture", "POST /api/outcomes", "POST /api/resolutions", "POST /api/resolutions/:id/decide", "GET /api/audit", "GET /api/audit/export", "POST /api/demo/run", "POST /api/demo/reset"]
+            <tbody>${["GET /api/health", "GET /api/config", "GET /api/metrics", "POST /api/intents", "GET /api/offers?intentId=", "POST /api/promises", "POST /api/promises/:id/approve", "POST /api/payments/orders", "POST /api/payments/orders/:id/capture", "POST /api/outcomes", "POST /api/resolutions", "POST /api/resolutions/:id/decide", "GET /api/audit", "GET /api/audit/export", "POST /api/demo/run", "POST /api/demo/runs/:id/reset", "POST /api/demo/reset"]
               .map((e) => { const [m, p] = e.split(" "); return `<tr><td class="mono">${m}</td><td class="mono">${p}</td></tr>`; }).join("")}
             ${( ["GET /api/discovery/status", "POST /api/discovery/search", "POST /api/discovery/compare", "GET /api/studio/datasets", "POST /api/studio/command", "GET /api/timeline?promiseId="])
               .map((e) => { const [m, p] = e.split(" "); return `<tr><td class="mono">${m}</td><td class="mono">${p}</td></tr>`; }).join("")}</tbody>
@@ -1000,6 +1000,9 @@ async function renderDeveloper() {
 /* ================================================================
    VIEW: Demo / Jury Mode
    ================================================================ */
+/* Per-run reset tokens for runs started in this browser (in-memory only;
+   tokens do not survive reload or server restart by design). */
+const demoTokens = new Map();
 async function renderDemo() {
   setNav("demo");
   view().innerHTML = viewHead("Demo / Jury Mode", "Reproducible scenarios with honest real-vs-simulated markers. Reset is available only where it is safe.") + loadingState();
@@ -1013,7 +1016,7 @@ async function renderDemo() {
           <li>${originPill("paypal-sandbox-live")} <span>Real PayPal Sandbox HTTPS call (only with credentials).</span></li>
           <li>${originPill("mock-simulated")} <span>Deterministic in-process PayPal simulation. Labeled everywhere.</span></li>
           <li>${originPill("simulated-logistics")} <span>Scripted carrier event. Detection logic is real; the carrier is not.</span></li>
-          <li>${originPill("heuristic-parse")} <span>Deterministic regex/keyword extraction. No LLM in this build.</span></li>
+          <li>${originPill("heuristic-parse")} <span>Deterministic regex/keyword extraction used for this step (model runs live in the AI Evidence gallery).</span></li>
           <li>${originPill("not-in-build")} <span>Capability explicitly absent. Never faked.</span></li>
         </ul></div>
       </div>
@@ -1031,7 +1034,7 @@ async function renderDemo() {
       </div>
       <div class="card section-gap">
         <h2>Safe reset</h2>
-        <p class="small muted">${config.resetAllowed ? "Mock-simulated mode: reset clears all local records including the audit chain, then records demo.reset as the new genesis event." : "Refused: reset is disabled outside mock-simulated mode to protect live sandbox records."}</p>
+        <p class="small muted">Runs you start in this browser carry a reset token: use “Reset this run” on the run card to delete only its records (other visitors’ runs are untouched; the audit chain is append-only so past entries stay). ${config.resetAllowed ? "Global reset clears ALL local records including the audit chain, then records demo.reset as the new genesis event — operator token required on shared boxes." : "Global reset is refused outside mock-simulated mode to protect live sandbox records."}</p>
         <div class="button-row"><button class="button danger" id="demoReset" ${config.resetAllowed ? "" : "disabled"}>Reset demo data</button></div>
       </div>
       <div id="demoResult" class="section-gap"></div>
@@ -1047,9 +1050,10 @@ async function renderDemo() {
 
     const showRun = (run) => {
       const box = $("#demoResult");
+      const ownToken = demoTokens.get(run.id);
       box.innerHTML = `<div class="card">
         <h2>Run ${escapeHtml(shortId(run.id))} · ${escapeHtml(run.scenario)} · ${escapeHtml(run.status.toUpperCase())}</h2>
-        <div class="badge-row" style="margin-bottom:0.8rem">${originPill(run.transport === "paypal-sandbox-live" ? "paypal-sandbox-live" : "mock-simulated")}</div>
+        <div class="badge-row" style="margin-bottom:0.8rem">${originPill(run.transport === "paypal-sandbox-live" ? "paypal-sandbox-live" : "mock-simulated")}${ownToken !== undefined && config.resetAllowed ? `<button class="button small secondary" id="resetThisRun">Reset this run</button>` : ""}</div>
         ${run.needsAction ? `<div class="error-banner"><strong>Action needed:</strong> approve the live PayPal order, then continue. <a href="${escapeHtml(run.needsAction.approveUrl)}" target="_blank" rel="noopener">Open PayPal approval</a>
           <div class="button-row"><button class="button small" id="continueRun">Continue after approval</button></div></div>` : ""}
         ${run.error ? errorBanner(run.error) : ""}
@@ -1071,12 +1075,26 @@ async function renderDemo() {
           toast(err.message, "error");
         }
       });
+      $("#resetThisRun")?.addEventListener("click", async () => {
+        if (!(await confirmDialog("Reset this run", "Delete only this run's records? Other visitors' runs are untouched; audit entries stay (append-only).", "Reset this run"))) return;
+        try {
+          const result = await api(`/api/demo/runs/${encodeURIComponent(run.id)}/reset`, { method: "POST", body: { token: demoTokens.get(run.id) } });
+          demoTokens.delete(run.id);
+          toast(`Run reset: ${Object.values(result.cleared).reduce((a, b) => a + b, 0)} records cleared`, "ok");
+          void renderDemo();
+          void refreshTopbar();
+        } catch (err) {
+          toast(err.message, "error");
+        }
+      });
     };
 
     $("#runFlagship").addEventListener("click", async () => {
       $("#demoResult").innerHTML = loadingState("Running flagship scenario (Acts 1–9)…");
       try {
-        showRun(await api("/api/demo/run", { method: "POST", body: { scenario: "flagship", label: "jury-demo" } }));
+        const run = await api("/api/demo/run", { method: "POST", body: { scenario: "flagship", label: "jury-demo" } });
+        if (typeof run.resetToken === "string") demoTokens.set(run.id, run.resetToken);
+        showRun(run);
         void refreshTopbar();
       } catch (err) {
         $("#demoResult").innerHTML = errorBanner(err.message);
@@ -1085,7 +1103,9 @@ async function renderDemo() {
     $("#runInjection").addEventListener("click", async () => {
       $("#demoResult").innerHTML = loadingState("Running injection scenario…");
       try {
-        showRun(await api("/api/demo/run", { method: "POST", body: { scenario: "injection", label: "jury-negative" } }));
+        const run = await api("/api/demo/run", { method: "POST", body: { scenario: "injection", label: "jury-negative" } });
+        if (typeof run.resetToken === "string") demoTokens.set(run.id, run.resetToken);
+        showRun(run);
         void refreshTopbar();
       } catch (err) {
         $("#demoResult").innerHTML = errorBanner(err.message);
