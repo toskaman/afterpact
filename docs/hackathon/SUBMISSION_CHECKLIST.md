@@ -34,10 +34,14 @@ Deadline: **Nov 12, 2026, 12:00 PM PT**. Source: `OFFICIAL_RULES_AUDIT.md`
 
 ## Video (<3 min, public YouTube)
 
-- [ ] Footage of the running project (no mockups/static prototype).
-- [ ] Under 3 minutes; problem/audience/why covered; end-to-end working shown.
-- [ ] No unlicensed trademarks/music; English or translated.
-- [ ] Transport/origin pills visible; sandbox-vs-mock labeled in captions.
+Film built 2026-11-08: `brag-output/paypal-ai-2026/AFTERPACT_PAYPAL_AI_FINAL.mp4`
+(165.1 s, 1080p30, H264+AAC, 25 EN cues burned; QA report + shot map alongside).
+
+- [x] Footage of the running project (no mockups/static prototype).
+- [x] Under 3 minutes; problem/audience/why covered; end-to-end working shown.
+- [x] No unlicensed trademarks/music; English or translated.
+- [x] Transport/origin pills visible; sandbox-vs-mock labeled in captions.
+- [ ] Public YouTube upload (owner step) + URL pasted into README/Devpost.
 
 ## Devpost submission text
 
@@ -58,7 +62,8 @@ they land). Repo URL filled; demo + video URLs pending human steps.
       Sponsor prize pursued: AG Grid only; APIMatic/Bryntum/Render NOT
       claimed.
 - [ ] Public repo URL + demo URL + video URL all present and reachable
-      (repo + demo done; video is the owner's step, later).
+      (repo + demo done; film file built 2026-11-08, YouTube upload is the
+      owner's step, then paste URL).
 
 ## Rules compliance
 

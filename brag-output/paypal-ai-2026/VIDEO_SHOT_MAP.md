@@ -15,7 +15,7 @@ Legend — footage provenance:
 |---|------|-------|--------|---------|----|
 | 1 | 0:00–0:15 | s1-hook | Command Center hero push-in, AFTERPACT title | APP `f5-hero-hold` ×2 (chain-s1, 13.13 s + hold) | L01–L03: hook — payment OK, delivery wrong, "Who makes it right?" |
 | 2 | 0:15–0:38 | s2-promise | Flagship run log → Transaction Detail zoom | APP `clip1` 11.2 s + `f4-promise-detail` 11.8 s (chain-s2) | L04–L06: PurchasePromise, version+hash approval, PayPal executes |
-| 3 | 0:38–0:46 | s3-sandbox | Proof card: order 2ER…722V → capture 7R1…771B → refund 8DB…303G | GFX (values = real recorded sandbox IDs, creds redacted) | L07: recorded sandbox runs prove the loop |
+| 3 | 0:38–0:46 | s3-sandbox | Proof card: order 2ER…722V → capture 7R1…771B → refund 8DJ…303G | GFX (values = real recorded sandbox IDs, creds redacted) | L07: recorded sandbox runs prove the loop |
 | 4 | 0:46–1:14 | s4-twin | Outcome Twin: PROMISED / OBSERVED / RECOVERED, divergence strip, `1 KIT · $129.99 MISSING` | APP `f3-twin-long` 16.96 s + `clip2` 9.67 s (chain-s4) | L08–L11: short delivery, Twin lays it bare, $129.99 unaccounted |
 | 5 | 1:14–1:42 | s5-resolution | AI proposal → policy check → human approve dialog → refund verified | APP `clip4` 4 s + `f6-recovery-gate` 12 s + `clip3` 11.4 s (chain-s5) | L12–L15: AI proposes, policy checks, human approves, PayPal confirms |
 | 6 | 1:42–2:00 | s6-recorder | Flight Recorder chain-valid timeline, receipt | APP `f1-recorder-proof` 15.6 s + hold | L16–L18: hash-chained record, the artifact merchants keep |

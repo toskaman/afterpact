@@ -12,7 +12,9 @@ an append-only, hash-chained Flight Recorder.
 
 > **Live demo:** `https://199.247.9.188.nip.io` (Vultr VPS, mock transport — deterministic one-click demo, no secrets on the box; live PayPal/Channel3 paths unlock with keys per `.env.example`)
 > (see `docs/demo/VULTR_HOSTING.md`). Demo video (<3 min):
-> `TBD — paste the YouTube link here`.
+> built — `brag-output/paypal-ai-2026/AFTERPACT_PAYPAL_AI_FINAL.mp4`
+> (165 s, 1080p30, EN subs; QA: `VIDEO_QA_REPORT.md`).
+> Public YouTube URL: `TBD — owner uploads, then paste link here`.
 
 ## The problem
 

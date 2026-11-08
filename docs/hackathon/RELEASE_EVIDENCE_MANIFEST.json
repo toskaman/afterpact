@@ -163,7 +163,11 @@
   },
   "video": {
     "url": null,
-    "status": "missing-owner-action"
+    "status": "file-built-upload-pending-owner",
+    "file": "brag-output/paypal-ai-2026/AFTERPACT_PAYPAL_AI_FINAL.mp4",
+    "runtimeSec": 165.1,
+    "resolution": "1920x1080",
+    "fps": 30
   },
   "devpost": {
     "status": "draft-not-submitted"
@@ -173,6 +177,6 @@
     "demo runs share global lists/audit views; per-run token-gated reset + 50-run cap landed in P1-S (full per-session data isolation NOT implemented)",
     "no chaos/load campaign yet",
     "no independent usability test yet",
-    "video missing (owner)"
+    "video file built 2026-11-08; public YouTube upload pending (owner)"
   ]
 }
