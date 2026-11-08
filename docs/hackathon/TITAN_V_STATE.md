@@ -25,14 +25,16 @@ direct Devpost fetch blocked by 403 bot protection — owner to confirm on the e
 - Rules corroborated via 3+ secondary sources (deadline, criteria, <3 min video,
   open-source repo, AI-tools disclosure).
 
-## Active / next (Phase 1, ranked)
+## Active / next (Phase 1 DONE — awaiting owner for Phase 2 lock)
 
-1. Devpost draft final polish vs film (claims match verified footage).
-2. AG Grid: cutoff Nov 11 EOD — fallback `AG_STUDIO_DISABLED=1` + Community-only
-   claims if no written consent by then (fallback test green).
-3. Usability: protocol ready; participants = owner blocker (document honestly).
-4. Final evidence manifest regen at lock time; submission snapshot after owner submit.
-5. Newman collection re-run (CI covers; local optional).
+- [x] Devpost draft polished vs verified evidence (`939f063`).
+- [x] Newman re-run 37/37 + 18/18, report refreshed (`7748743`).
+- [x] Secret scan + `npm audit` prod clean.
+- [x] Owner checklist, jury scorecard (38/50), final report written.
+- AG Grid: cutoff Nov 11 EOD — fallback `AG_STUDIO_DISABLED=1` + Community-only
+  claims if no written consent by then (fallback test green).
+- Usability: protocol ready; participants = owner blocker (document honestly).
+- Phase 2 on owner go: link check → submit → immutable snapshot.
 
 ## Blockers (owner-only)
 
