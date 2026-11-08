@@ -1,6 +1,6 @@
 # AFTERPACT — 100-Question Self-Audit
 
-Date: 2026-11-07, re-verified 2026-11-08. Baseline: 271 passed +
+Date: 2026-11-07, re-verified 2026-11-08. Baseline: 280 passed +
 33 skipped, `tsc` clean (6 projects), CI green at HEAD (the 2026-11-07
 run recorded 155+1 at `2a26d05`). Status: **PASS** (evidence in repo),
 **PARTIAL** (works with a noted gap), **FAIL** (missing/red),
@@ -118,7 +118,7 @@ Nothing is PASS on confidence alone — every PASS names its artifact.
 |---|---|---|---|---|---|
 | 71 | Are module boundaries clean? | domain/policy/payments/api/web packages; demo uses same Ops methods as routes | repo layout, gate deliberates | M | PASS |
 | 72 | Zero `tsc` errors on strict settings? | Exit 0 on 6 projects (strict + noUncheckedIndexedAccess) | OMEGA run 2026-11-08 | H | PASS |
-| 73 | Full suite green? | 271 passed + 33 skipped (30 live-eval + 3 probes, keys absent) + 6 Playwright E2E | OMEGA II run 2026-11-08 | H | PASS |
+| 73 | Full suite green? | 280 passed + 33 skipped (30 live-eval + 3 probes, keys absent) + 6 Playwright E2E | OMEGA II run 2026-11-08 | H | PASS |
 | 74 | Concurrency suite exists? | Same-key serialization + duplicate capture/refund + webhook dedupe | safety + flows tests | M | PASS |
 | 75 | Adversarial suite exists? | Injection double-block, replay/tamper/mismatch/over-refund/expired negatives | `apps.api`, safety tests | M | PASS |
 | 76 | E2E beyond unit/integration? | Playwright chromium in CI: dashboard, copilot, twin, recovery, studio mount, ai-gallery; 6 specs green, 0 page errors | `tests/e2e/`, `ci.yml` e2e job | M | PASS |
@@ -207,7 +207,7 @@ Both FAILs remain the owner's steps: <3-min video, one usability session.
 
 | # | Question | Status 2026-11-08 | Evidence | Pri | Verdict |
 |---|---|---|---|---|---|
-| 115 | Are all public documentation claims synchronized with the latest commit? | Manifest + drift green at HEAD; tallies 271+33 flipped same-commit | `RELEASE_EVIDENCE_MANIFEST.json`, `check-docs-drift.mjs`, CI `drift` | H | PASS |
+| 115 | Are all public documentation claims synchronized with the latest commit? | Manifest + drift green at HEAD; tallies 280+33 flipped same-commit | `RELEASE_EVIDENCE_MANIFEST.json`, `check-docs-drift.mjs`, CI `drift` | H | PASS |
 | 116 | Is commercial AG Studio redistribution expressly permitted? | UMD un-vendored; official-CDN-first + pinned fallback + notice; historical git bytes remain; consent drafted, not sent | `vendor/ag-studio.NOTICE.txt`, `AG_GRID_STATUS.md`, Q10 | H | PARTIAL |
 | 117 | Is the trial valid during the entire judging period? | No trial key obtained; coverage unknown until the owner registers | Q112, owner action | H | UNKNOWN |
 | 118 | Can a judge independently verify the AI without paid inference? | Gallery: 4 runs (117/120), model id, citations, latency/cost + reproduce recipe, keyless | `#/ai-gallery`, `ai.gallery.test.ts` 6/6 | H | PASS |
@@ -221,7 +221,7 @@ Both FAILs remain the owner's steps: <3-min video, one usability session.
 | 126 | Are human impact figures genuinely measured? | Estimates only; study package ready, zero sessions run | `OPERATOR_IMPACT.md`, `USABILITY_STUDY.md` §6 | H | FAIL |
 | 127 | Have real users independently tested the product? | None; owner action to recruit | Q84, `USABILITY_STUDY.md` | H | FAIL |
 | 128 | Are financial claims traceable to provider evidence? | Receipts artifact test-pinned (order/capture/refund ids + statuses) | `paypal-live-receipts.json`, receipts tests 2/2 | H | PASS |
-| 129 | Are test counts current and machine-verifiable? | 271+33 vitest, 6/6 e2e, manifest + drift enforced in CI | CI `verify`+`e2e`+`drift` green | H | PASS |
+| 129 | Are test counts current and machine-verifiable? | 280+33 vitest, 6/6 e2e, manifest + drift enforced in CI | CI `verify`+`e2e`+`drift` green | H | PASS |
 | 130 | Does the README accurately explain every AI component? | Post-P0-D rewrite; drift-governed; gallery + live paths documented | `README.md`, drift check | M | PASS |
 | 131 | Does Devpost accurately reflect current sponsor usage? | Full rewrite: honest per-sponsor statuses, verified counts, TBD video | `DEVPOST_DRAFT.md` | H | PASS |
 | 132 | Can the demo survive an interrupted agent turn? | 503/422 semantics + timeouts tested; no dedicated interruption e2e | smoke expectations, adapter tests | M | PARTIAL |
@@ -229,7 +229,7 @@ Both FAILs remain the owner's steps: <3-min video, one usability session.
 | 134 | Does the final video communicate without exaggeration? | No video file exists | Q6, `RECORDING_PACKAGE.md`, `TBD:youtube-url` | H | FAIL |
 | 135 | Is the AG Studio license key applied correctly and only as permitted? | Mechanism ready (config → LicenseManager); no key installed, watermark remains | `routes.ts` config, `AG_GRID_STATUS.md` | M | PARTIAL |
 | 136 | Are all third-party components properly attributed? | Vendor notice, license files, per-sponsor status docs | `vendor/*.NOTICE*`, `docs/sponsors/` | M | PASS |
-| 137 | Can a clean checkout reproduce the non-secret functionality? | CI Ubuntu `npm ci` → build → 271+33 → e2e authoritative green | CI runs, `RELEASE_GATE.md` | H | PASS |
+| 137 | Can a clean checkout reproduce the non-secret functionality? | CI Ubuntu `npm ci` → build → 280+33 → e2e authoritative green | CI runs, `RELEASE_GATE.md` | H | PASS |
 | 138 | Are all sponsor claims supported by actual usage? | Drift-governed; non-claims filed for unused sponsors | drift check, `DEVPOST_DRAFT.md` | H | PASS |
 | 139 | Is the deployment likely to remain available during December judging? | Box healthy now; depends on owner credits/box to Dec 15 | `VULTR_HOSTING.md`, health checks | M | PARTIAL |
 

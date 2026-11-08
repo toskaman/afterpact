@@ -8,7 +8,7 @@ Full rationale: `docs/hackathon/OMEGA_II_FINAL_REPORT.md` §G.
 
 | Criterion | Score | Evidence | Deductions |
 |---|---:|---|---|
-| Technological Implementation | 9/10 | B1–B5: licensing-clean Studio, build-SHA, artifact-pinned PayPal/Channel3, gallery, per-run bounds + concurrency 8/8; 271+33 + 6/6 e2e + Newman 37/37+18/18, CI green | −1 single-node JSON store + no chaos suite (sessions bounded, not fully isolated) |
+| Technological Implementation | 9/10 | B1–B5: licensing-clean Studio, build-SHA, artifact-pinned PayPal/Channel3, gallery, per-run bounds + concurrency 8/8; 280+33 + 6/6 e2e + Newman 37/37+18/18, CI green | −1 single-node JSON store + no chaos suite (sessions bounded, not fully isolated) |
 | Design | 9/10 | Signature Studio theme e2e-pinned; Twin DIVERGENCE strip; a11y live regions + tabs; origin badges everywhere | −1 no independent usability session (package ready, Q84/Q127 FAIL) |
 | Potential Impact | 8/10 | Merchant enterprise case + 5-scenario study package + labeled ROI sketch; structural 8→3 win measured | −2 no interviews/users, no measured human timings (Q126/Q127 FAIL) |
 | Innovation | 9/10 | 13-stage lifecycle evidence table vs 15+ entries; 90-scenario committed eval corpus; captured-payment tail owned | −1 no durable moat proof yet (pilots + data pending) |
