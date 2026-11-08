@@ -49,15 +49,16 @@ The "Why not AG Studio" evaluation below is superseded: Studio IS used
   hackathon-demo use is drafted in `docs/sponsors/ag-studio-trial.md`
   (not yet sent); judging-window coverage (Dec 1–15) is UNKNOWN until
   AG Grid confirms.
-- **Prize intent: pursue Best Use of AG Studio** as the single sponsor
+- **Prize intent: pursue Best Use of AG Grid** (official Devpost name;
+  AG Grid's blog calls it "Best Use of AG Studio") as the single sponsor
   prize, on genuine usage (real canvas + real Agent Framework over live
   data). If consent is declined, the entry falls back to the honestly
   labeled Community edition before judging.
 
 ## Prize implication
 
-The AG Grid sponsor prize is judged as "Best Use of AG Studio" (rules
-audit §Sponsor criteria). With real Studio usage plus the Community
+The AG Grid sponsor prize is "Best Use of AG Grid" (rules audit
+§Sponsor criteria). With real Studio usage plus the Community
 foundation, the entry claims this prize; the Studio also strengthens the
 Grand-prize case (Technological Implementation + Design).
 

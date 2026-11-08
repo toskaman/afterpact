@@ -50,6 +50,17 @@ is real but unexecuted — set the key on the demo host (or a local `.env`)
 to make the live path demoable. Live execution is NOT VERIFIED until a
 keyed run commits its evidence (see manifest `channel3Live`).
 
+## TITAN III decision (2026-11-08): no Channel3 prize claim
+
+Gap assessed: offer SELECTION (copilot compare → promise → payment) still
+runs on the simulated catalog; Channel3 feeds Discovery and flagship Act 2
+candidates (advisory) when keyed, and no key is installed on the demo box.
+Closing the gap would rewire the purchase path days before the deadline,
+risking the PayPal demo for a $1,500 prize while only one sponsor prize
+may be claimed. AG Grid ("Best Use of AG Grid", $5,000) stays the single
+sponsor target. Channel3 remains a real, honestly labeled integration —
+not a prize claim.
+
 ## Files
 
 - `apps/api/src/channel3.ts` — client, normalization, comparison

@@ -102,9 +102,10 @@ substantially different.
 Sponsor prizes are open to all eligible submissions that USE that sponsor's
 tools (rules §8). Partner roles per the PayPal dev blog:
 
-- AG Grid via AG Studio: embedded analytics/dashboards/AI assistant
-  ("Best Use of AG Studio"). Judged on polish (custom widgets, theming,
-  layout) + use of Studio Agent Framework.
+- AG Grid via AG Studio: embedded analytics/dashboards/AI assistant.
+  Official Devpost prize name is "Best Use of AG Grid" (AG Grid's blog
+  calls it "Best Use of AG Studio"). Judged on polish (custom widgets,
+  theming, layout) + use of Studio Agent Framework.
 - APIMatic: Context Plugin giving AI agents PayPal API context.
 - Bryntum: Gantt/Scheduler/Calendar/Grid web components.
 - Channel3: product-data API (100M+ items); must actually CALL the API or MCP

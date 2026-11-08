@@ -53,6 +53,9 @@ contact (or info@ag-grid.com) and file the reply here:
 
 ## Fallback
 
-If consent is declined or the trial cannot cover judging: remove the
-Studio canvas path, keep the Community tables (MIT, vendored), and
-retract the AG Grid sponsor claim to Community-only usage.
+If consent is declined or the trial cannot cover judging: set
+`AG_STUDIO_DISABLED=1` on the demo box and redeploy — the Studio UMD is
+never loaded and the view serves Community tables only (tested in
+`tests/integration/sponsors.studio-toggle.test.ts`). Then retract the
+AG Grid sponsor claim to Community-only usage. Cutoff: Nov 11 EOD;
+without written consent by then, ship Community-only.

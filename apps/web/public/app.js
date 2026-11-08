@@ -1177,9 +1177,10 @@ async function renderDemo() {
 
 /* ================================================================
    VIEW: Intelligence Studio (AG Studio canvas + agent, Community tables)
-   The canvas is real AG Studio (vendored UMD, trial watermark until a
-   licence key is configured). Tables below use AG Grid Community
-   (vendored) when available, with an honest native-table fallback.
+   The canvas is real AG Studio (official CDN, SRI-pinned, trial
+   watermark until a licence key is configured). Tables below use AG
+   Grid Community (vendored, MIT) when available, with an honest
+   native-table fallback.
    ================================================================ */
 const studio = { datasets: null, entity: "incidents", crossPromiseId: null, nl: null, gridApi: null, api: null };
 
@@ -1284,10 +1285,14 @@ async function mountAgStudio(datasets) {
   const host = $("#agStudioHost");
   if (!host) return;
   try {
+    const config = await api("/api/config");
+    if (config.agStudio && config.agStudio.enabled === false) {
+      host.innerHTML = `<p class="small muted">AG Studio canvas disabled on this box (consent fallback). The Community tables below stay fully functional.</p>`;
+      return;
+    }
     await loadAgStudioBundle();
     await loadScriptOnce("/ag-studio-adapter.js");
     syncAgStudioThemeMode();
-    const config = await api("/api/config");
     const key = config.agStudio && typeof config.agStudio.licenseKey === "string" ? config.agStudio.licenseKey : null;
     if (key) {
       window.agStudio.AgStudioLicenseManager.setLicenseKey(key);

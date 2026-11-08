@@ -522,6 +522,10 @@ export class Ops {
         bryntum: "fallback-timeline",
       },
       agStudio: {
+        // Consent kill-switch: AG_STUDIO_DISABLED=1 keeps the trial UMD
+        // unloadable; the view falls back to Community tables (see
+        // docs/sponsors/ag-studio-trial.md fallback).
+        enabled: this.env["AG_STUDIO_DISABLED"] !== "1",
         licensed: studioKey !== "",
         // AG licence keys install client-side by design (every production
         // bundle carries one); the key stays out of git via deploy-time env.
