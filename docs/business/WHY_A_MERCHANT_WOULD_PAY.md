@@ -49,7 +49,8 @@ Three costed pains (ASSUMED magnitudes, MEASURED structure):
 
 Source: `docs/benchmarks/OPERATOR_IMPACT.md` (controlled self-test, same
 case both paths; NOT measured human timings — see §7). Machine overhead is
-20 ms fallback / ~4 s with one live inference call: the tool adds no
+now measured: 637 ms total across the 6 UI tasks on localhost
+(`docs/benchmarks/WALKTHROUGH_INTERNAL.md`, internal n=1): the tool adds no
 friction; the structural claim is fewer places for an operator to err.
 
 Illustrative value sketch (ASSUMED rates): 30 min at €30/h fully loaded =
@@ -85,8 +86,9 @@ for outcomes.
 
 ## 7. What could block adoption (honest limitations)
 
-- **No independent user validation yet.** All time figures are estimates;
-  the lab-study package is ready (`docs/benchmarks/USABILITY_STUDY.md`)
+- **No independent user validation yet.** Machine times are measured
+  (637 ms, `WALKTHROUGH_INTERNAL.md`); human times are still estimates.
+  The lab-study package is ready (`docs/benchmarks/USABILITY_STUDY.md`)
   but no external session has run. An enterprise pilot starts here.
 - **Single-node JSON persistence.** Documented limitation; SQLite/PostgreSQL
   migration is future work. Fine for pilot scale, not for enterprise volume.
