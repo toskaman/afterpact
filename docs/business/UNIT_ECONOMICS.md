@@ -9,7 +9,7 @@
 | Driver | Assumption | Notes |
 |---|---|---|
 | Compute (API + store) | negligible at pilot scale | Node + JSON snapshot store (SQLite migration is future work); hosted cost dominated by base tier |
-| AI inference | zero in current build (no live LLM) | If an LLM is added: strict-output calls only, budget per incident |
+| AI inference | measured: $0.0393 for 90 eval scenarios (~$0.00044/scenario) on Vultr `deepseek-v4.1-flash-1017` | `apps/web/public/gallery/ai-gallery.json` totals; production per-incident cost still unmeasured — pilot must meter it |
 | PayPal fees | merchant's existing processing cost | AFTERPACT adds no per-transaction PayPal fee |
 | Operator time (with AFTERPACT) | 3–8 min/case vs 15–45 manual | Hypothesis H1; measure in pilot |
 | Evidence storage | cents per case | Redacted bundles, retention-tiered |
