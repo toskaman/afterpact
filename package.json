@@ -17,7 +17,8 @@
     "build": "tsc -p apps/api",
     "start": "node apps/api/dist/apps/api/src/index.js",
     "bench": "node scripts/bench.mjs",
-    "vendor:ag-grid": "node scripts/vendor-ag-grid.mjs"
+    "vendor:ag-grid": "node scripts/vendor-ag-grid.mjs",
+    "vendor:ag-studio": "node scripts/vendor-ag-studio.mjs"
   },
   "dependencies": {
     "zod": "4.6.7"
