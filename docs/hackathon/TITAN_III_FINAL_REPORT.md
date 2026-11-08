@@ -3,9 +3,12 @@
 ## A. Verified repository status
 
 - Repo: `https://github.com/toskaman/afterpact` (public, MIT), branch `main`.
-- HEAD: `ba9edc8a03ccede9aa60b6ea1da71fdadc156896`.
-- CI: run `42479179914` — `verify` SUCCESS, `e2e` SUCCESS, `drift` SUCCESS.
-- Deployed SHA: `ba9edc8` (= HEAD), verified live post-deploy.
+- HEAD: `72ea34b` (docs-close; runtime code identical since `ba9edc8`).
+- CI: run `42479939443` — `verify` SUCCESS, `e2e` SUCCESS, `drift` SUCCESS
+  (prior full-green: `42479179914` on `ba9edc8`).
+- Deployed SHA: `d1e79f2`, verified live post-deploy (chain valid,
+  flagship `completed`, anon reset 401, `keyed:false`); runtime code is
+  identical from `ba9edc8` through HEAD (docs-only deltas).
 - Suite: **288 passed / 33 skipped / 0 failed** (vitest) + **7/7 Playwright** +
   Newman 37/37 reqs, 18/18 assertions + `tsc` clean (6 projects) + drift-ok.
 - Public demo: `https://199.247.9.188.nip.io` — health ok, audit chain
