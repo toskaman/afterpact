@@ -118,10 +118,10 @@ Nothing is PASS on confidence alone — every PASS names its artifact.
 |---|---|---|---|---|---|
 | 71 | Are module boundaries clean? | domain/policy/payments/api/web packages; demo uses same Ops methods as routes | repo layout, gate deliberates | M | PASS |
 | 72 | Zero `tsc` errors on strict settings? | Exit 0 on 6 projects (strict + noUncheckedIndexedAccess) | OMEGA run 2026-11-08 | H | PASS |
-| 73 | Full suite green? | 255 passed + 33 skipped (30 live-eval + 3 probes, keys absent) + 5 Playwright E2E | OMEGA II run 2026-11-08 | H | PASS |
+| 73 | Full suite green? | 255 passed + 33 skipped (30 live-eval + 3 probes, keys absent) + 6 Playwright E2E | OMEGA II run 2026-11-08 | H | PASS |
 | 74 | Concurrency suite exists? | Same-key serialization + duplicate capture/refund + webhook dedupe | safety + flows tests | M | PASS |
 | 75 | Adversarial suite exists? | Injection double-block, replay/tamper/mismatch/over-refund/expired negatives | `apps.api`, safety tests | M | PASS |
-| 76 | E2E beyond unit/integration? | Playwright chromium in CI: dashboard, copilot, twin, recovery, studio mount; 5 specs green, 0 page errors | `tests/e2e/`, `ci.yml` e2e job | M | PASS |
+| 76 | E2E beyond unit/integration? | Playwright chromium in CI: dashboard, copilot, twin, recovery, studio mount, ai-gallery; 6 specs green, 0 page errors | `tests/e2e/`, `ci.yml` e2e job | M | PASS |
 | 77 | Performance measured? | Machine bench + AI eval latencies (p50 3.1 s, p95 6.3 s) + operator benchmark; no load test | `IMPACT_BENCHMARK.md`, `docs/evals/` | L | PARTIAL |
 | 78 | Outage behavior specified? | Fail-closed discovery/AI (evals cover timeout/outage/mismatch), kill switch, webhook redelivery; no chaos suite | `channel3.ts`, `config.ts`, `ai-eval` | M | PARTIAL |
 | 79 | Secrets handling verified? | No `.env`, placeholders only, redaction tests, presence-boolean status | gate 13, `redact.ts` | H | PASS |

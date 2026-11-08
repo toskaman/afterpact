@@ -14,7 +14,7 @@ Verification baseline (2026-11-08; supersedes the 2026-11-07 baseline at
 **255 passed, 33 skipped** (skips = keyless live probes + live evals);
 `tsc -p apps/api` build exit 0; `node --check` on
 `apps/web/public/app.js` exit 0; Newman executed (37/37 requests, 18/18
-assertions); Playwright E2E 5/5 in CI; no secrets in repo (`.env` absent,
+assertions); Playwright E2E 6/6 in CI; no secrets in repo (`.env` absent,
 `.env.example` placeholders only). Machine source of truth:
 `docs/hackathon/RELEASE_EVIDENCE_MANIFEST.json`.
 

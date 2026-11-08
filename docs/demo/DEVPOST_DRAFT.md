@@ -53,7 +53,7 @@ data plus AG Grid Community analytics, a dependency-aware recovery
 timeline, a Newman-verified 38-request Postman collection, and Vultr
 hosting round out the build. 255 automated tests green (+33 keyless skips — live probes that skip
 visibly without credentials), strict `tsc` clean on 6 projects,
-5 Playwright E2E green. Every on-screen capability carries an origin badge (`REAL API`,
+6 Playwright E2E green. Every on-screen capability carries an origin badge (`REAL API`,
 `PAYPAL SANDBOX · LIVE`, `SIMULATED · MOCK`, `AI · LIVE` / `AI · OFF`, …)
 so judges can see exactly what is live and what is labeled simulation.
 
