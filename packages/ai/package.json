@@ -1,0 +1,12 @@
+{
+  "name": "@afterpact/ai",
+  "version": "0.1.0",
+  "description": "AFTERPACT runtime AI: provider abstraction, structured inference, fallbacks, cost ledger",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "dependencies": {
+    "zod": "4.6.7"
+  }
+}
