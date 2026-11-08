@@ -2,24 +2,25 @@
 
 Internal scoring against the five official criteria. Scores are evidence-based
 and deliberately strict; they are NOT official results. See
-`docs/audit/100_QUESTIONS.md` (114 questions: 97 PASS / 14 PARTIAL / 2 FAIL /
-1 UNKNOWN after the OMEGA II live-artifacts pass) for the underlying audit.
+`docs/audit/100_QUESTIONS.md` (139 questions: 110 PASS / 22 PARTIAL /
+5 FAIL / 2 UNKNOWN after the OMEGA II appendix) for the underlying audit.
+Full rationale: `docs/hackathon/OMEGA_II_FINAL_REPORT.md` §G.
 
 | Criterion | Score | Evidence | Deductions |
 |---|---:|---|---|
-| Technological Implementation | 8/10 | Real PayPal sandbox full-loop (order/capture/refund IDs, receipts artifact re-verified 2026-11-08); real Vultr inference with identity checks; deterministic policy gates; 267 unit/integration tests + 53-scenario AI eval + 6 Playwright E2E, all green in CI; Newman 37/37 | −1 single-node JSON store, no chaos suite; −1 demo state shared across visitors (no per-session isolation) |
-| Design | 8/10 | 10 coherent views incl. Outcome Twin and real Studio canvas; dark/light, responsive, focus states, reduced-motion; origin badges on every surface | −1 no usability session (Q84 FAIL); −1 Studio canvas uses default theme (no dark-mode token match) |
-| Potential Impact | 7/10 | Crisp persona (merchant-ops refund queue); controlled self-test (8 manual touchpoints vs 3 assisted decisions, measured); honest hypotheses, no invented savings | −2 no interviews, no measured human timings; −1 time estimates only |
-| Innovation | 8/10 | Post-payment outcome assurance as a platform: structured promises + verified outcomes + evidence-grounded AI + deterministic gates + human-authorized PayPal refunds + tamper-evident trail + agent-built analytics | −1 competitors now show agentic analytics too (differentiation is the combination, not each part); −1 no outcome-verification moat data yet |
-| Presentation | 6/10 | Hosted demo live (TLS, one-click flagship); 13 screenshots; complete Devpost draft; demo script with shot list; docs coherent | −4 VIDEO MISSING (owner step, required by the rules) |
+| Technological Implementation | 9/10 | B1–B5: licensing-clean Studio, build-SHA, artifact-pinned PayPal/Channel3, gallery, per-run bounds + concurrency 8/8; 267+33 + 6/6 e2e + Newman 37/37+18/18, CI green | −1 single-node JSON store + no chaos suite (sessions bounded, not fully isolated) |
+| Design | 9/10 | Signature Studio theme e2e-pinned; Twin DIVERGENCE strip; a11y live regions + tabs; origin badges everywhere | −1 no independent usability session (package ready, Q84/Q127 FAIL) |
+| Potential Impact | 8/10 | Merchant enterprise case + 5-scenario study package + labeled ROI sketch; structural 8→3 win measured | −2 no interviews/users, no measured human timings (Q126/Q127 FAIL) |
+| Innovation | 9/10 | 13-stage lifecycle evidence table vs 15+ entries; 90-scenario committed eval corpus; captured-payment tail owned | −1 no durable moat proof yet (pilots + data pending) |
+| Presentation | 7/10 | Demo live @ HEAD build; Devpost rewritten; recording package exact; gallery + docs coherent | −3 VIDEO FILE MISSING (owner step, Q6/Q134 FAIL) |
 
-Total: **37/50**.
+Total: **42/50** (was 37; +5 evidenced, nothing forced).
 
 ## What flips the score before submission
 
-1. Owner records + publishes the <3-min video → Presentation 6 → 8/9.
-2. One usability session with an outsider (30 min, scripted tasks) →
-   Design +1, Impact +1, clears Q84.
-3. Trial licence key installed + redeploy (watermark gone) → strengthens
-   the sponsor slice inside Technological Implementation.
-4. Trial key dates confirmed to cover Dec 1–15 → clears Q112, de-risks Q111.
+1. Owner records + publishes the <3-min video → Presentation 7 → 9/10.
+2. One usability session with an outsider (30 min, `USABILITY_STUDY.md`) →
+   Design +1, Impact +1, clears Q84/Q126/Q127.
+3. Trial licence key installed + redeploy (watermark gone) → clears
+   Q112/Q117, strengthens the sponsor slice.
+4. Consent request sent to AG Grid → clears Q10/Q116 residual.

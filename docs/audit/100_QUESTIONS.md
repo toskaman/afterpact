@@ -203,3 +203,40 @@ Q10/Q20/Q24/Q40/Q69/Q72/Q73/Q77/Q78/Q81/Q88/Q100 answers refreshed with
 OMEGA evidence; 14 OMEGA questions added (10 PASS, 3 PARTIAL, 1 UNKNOWN).
 Both FAILs remain the owner's steps: <3-min video, one usability session.
 
+## OMEGA II appendix (25 questions, 2026-11-08)
+
+| # | Question | Status 2026-11-08 | Evidence | Pri | Verdict |
+|---|---|---|---|---|---|
+| 115 | Are all public documentation claims synchronized with the latest commit? | Manifest + drift green at HEAD; tallies 267+33 flipped same-commit | `RELEASE_EVIDENCE_MANIFEST.json`, `check-docs-drift.mjs`, CI `drift` | H | PASS |
+| 116 | Is commercial AG Studio redistribution expressly permitted? | UMD un-vendored; official-CDN-first + pinned fallback + notice; historical git bytes remain; consent drafted, not sent | `vendor/ag-studio.NOTICE.txt`, `AG_GRID_STATUS.md`, Q10 | H | PARTIAL |
+| 117 | Is the trial valid during the entire judging period? | No trial key obtained; coverage unknown until the owner registers | Q112, owner action | H | UNKNOWN |
+| 118 | Can a judge independently verify the AI without paid inference? | Gallery: 3 runs, model id, citations, latency/cost + reproduce recipe, keyless | `#/ai-gallery`, `ai.gallery.test.ts` 6/6 | H | PASS |
+| 119 | Is a recorded inference clearly distinguished from a live inference? | RECORDED VERIFIED AI RUN badge + NO INFERENCE labels; e2e asserts no live claims | `gallery.e2e.ts`, contract tests | H | PASS |
+| 120 | Can two concurrent judges interfere with each other's session? | Per-run token reset + cap + concurrency tests; global lists/audit still shared | `demo.sessions.test.ts` 8/8, P1-S bounds | H | PARTIAL |
+| 121 | Are demo reset and export operations appropriately isolated? | Reset per-run token-gated; export still global view | `POST /api/demo/runs/:id/reset`, P1-S | M | PARTIAL |
+| 122 | Is the public demo resistant to deliberate resource exhaustion? | Rate limits + max 50 runs + 429; no session TTL/cleanup | `AFTERPACT_MAX_DEMO_RUNS`, rate-limit tests | M | PARTIAL |
+| 123 | Does the Studio look and behave like an integrated product? | Signature theme dark/light via withParams + mode sync, e2e-pinned | `buildAfterpactStudioTheme`, `studio.e2e.ts` | M | PASS |
+| 124 | Does the Studio agent genuinely modify live analytics? | 13-turn live interaction + Vultr adapter + widget-from-data evidence preserved | OMEGA report, `studioAgent` tests | H | PASS |
+| 125 | Does the Outcome Twin reduce the time to understand an incident? | DIVERGENCE strip + 3 realities + text equivalents; no measured timings | `twin-divergence`, `twin.e2e.ts` | M | PARTIAL |
+| 126 | Are human impact figures genuinely measured? | Estimates only; study package ready, zero sessions run | `OPERATOR_IMPACT.md`, `USABILITY_STUDY.md` §6 | H | FAIL |
+| 127 | Have real users independently tested the product? | None; owner action to recruit | Q84, `USABILITY_STUDY.md` | H | FAIL |
+| 128 | Are financial claims traceable to provider evidence? | Receipts artifact test-pinned (order/capture/refund ids + statuses) | `paypal-live-receipts.json`, receipts tests 2/2 | H | PASS |
+| 129 | Are test counts current and machine-verifiable? | 267+33 vitest, 6/6 e2e, manifest + drift enforced in CI | CI `verify`+`e2e`+`drift` green | H | PASS |
+| 130 | Does the README accurately explain every AI component? | Post-P0-D rewrite; drift-governed; gallery + live paths documented | `README.md`, drift check | M | PASS |
+| 131 | Does Devpost accurately reflect current sponsor usage? | Full rewrite: honest per-sponsor statuses, verified counts, TBD video | `DEVPOST_DRAFT.md` | H | PASS |
+| 132 | Can the demo survive an interrupted agent turn? | 503/422 semantics + timeouts tested; no dedicated interruption e2e | smoke expectations, adapter tests | M | PARTIAL |
+| 133 | Can the demo survive a concurrent reset attempt? | Exact-id sweep + token gate + concurrency tests incl. reset races | `demo.sessions.test.ts` 8/8 | M | PASS |
+| 134 | Does the final video communicate without exaggeration? | No video file exists | Q6, `RECORDING_PACKAGE.md`, `TBD:youtube-url` | H | FAIL |
+| 135 | Is the AG Studio license key applied correctly and only as permitted? | Mechanism ready (config → LicenseManager); no key installed, watermark remains | `routes.ts` config, `AG_GRID_STATUS.md` | M | PARTIAL |
+| 136 | Are all third-party components properly attributed? | Vendor notice, license files, per-sponsor status docs | `vendor/*.NOTICE*`, `docs/sponsors/` | M | PASS |
+| 137 | Can a clean checkout reproduce the non-secret functionality? | CI Ubuntu `npm ci` → build → 267+33 → e2e authoritative green | CI runs, `RELEASE_GATE.md` | H | PASS |
+| 138 | Are all sponsor claims supported by actual usage? | Drift-governed; non-claims filed for unused sponsors | drift check, `DEVPOST_DRAFT.md` | H | PASS |
+| 139 | Is the deployment likely to remain available during December judging? | Box healthy now; depends on owner credits/box to Dec 15 | `VULTR_HOSTING.md`, health checks | M | PARTIAL |
+
+## Tally (2026-11-08 OMEGA II appendix)
+
+Appendix: PASS 13 · PARTIAL 8 · FAIL 3 (Q126 measured impact, Q127 users,
+Q134 video) · UNKNOWN 1 (Q117 trial coverage). Combined 139: PASS 110 ·
+PARTIAL 22 · FAIL 5 (Q6, Q84, Q126, Q127, Q134 — video + independent users,
+both owner actions) · UNKNOWN 2 (Q112/Q117 trial window, owner action).
+
