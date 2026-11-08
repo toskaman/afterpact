@@ -76,6 +76,7 @@ const ORIGINS = {
   "channel3-unavailable": { label: "DISCOVERY UNAVAILABLE", cls: "warn" },
   "ai-live": { label: "AI · LIVE", cls: "accent" },
   "ai-off": { label: "AI · OFF (HEURISTIC)", cls: "info" },
+  "recorded-ai": { label: "RECORDED VERIFIED AI RUN", cls: "violet" },
   "ag-grid-community": { label: "AG GRID COMMUNITY", cls: "ok" },
   "native-table": { label: "NATIVE TABLE FALLBACK", cls: "info" },
   "computed-schedule": { label: "COMPUTED SCHEDULE", cls: "violet" },
@@ -1752,6 +1753,94 @@ function currentRoute() {
   return { path: path || "/", params: new URLSearchParams(query ?? "") };
 }
 
+/* ---------- VIEW: AI Evidence Gallery (recorded, never live) ---------- */
+const aiGallery = { task: "all" };
+
+function formatCostUsd(value) {
+  const n = Number(value);
+  if (!Number.isFinite(n)) return "—";
+  return `$${n.toFixed(6)}`;
+}
+
+function gallerySampleHtml(sample) {
+  if (!sample || typeof sample !== "object") return "";
+  const parts = [];
+  if (typeof sample.interpretation === "string" && sample.interpretation) {
+    parts.push(`<p class="sample-text">“${escapeHtml(sample.interpretation)}”</p>`);
+  }
+  if (typeof sample.rationale === "string" && sample.rationale) {
+    parts.push(`<p class="sample-text">“${escapeHtml(sample.rationale)}”</p>`);
+  }
+  for (const key of ["requirements", "ambiguities"]) {
+    const list = sample[key];
+    if (Array.isArray(list) && list.length > 0) {
+      parts.push(`<h3>${key === "requirements" ? "Requirements stated" : "Ambiguities flagged"}</h3><ul>${list.map((x) => `<li class="small">${escapeHtml(String(x))}</li>`).join("")}</ul>`);
+    }
+  }
+  const c = sample.constraints;
+  if (c && typeof c === "object") {
+    const rows = Object.entries(c).map(([k, v]) => `<li class="small"><span class="mono">${escapeHtml(k)}</span>: <span class="mono">${escapeHtml(v === null ? "null" : String(v))}</span></li>`).join("");
+    parts.push(`<h3>Structured constraints (model output)</h3><ul>${rows}</ul>`);
+  }
+  return parts.join("");
+}
+
+function galleryCardHtml(f) {
+  const taskCls = f.task === "intent" ? "info" : f.task === "incident" ? "warn" : "accent";
+  const meta = [];
+  meta.push(`model <span class="mono">${escapeHtml(f.modelServed)}</span>`);
+  meta.push(`${escapeHtml(String(f.latencyMs))} ms`);
+  meta.push(`${escapeHtml(String(f.promptTokens))}+${escapeHtml(String(f.completionTokens))} tokens`);
+  meta.push(formatCostUsd(f.costUsd));
+  meta.push(`citations ${escapeHtml(String(f.citationsKept))} kept / ${escapeHtml(String(f.citationsDropped))} dropped`);
+  if (f.category) meta.push(`category <span class="mono">${escapeHtml(f.category)}</span>`);
+  if (f.strategy) meta.push(`strategy <span class="mono">${escapeHtml(f.strategy)}</span>`);
+  if (f.gateVerdict) meta.push(`gate <span class="mono">${escapeHtml(f.gateVerdict)}</span>`);
+  if (f.fallbackUsed) meta.push(`fallback used`);
+  const checks = (f.checks ?? []).map((c) => `<li class="small"><span class="pill ${c.pass ? "ok" : "bad"}">${c.pass ? "OK" : "FAIL"}</span> <span class="mono">${escapeHtml(c.check)}</span></li>`).join("");
+  return `<div class="card section-gap"><h2><span class="mono">${escapeHtml(f.id)}</span></h2>
+    <div class="badge-row"><span class="pill ${taskCls}">${escapeHtml(String(f.task).toUpperCase())}</span>${originPill("recorded-ai")}<span class="pill ${f.pass ? "ok" : "bad"}">${f.pass ? "PASS" : "FAIL"}</span></div>
+    <p class="small muted">${meta.join(" · ")}</p>
+    ${gallerySampleHtml(f.sample)}
+    <details><summary class="small">Validation checks: ${escapeHtml(String(f.checksPassed))}/${escapeHtml(String(f.checksTotal))}</summary><ul>${checks}</ul></details>
+    <p class="small muted">Source: <span class="mono">${escapeHtml(f.sourceReport)}</span></p></div>`;
+}
+
+async function renderAiGallery() {
+  setNav("ai-gallery");
+  const head = viewHead("AI Evidence Gallery", "Authentic model outputs recorded during keyed evaluation runs — shown here as evidence, never re-executed. The public demo ships without an inference key.");
+  view().innerHTML = head + loadingState();
+  try {
+    const res = await fetch("gallery/ai-gallery.json");
+    if (!res.ok) throw new Error(`Gallery data unavailable (HTTP ${res.status})`);
+    const g = await res.json();
+    const tasks = ["all", "intent", "incident", "recovery"];
+    const list = g.featured.filter((f) => aiGallery.task === "all" || f.task === aiGallery.task);
+    const kpis = `<div class="grid kpi section-gap">
+      <div class="card"><div class="kpi-value">${escapeHtml(String(g.totals.passed))}/${escapeHtml(String(g.totals.scenarios))}</div><div class="kpi-label">Scenarios passed (3 runs)</div><div class="kpi-sub">Failures kept in the record, not hidden</div></div>
+      <div class="card"><div class="kpi-value">${escapeHtml(String(Math.min(...g.runs.map((r) => r.citationPrecision)).toFixed(3)))}</div><div class="kpi-label">Min citation precision</div><div class="kpi-sub">${escapeHtml(String(g.runs.reduce((n, r) => n + r.citationsKept, 0)))} kept, ${escapeHtml(String(g.runs.reduce((n, r) => n + r.citationsDropped, 0)))} dropped</div></div>
+      <div class="card"><div class="kpi-value">${formatCostUsd(g.totals.costUsd)}</div><div class="kpi-label">Total recorded inference cost</div><div class="kpi-sub">${escapeHtml(g.provider)} · <span class="mono">${escapeHtml(g.model)}</span></div></div>
+    </div>`;
+    const runs = `<div class="card section-gap"><h2>Recorded runs</h2><div class="table-wrap"><table class="data-table"><thead><tr><th scope="col">Recorded</th><th scope="col">Passed</th><th scope="col">Citation prec.</th><th scope="col">Latency p50/p95</th><th scope="col">Cost</th><th scope="col">Report</th></tr></thead><tbody>
+      ${g.runs.map((r) => `<tr><td>${formatTime(r.recordedAt)}</td><td class="num">${escapeHtml(String(r.passed))}/${escapeHtml(String(r.scenarios))}</td><td class="num">${escapeHtml(String(Number(r.citationPrecision).toFixed(3)))}</td><td class="num">${escapeHtml(String(r.latencyP50Ms))}/${escapeHtml(String(r.latencyP95Ms))} ms</td><td class="num">${formatCostUsd(r.costUsd)}</td><td><span class="mono">${escapeHtml(r.report)}</span></td></tr>`).join("")}</tbody></table></div>
+      <p class="small muted">${escapeHtml(g.notice)}</p></div>`;
+    const featured = `<div class="card section-gap"><h2>Featured runs</h2>
+      <div class="field"><label for="galleryTask">Task</label><select id="galleryTask">${tasks.map((t) => `<option value="${t}"${t === aiGallery.task ? " selected" : ""}>${t === "all" ? "All tasks" : t}</option>`).join("")}</select></div></div>
+      ${list.map(galleryCardHtml).join("") || emptyState("❖", "No featured runs", "No recorded outcome matches this task filter.")}`;
+    const repro = `<div class="card section-gap"><h2>Reproduce with your own key</h2>
+      <p class="small">Requires: <span class="mono">${escapeHtml(g.reproduce.requires)}</span></p>
+      <pre class="mono">${escapeHtml(g.reproduce.steps.join("\n"))}</pre>
+      <p class="small muted">${escapeHtml(g.reproduce.note)}</p></div>`;
+    view().innerHTML = head + `<div class="badge-row section-gap">${originPill("recorded-ai")}<span class="pill">NO INFERENCE ON THIS PAGE</span></div>` + kpis + runs + featured + repro;
+    $("#galleryTask")?.addEventListener("change", (ev) => {
+      aiGallery.task = ev.target.value;
+      void renderAiGallery();
+    });
+  } catch (err) {
+    view().innerHTML = head + errorBanner(err.message);
+  }
+}
+
 async function route() {
   const { path, params } = currentRoute();
   $("#sidenav").classList.remove("open");
@@ -1768,6 +1857,7 @@ async function route() {
   if (path === "/recorder") return renderRecorder(params.get("promiseId") ?? "");
   if (path === "/developer") return renderDeveloper();
   if (path === "/demo") return renderDemo();
+  if (path === "/ai-gallery") return renderAiGallery();
   setNav("");
   view().innerHTML = viewHead("Not found", "") + `<div class="card">${emptyState("◈", "Unknown view", "That route does not exist.", '<p><a class="button small" href="#/">Back to Command Center</a></p>')}</div>`;
 }

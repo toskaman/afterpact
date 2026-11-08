@@ -20,6 +20,7 @@ plus 5 Playwright browser specs in `tests/e2e/` (CI `e2e` job, Chromium).
 | `#/recorder` | Flight Recorder | Filterable hash-chained timeline, step replay, chain-validity badge, redacted export download |
 | `#/developer` | Developer Center | API health, sandbox config (redacted), integration status, kill-switch test tool, endpoint reference |
 | `#/demo` | Demo / Jury Mode | Reproducible flagship + injection scenarios, provenance legend, safe reset |
+| `#/ai-gallery` | AI Evidence Gallery | RECORDED VERIFIED AI RUNs: run totals, featured model outputs with latency/cost/citations/gate verdicts, reproduce recipe — no inference on the page |
 
 ## Jury script — “The Purchase That Went Wrong” (~3 min)
 

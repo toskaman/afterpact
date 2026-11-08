@@ -1,10 +1,10 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-11-08T02:28:34.541Z",
-  "verifiedCommit": "4fcc7c4a72ea99cb46635436058205140e6faf0d",
-  "verifiedCiRun": "https://github.com/toskaman/afterpact/actions/runs/42438631770",
+  "generatedAt": "2026-11-08T02:32:38.529Z",
+  "verifiedCommit": "ad960e6806c262af6b3f9ad8757a5c6943b1dab0",
+  "verifiedCiRun": "https://github.com/toskaman/afterpact/actions/runs/42438707400",
   "suite": {
-    "passed": 249,
+    "passed": 255,
     "failed": 0,
     "skipped": 33
   },
@@ -27,6 +27,7 @@
       "/tests/unit/refund.test.ts",
       "/tests/unit/studio-agent.test.ts",
       "/tests/integration/ai-studio-turn.test.ts",
+      "/tests/integration/ai.gallery.test.ts",
       "/tests/integration/ai.live.test.ts",
       "/tests/integration/ai.tasks.test.ts",
       "/tests/integration/apps.api.test.ts",
@@ -41,14 +42,15 @@
       "/tests/integration/sponsors.discovery.test.ts",
       "/tests/integration/sponsors.studio.timeline.test.ts"
     ],
-    "suiteFileCount": 26,
-    "suiteStaticBlocks": 206,
+    "suiteFileCount": 27,
+    "suiteStaticBlocks": 212,
     "e2eFiles": [
       "/tests/e2e/dashboard.e2e.ts",
+      "/tests/e2e/gallery.e2e.ts",
       "/tests/e2e/studio.e2e.ts",
       "/tests/e2e/twin.e2e.ts"
     ],
-    "e2eStaticBlocks": 5,
+    "e2eStaticBlocks": 6,
     "typecheckProjects": [
       "packages/domain",
       "packages/policy",
