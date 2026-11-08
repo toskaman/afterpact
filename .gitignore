@@ -24,3 +24,5 @@ APIS.txt
 # Grid channel (npm run vendor:ag-studio), never committed (EULA forbids
 # redistribution). See apps/web/public/vendor/ag-studio.NOTICE.txt.
 apps/web/public/vendor/ag-studio.min.js
+# Raw video footage (local only, owner edit)
+/video-rushes/*.webm
