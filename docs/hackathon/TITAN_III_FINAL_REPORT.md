@@ -3,12 +3,12 @@
 ## A. Verified repository status
 
 - Repo: `https://github.com/toskaman/afterpact` (public, MIT), branch `main`.
-- HEAD: `72ea34b` (docs-close; runtime code identical since `ba9edc8`).
-- CI: run `42479939443` — `verify` SUCCESS, `e2e` SUCCESS, `drift` SUCCESS
-  (prior full-green: `42479179914` on `ba9edc8`).
-- Deployed SHA: `d1e79f2`, verified live post-deploy (chain valid,
-  flagship `completed`, anon reset 401, `keyed:false`); runtime code is
-  identical from `ba9edc8` through HEAD (docs-only deltas).
+- Verified configuration (point-in-time; docs-only commits after the
+  freeze do not change it): runtime code frozen at `ba9edc8`, deployed
+  as `d1e79f2` and verified live post-deploy (chain valid, flagship
+  `completed`, anon reset 401, `keyed:false`).
+- CI green on the frozen code and every follow-up (`verify`+`e2e`+`drift`
+  SUCCESS, incl. runs `42479179914`, `42479676785`, `42479939443`).
 - Suite: **288 passed / 33 skipped / 0 failed** (vitest) + **7/7 Playwright** +
   Newman 37/37 reqs, 18/18 assertions + `tsc` clean (6 projects) + drift-ok.
 - Public demo: `https://199.247.9.188.nip.io` — health ok, audit chain
