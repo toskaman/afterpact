@@ -11,6 +11,8 @@ test("outcome twin renders all three realities for a verified recovery", async (
   await expect(page.getByText("VERIFIED REFUND").first()).toBeVisible();
   await expect(page.getByText("CHAIN VALID").first()).toBeVisible();
   await expect(page.getByText("If left unresolved")).toBeVisible();
+  await expect(page.locator(".twin-divergence")).toBeVisible();
+  await expect(page.getByText("DIVERGENCE").first()).toBeVisible();
   expect(errors).toEqual([]);
 });
 

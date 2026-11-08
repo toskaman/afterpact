@@ -11,5 +11,6 @@ test("studio canvas mounts with live sources and trial pill", async ({ page, req
   await expect(host).not.toBeEmpty({ timeout: 30000 });
   await expect(page.locator("#studioLicensePill")).toContainText("TRIAL");
   await expect(page.getByText("AI Assistant").first()).toBeVisible({ timeout: 30000 });
+  await expect(page.locator("html[data-ag-theme-mode]")).toHaveCount(1);
   expect(errors).toEqual([]);
 });

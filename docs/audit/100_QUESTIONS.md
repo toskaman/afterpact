@@ -1,6 +1,6 @@
 # AFTERPACT — 100-Question Self-Audit
 
-Date: 2026-11-07, re-verified 2026-11-08. Baseline: 263 passed +
+Date: 2026-11-07, re-verified 2026-11-08. Baseline: 267 passed +
 33 skipped, `tsc` clean (6 projects), CI green at HEAD (the 2026-11-07
 run recorded 155+1 at `2a26d05`). Status: **PASS** (evidence in repo),
 **PARTIAL** (works with a noted gap), **FAIL** (missing/red),
@@ -118,7 +118,7 @@ Nothing is PASS on confidence alone — every PASS names its artifact.
 |---|---|---|---|---|---|
 | 71 | Are module boundaries clean? | domain/policy/payments/api/web packages; demo uses same Ops methods as routes | repo layout, gate deliberates | M | PASS |
 | 72 | Zero `tsc` errors on strict settings? | Exit 0 on 6 projects (strict + noUncheckedIndexedAccess) | OMEGA run 2026-11-08 | H | PASS |
-| 73 | Full suite green? | 263 passed + 33 skipped (30 live-eval + 3 probes, keys absent) + 6 Playwright E2E | OMEGA II run 2026-11-08 | H | PASS |
+| 73 | Full suite green? | 267 passed + 33 skipped (30 live-eval + 3 probes, keys absent) + 6 Playwright E2E | OMEGA II run 2026-11-08 | H | PASS |
 | 74 | Concurrency suite exists? | Same-key serialization + duplicate capture/refund + webhook dedupe | safety + flows tests | M | PASS |
 | 75 | Adversarial suite exists? | Injection double-block, replay/tamper/mismatch/over-refund/expired negatives | `apps.api`, safety tests | M | PASS |
 | 76 | E2E beyond unit/integration? | Playwright chromium in CI: dashboard, copilot, twin, recovery, studio mount, ai-gallery; 6 specs green, 0 page errors | `tests/e2e/`, `ci.yml` e2e job | M | PASS |

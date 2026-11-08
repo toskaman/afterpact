@@ -164,6 +164,19 @@ body {
 @media (min-width: 900px) { .grid.two { grid-template-columns: 1fr 1fr; } }
 .grid.three { grid-template-columns: 1fr; }
 @media (min-width: 1100px) { .grid.three { grid-template-columns: 1fr 1fr 1fr; } }
+
+/* Outcome Twin divergence strip: violation → evidence → correction, one row. */
+.twin-divergence {
+  border-left: 4px solid var(--danger);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.5rem 0.75rem;
+  margin-bottom: 1rem;
+}
+@media (prefers-reduced-motion: reduce) {
+  .twin-divergence { transition: none; }
+}
 .card {
   background: var(--bg-raised);
   border: 1px solid var(--border);

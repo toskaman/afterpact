@@ -125,6 +125,24 @@ describe("frontend AG Studio contract", () => {
     }
   });
 
+  it("applies the AFTERPACT Signature theme with light/dark mode sync", () => {
+    const source = readFileSync(join(WEB_DIR, "app.js"), "utf8");
+    for (const token of [
+      "withParams",
+      "afterpact-studio-dark",
+      "afterpact-studio-light",
+      "agThemeMode",
+      "data-ag-theme-mode",
+    ]) {
+      expect(source.includes(token), `app.js missing Studio theme token: ${token}`).toBe(true);
+    }
+  });
+
+  it("exposes accessible Studio dataset tabs", () => {
+    const source = readFileSync(join(WEB_DIR, "app.js"), "utf8");
+    expect(source.includes("aria-selected"), "Studio dataset tabs must expose aria-selected").toBe(true);
+  });
+
   it("routes the Studio proxy endpoint", async () => {
     const res = await fetch(`${base}/api/ai/studio-turn`, {
       method: "POST",
@@ -154,5 +172,22 @@ describe("frontend Outcome Twin contract", () => {
     }
     expect(html.includes('data-route="twin"'), "nav missing twin entry").toBe(true);
     expect(css.includes(".grid.three"), "styles missing .grid.three").toBe(true);
+  });
+
+  it("renders a divergence strip linking violation, evidence, and correction", () => {
+    const source = readFileSync(join(WEB_DIR, "app.js"), "utf8");
+    const css = readFileSync(join(WEB_DIR, "styles.css"), "utf8");
+    for (const token of ["twin-divergence", "DIVERGENCE", "#/recovery"]) {
+      expect(source.includes(token), `app.js missing twin divergence token: ${token}`).toBe(true);
+    }
+    expect(css.includes(".twin-divergence"), "styles missing .twin-divergence").toBe(true);
+  });
+
+  it("announces async AI analysis to assistive technology", () => {
+    const source = readFileSync(join(WEB_DIR, "app.js"), "utf8");
+    expect(
+      source.includes('id="twinAiBox" role="status"'),
+      "twin AI box must be a role=status live region",
+    ).toBe(true);
   });
 });

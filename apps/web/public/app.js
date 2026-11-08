@@ -128,7 +128,18 @@ function initTheme() {
   $("#themeToggle").addEventListener("click", () => {
     root.dataset.theme = root.dataset.theme === "dark" ? "light" : "dark";
     localStorage.setItem("afterpact-theme", root.dataset.theme);
+    syncAgStudioThemeMode();
   });
+  syncAgStudioThemeMode();
+}
+
+/* ---------- AG Studio theme mode sync ---------- */
+// AG Studio 3.1.0 switches built-in and custom themes via the
+// data-ag-theme-mode attribute (AG docs: "Updating theme & mode").
+function syncAgStudioThemeMode() {
+  const mode = document.documentElement.dataset.theme === "light" ? "light" : "dark";
+  document.documentElement.dataset.agThemeMode = mode;
+  document.documentElement.setAttribute("data-ag-theme-mode", mode);
 }
 
 /* ---------- topbar status ---------- */
@@ -1204,12 +1215,50 @@ async function loadAgStudioBundle() {
   return "local-fallback";
 }
 
+// Commerce Intelligence Studio — Signature theme. Built with the official
+// createStudioTheme/studioTheme.withParams API (AG Studio 3.1.0): one palette
+// per app mode, matched 1:1 to the AFTERPACT CSS variables in styles.css so
+// the canvas reads as a native part of the product, not an embedded tool.
+function buildAfterpactStudioTheme() {
+  const S = window.agStudio;
+  if (!S || typeof S.studioTheme?.withParams !== "function") return null;
+  const dark = document.documentElement.dataset.theme !== "light";
+  const shared = {
+    fontFamily: "Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif",
+    fontSize: 14,
+    borderRadius: 8,
+    spacing: 8,
+  };
+  const palette = dark ? {
+    browserColorScheme: "dark",
+    backgroundColor: "#11151f",
+    foregroundColor: "#e8edf5",
+    chromeBackgroundColor: "#070a10",
+    headerBackgroundColor: "#070a10",
+    borderColor: "#232b3b",
+    accentColor: "#2dd4bf",
+  } : {
+    browserColorScheme: "light",
+    backgroundColor: "#ffffff",
+    foregroundColor: "#141a26",
+    chromeBackgroundColor: "#e9edf3",
+    headerBackgroundColor: "#e9edf3",
+    borderColor: "#d4dbe6",
+    accentColor: "#0d9488",
+  };
+  return S.studioTheme.withParams(
+    { ...shared, ...palette },
+    dark ? "afterpact-studio-dark" : "afterpact-studio-light",
+  );
+}
+
 async function mountAgStudio(datasets) {
   const host = $("#agStudioHost");
   if (!host) return;
   try {
     await loadAgStudioBundle();
     await loadScriptOnce("/ag-studio-adapter.js");
+    syncAgStudioThemeMode();
     const config = await api("/api/config");
     const key = config.agStudio && typeof config.agStudio.licenseKey === "string" ? config.agStudio.licenseKey : null;
     if (key) {
@@ -1223,7 +1272,9 @@ async function mountAgStudio(datasets) {
     window.agStudio.AgStudioModuleRegistry.registerModules([window.agStudio.AgStudioAiModule]);
     destroyStudioGrid();
     const adapter = window.AfterpactStudioAdapter.createVultrStudioAdapter("/api/ai/studio-turn");
+    const signatureTheme = buildAfterpactStudioTheme();
     studio.api = window.agStudio.createStudio(host, {
+      ...(signatureTheme ? { theme: signatureTheme } : {}),
       data: {
         sources: [
           { id: "promises", data: datasets.promises ?? [] },
@@ -1414,7 +1465,7 @@ async function renderStudio() {
       </div>
       <div class="card section-gap"><h2>Datasets</h2>
         <div class="button-row" role="tablist" aria-label="Studio datasets">
-          ${["incidents", "promises", "refunds", "captures"].map((e) => `<button class="button small${studio.entity === e ? "" : " secondary"}" data-studio-entity="${e}" role="tab">${e} (${(datasets[e] ?? []).length})</button>`).join("")}
+          ${["incidents", "promises", "refunds", "captures"].map((e) => `<button class="button small${studio.entity === e ? "" : " secondary"}" data-studio-entity="${e}" role="tab" aria-selected="${studio.entity === e}"${e} (${(datasets[e] ?? []).length})</button>`).join("")}
         </div>
         <div id="studioCross" class="section-gap"></div>
         <div id="studioGrid"></div>
@@ -1723,15 +1774,29 @@ async function renderTwin(promiseId = "") {
         <button class="button small secondary" id="twinAnalyze">Analyze with AI</button>
         <button class="button small secondary" id="twinPropose">AI recovery proposal</button>
       </div>
-      <div id="twinAiBox" class="section-gap"></div>` : `<p class="muted small">No incident to analyze.</p>`}
+      <div id="twinAiBox" role="status" class="section-gap"></div>` : `<p class="muted small">No incident to analyze.</p>`}
       <h3 class="section-gap">Resolutions (${proposals.length})</h3>${proposalHtml}
       <p class="small">Verified refunded: <strong>${formatMoney({ currency: p.total.currency, amountMinor: refundedMinor })}</strong></p>
       <p class="small">${audit.chainValid ? '<span class="pill ok">CHAIN VALID</span>' : '<span class="pill bad">CHAIN BROKEN</span>'}</p></div>`;
+
+    // Divergence strip: one glanceable row linking the violated obligation to
+    // its evidence and the proposed financial correction. Rendered only from
+    // the live data above — never projected or animated ahead of provider truth.
+    const correction = pendingProposals[0] ?? proposals[proposals.length - 1] ?? null;
+    const divergenceStrip = focus ? `
+      <div class="card twin-divergence" role="note" aria-label="Incident divergence summary">
+        <span class="pill bad">DIVERGENCE</span>
+        <strong>${escapeHtml(focus.category)}</strong>
+        <span class="small">${escapeHtml(focus.detail)}</span>
+        <span class="small muted">Evidence: ${outcomes.length} outcome${outcomes.length === 1 ? "" : "s"} · Proposed correction: ${correction ? `${escapeHtml(correction.kind)}${correction.amount ? ` · ${formatMoney(correction.amount)}` : ""}` : "none yet"}</span>
+        <span class="small"><a href="#/recovery">Review in Recovery Center →</a></span>
+      </div>` : ``;
 
     view().innerHTML = viewHead("Outcome Twin", `Promise ${p.id}`) + `
       <div class="badge-row" style="margin-bottom:1rem">${statePill(v.state)}
         <span class="pill ${v.policy.verdict === "Cleared" ? "ok" : v.policy.verdict === "Hold" ? "warn" : "bad"}">POLICY · ${escapeHtml(v.policy.verdict.toUpperCase())}</span>
         <span class="small"><a href="#/tx/${encodeURIComponent(promiseId)}">Transaction →</a> · <a href="#/recovery">Recovery Center →</a> · <a href="#/twin">All twins →</a></span></div>
+      ${divergenceStrip}
       <div class="grid three">${promisedCol}${actualCol}${recoveredCol}</div>
       <div class="card section-gap"><h3>If left unresolved — projection from current state, not measured history</h3>
         <p class="small">Open incidents: <strong>${openIncidents.length}</strong> · Unresolved exposure: <strong>${formatMoney({ currency: p.total.currency, amountMinor: exposureMinor })}</strong> · Proposals awaiting approval: <strong>${pendingProposals.length}</strong></p>

@@ -15,6 +15,7 @@ test-results/
 playwright-report/
 playwright/.cache/
 .browsers/
+.playwright-browsers/
 # Local secret holders (user-provided, never commit)
 APIS.txt
 *.key
