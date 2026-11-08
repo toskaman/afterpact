@@ -1,16 +1,16 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-11-08T11:48:17.682Z",
-  "verifiedCommit": "2c6e157",
-  "verifiedCiRun": "https://github.com/toskaman/afterpact/actions/runs/42477186057",
+  "generatedAt": "2026-11-08T12:12:41.555Z",
+  "verifiedCommit": "a3e705a",
+  "verifiedCiRun": "https://github.com/toskaman/afterpact/actions/runs/42479138322",
   "suite": {
-    "passed": 281,
+    "passed": 288,
     "failed": 0,
     "skipped": 33
   },
   "e2e": {
-    "passed": 6,
-    "total": 6
+    "passed": 7,
+    "total": 7
   },
   "statics": {
     "suiteFiles": [
@@ -25,6 +25,7 @@
       "/tests/unit/policy.test.ts",
       "/tests/unit/promise.test.ts",
       "/tests/unit/refund.test.ts",
+      "/tests/unit/store.test.ts",
       "/tests/unit/studio-agent.test.ts",
       "/tests/integration/ai-studio-turn.test.ts",
       "/tests/integration/ai.gallery.test.ts",
@@ -42,17 +43,18 @@
       "/tests/integration/paypal.safety.test.ts",
       "/tests/integration/security.test.ts",
       "/tests/integration/sponsors.discovery.test.ts",
+      "/tests/integration/sponsors.studio-toggle.test.ts",
       "/tests/integration/sponsors.studio.timeline.test.ts"
     ],
-    "suiteFileCount": 29,
-    "suiteStaticBlocks": 238,
+    "suiteFileCount": 31,
+    "suiteStaticBlocks": 244,
     "e2eFiles": [
       "/tests/e2e/dashboard.e2e.ts",
       "/tests/e2e/gallery.e2e.ts",
       "/tests/e2e/studio.e2e.ts",
       "/tests/e2e/twin.e2e.ts"
     ],
-    "e2eStaticBlocks": 6,
+    "e2eStaticBlocks": 7,
     "typecheckProjects": [
       "packages/domain",
       "packages/policy",
@@ -69,6 +71,15 @@
       "assertionsFailed": 0
     },
     "evalReports": [
+      {
+        "report": "/docs/evals/baseline-comparison.json",
+        "generatedAt": null,
+        "model": null,
+        "passed": null,
+        "total": null,
+        "citationPrecision": null,
+        "costUsd": null
+      },
       {
         "report": "/docs/evals/report-2026-11-08T01-04-16-487Z.json",
         "generatedAt": "2026-11-08T01:04:16.487Z",
