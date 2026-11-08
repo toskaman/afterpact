@@ -1,8 +1,10 @@
 # AFTERPACT — Hosted Demo (Vultr)
 
 **URL:** `https://199.247.9.188.nip.io`
-**Verified:** 2026-11-07 — `/api/health` ok (valid production LE cert),
-`/` 200, remote flagship `completed` (9 acts).
+**Verified:** 2026-11-08 — `/api/health` ok (valid production LE cert),
+`/` 200, remote flagship `completed`, operator token gate 401-checked,
+`features.agStudio=ag-studio`, `/api/ai/status` honest `keyed:false`
+(mock box carries no inference key; AI surfaces show `AI · OFF`).
 
 ## Stack
 
@@ -36,7 +38,9 @@ Caddy (ports 80/443 opened in ufw — Vultr images ship SSH-only).
 
 - Health: `GET /api/health` (no secrets in output).
 - Logs: `journalctl -u afterpact.service`.
-- Reset demo state: `POST /api/demo/reset` (allowed in mock mode).
+- Reset demo state: `POST /api/demo/reset` with
+  `Authorization: Bearer $OPERATOR_TOKEN` (token printed once at deploy,
+  saved in local `APIS.txt`, never committed). Anonymous reset → 401.
 - Keep the box until judging ends (Dec 15, 2026), then destroy it from
   the Vultr panel (or `DELETE /v2/instances/<id>`).
 - Cost: ~$5/mo while it lives; the account holds ample credit.

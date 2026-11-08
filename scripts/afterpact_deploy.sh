@@ -70,6 +70,8 @@ WantedBy=multi-user.target
 EOF
 systemctl daemon-reload
 systemctl enable --now afterpact.service
+# --now does not restart an already-running service: force the new build live.
+systemctl restart afterpact.service
 
 # Caddy: HTTPS with automatic certs
 cat > /etc/caddy/Caddyfile <<EOF
