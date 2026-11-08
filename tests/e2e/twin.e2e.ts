@@ -25,3 +25,14 @@ test("recovery center lists the open incident with AI actions", async ({ page, r
   await expect(page.locator("[data-ai-propose]").first()).toBeVisible();
   expect(errors).toEqual([]);
 });
+
+test("unkeyed AI action falls back honestly and points at the recorded gallery", async ({ page, request }) => {
+  const errors = collectPageErrors(page);
+  await seedIncident(request);
+  await page.goto("/#/recovery");
+  await page.locator("[data-ai-analyze]").first().click();
+  await expect(page.getByText("deterministic-detection").first()).toBeVisible();
+  await expect(page.getByText("Live model unavailable on this box").first()).toBeVisible();
+  await expect(page.locator('a[href="#/ai-gallery"]').first()).toBeVisible();
+  expect(errors).toEqual([]);
+});

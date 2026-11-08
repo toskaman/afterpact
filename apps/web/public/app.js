@@ -189,6 +189,21 @@ function errorBanner(message) {
   return `<div class="error-banner" role="alert"><strong>Something went wrong.</strong> ${escapeHtml(message)}</div>`;
 }
 
+/** AI-action failure: an unkeyed box must point at recorded evidence, not dead-end. */
+function aiErrorHtml(err) {
+  const message = err && err.message ? err.message : String(err);
+  if (message.startsWith("ai-unavailable")) {
+    return `<div class="error-banner" role="alert"><strong>Live AI is off on this box</strong> (no inference key — by design, to avoid an unbounded paid endpoint). `
+      + `See <a href="#/ai-gallery">RECORDED VERIFIED AI RUNs in the AI Evidence gallery →</a></div>`;
+  }
+  return errorBanner(message);
+}
+
+/** Incident details carry a "[category/severity] " prefix; drop it next to the pills. */
+function shortDetail(detail) {
+  return String(detail).replace(/^\[[^\]]+\]\s*/, "");
+}
+
 function emptyState(glyph, title, hint, actionHtml = "") {
   return `<div class="empty"><span class="glyph" aria-hidden="true">${glyph}</span><strong>${escapeHtml(title)}</strong><p class="muted small">${escapeHtml(hint)}</p>${actionHtml}</div>`;
 }
@@ -220,6 +235,11 @@ async function renderCommand() {
         ${m.chainValid ? '<span class="pill ok">FLIGHT RECORDER · VALID</span>' : '<span class="pill bad">FLIGHT RECORDER · BROKEN</span>'}
         ${m.killSwitch ? '<span class="pill bad">KILL-SWITCH ENGAGED</span>' : ""}
       </div>
+      ${states.length === 0 ? `<div class="card section-gap">
+        <h2>AI agents can already buy. AFTERPACT makes sure the outcome matches the promise.</h2>
+        <p class="muted small">Watch a purchase go wrong — short delivery, detected automatically — then see evidence-backed AI analysis, a human approval, and a verified PayPal refund.</p>
+        <div class="button-row"><a class="button" href="#/demo">Run the 2-minute flagship demo</a><a class="button secondary" href="#/copilot">Open Purchase Copilot</a></div>
+      </div>` : ""}
       <div class="grid kpi">
         <div class="card"><div class="kpi-label">Amount at risk</div><div class="kpi-value">${formatMoney({ ...money, amountMinor: m.atRiskMinor })}</div><div class="kpi-sub">Captured, not yet verified</div></div>
         <div class="card"><div class="kpi-label">Captured</div><div class="kpi-value">${formatMoney({ ...money, amountMinor: m.capturedMinor })}</div><div class="kpi-sub">Settled provider captures</div></div>
@@ -327,7 +347,7 @@ function renderCopilot() {
             const r = await api("/api/ai/analyze-intent", { method: "POST", body: { rawText: payload.rawText, buyerId: payload.buyerId } });
             abox.innerHTML = aiInterpretationHtml(r);
           } catch (err) {
-            abox.innerHTML = errorBanner(err.message);
+            abox.innerHTML = aiErrorHtml(err);
           }
         });
         $("#toOffers").addEventListener("click", () => { copilot.step = 2; renderCopilot(); void loadOffers(); });
@@ -664,6 +684,11 @@ function aiOriginPill(origin) {
   return originPill(String(origin ?? "").startsWith("ai-model:") ? "ai-live" : "ai-off");
 }
 
+function aiFallbackNote(origin) {
+  if (String(origin ?? "").startsWith("ai-model:")) return "";
+  return `<p class="small">Live model unavailable on this box — see <a href="#/ai-gallery">RECORDED VERIFIED AI RUNs in the AI Evidence gallery →</a></p>`;
+}
+
 function aiProvenanceLine(r) {
   const prov = r.provenance ?? {};
   const tokens = (prov.promptTokens ?? 0) + (prov.completionTokens ?? 0);
@@ -682,6 +707,7 @@ function aiInterpretationHtml(r) {
       <dt>Trade-offs</dt><dd class="small">${list(r.tradeoffs)}</dd>
       <dt>Provenance</dt><dd class="small muted mono">${escapeHtml(aiProvenanceLine(r))}</dd>
     </dl>
+    ${aiFallbackNote(r.origin)}
     <p class="small muted">Advisory only — the heuristic parse above stays authoritative for offer search, and injection signals still block execution.</p></div>`;
 }
 
@@ -694,7 +720,8 @@ function aiAnalysisHtml(r) {
     ${(r.citations ?? []).length ? `<p class="small muted">Cited evidence: ${r.citations.map((x) => `<span class="mono">${escapeHtml(x)}</span>`).join(", ")}</p>` : ""}
     ${(r.droppedCitations ?? []).length ? `<p class="small"><span class="pill warn">DROPPED ${r.droppedCitations.length} UNGROUNDED CITATION(S)</span></p>` : ""}
     <p class="small muted">Uncertainty: ${escapeHtml(r.uncertainty ?? "?")} · escalation ${r.escalate ? "recommended" : "not needed"} · deterministic detection stays authoritative</p>
-    <p class="small muted mono">${escapeHtml(aiProvenanceLine(r))}</p></div>`;
+    <p class="small muted mono">${escapeHtml(aiProvenanceLine(r))}</p>
+    ${aiFallbackNote(r.origin)}</div>`;
 }
 
 function recoveryProposalHtml(r, currency) {
@@ -709,6 +736,7 @@ function recoveryProposalHtml(r, currency) {
     ${(r.risks ?? []).length ? `<dt>Risks</dt><dd class="small">${escapeHtml(r.risks.join("; "))}</dd>` : ""}
     <dt>Approvals</dt><dd class="small">${escapeHtml((r.requiredApprovals ?? []).join(", ") || "—")}</dd>
     <dt>Provenance</dt><dd class="small muted mono">${escapeHtml(aiProvenanceLine(r))}</dd></dl>
+    ${aiFallbackNote(r.origin)}
     <p class="small muted">The model proposes; the gate and your approval decide. Nothing moved yet — approve a proposal below to execute.</p></div>`;
 }
 
@@ -735,7 +763,7 @@ async function renderRecovery() {
           <span class="pill info">${escapeHtml(i.status.toUpperCase())}</span>
           <span class="small muted mono">${escapeHtml(shortId(i.id))} · detected ${formatTime(i.detectedAt)} by ${escapeHtml(i.detectedBy)}</span>
         </div>
-        <p>${escapeHtml(i.detail)}</p>
+        <p>${escapeHtml(shortDetail(i.detail))}</p>
         <p class="small"><a href="#/tx/${encodeURIComponent(i.promiseId)}">Open transaction →</a></p>
         <div class="button-row">
           <button class="button small secondary" data-ai-analyze="${escapeHtml(i.id)}" data-promise="${escapeHtml(i.promiseId)}" data-detail="${escapeHtml(i.detail.slice(0, 500))}">Analyze with AI</button>
@@ -815,7 +843,7 @@ async function renderRecovery() {
         const r = await api("/api/ai/analyze-incident", { method: "POST", body: { promiseId: b.dataset.promise, observation: { note: b.dataset.detail } } });
         box.innerHTML = aiAnalysisHtml(r);
       } catch (err) {
-        box.innerHTML = errorBanner(err.message);
+        box.innerHTML = aiErrorHtml(err);
       }
     }));
     document.querySelectorAll("[data-ai-propose]").forEach((b) => b.addEventListener("click", async () => {
@@ -828,7 +856,7 @@ async function renderRecovery() {
         ]);
         box.innerHTML = recoveryProposalHtml(r, tx.promise.total.currency);
       } catch (err) {
-        box.innerHTML = errorBanner(err.message);
+        box.innerHTML = aiErrorHtml(err);
       }
     }));
   } catch (err) {
@@ -1027,7 +1055,7 @@ async function renderDemo() {
           <li>${originPill("paypal-sandbox-live")} <span>Real PayPal Sandbox HTTPS call (only with credentials).</span></li>
           <li>${originPill("mock-simulated")} <span>Deterministic in-process PayPal simulation. Labeled everywhere.</span></li>
           <li>${originPill("simulated-logistics")} <span>Scripted carrier event. Detection logic is real; the carrier is not.</span></li>
-          <li>${originPill("heuristic-parse")} <span>Deterministic regex/keyword extraction used for this step (model runs live in the AI Evidence gallery).</span></li>
+          <li>${originPill("heuristic-parse")} <span>Deterministic regex/keyword extraction used for this step (the AI Evidence gallery holds recorded verified model runs).</span></li>
           <li>${originPill("not-in-build")} <span>Capability explicitly absent. Never faked.</span></li>
         </ul></div>
       </div>
@@ -1379,6 +1407,7 @@ function renderStudioGrid() {
       rowData: rows,
       pagination: true,
       paginationPageSize: 15,
+      paginationPageSizeSelector: [15, 30, 50],
       animateRows: false,
       onRowClicked: (ev) => {
         if (studio.entity === "promises" && ev.data) {
@@ -1787,7 +1816,7 @@ async function renderTwin(promiseId = "") {
       <div class="card twin-divergence" role="note" aria-label="Incident divergence summary">
         <span class="pill bad">DIVERGENCE</span>
         <strong>${escapeHtml(focus.category)}</strong>
-        <span class="small">${escapeHtml(focus.detail)}</span>
+        <span class="small">${escapeHtml(shortDetail(focus.detail))}</span>
         <span class="small muted">Evidence: ${outcomes.length} outcome${outcomes.length === 1 ? "" : "s"} · Proposed correction: ${correction ? `${escapeHtml(correction.kind)}${correction.amount ? ` · ${formatMoney(correction.amount)}` : ""}` : "none yet"}</span>
         <span class="small"><a href="#/recovery">Review in Recovery Center →</a></span>
       </div>` : ``;
@@ -1810,7 +1839,7 @@ async function renderTwin(promiseId = "") {
           const r = await api("/api/ai/analyze-incident", { method: "POST", body: { promiseId, observation: { note: focus.detail.slice(0, 2000) } } });
           box.innerHTML = aiAnalysisHtml(r);
         } catch (err) {
-          box.innerHTML = errorBanner(err.message);
+          box.innerHTML = aiErrorHtml(err);
         }
       });
       $("#twinPropose")?.addEventListener("click", async () => {
@@ -1820,7 +1849,7 @@ async function renderTwin(promiseId = "") {
           const r = await api("/api/ai/plan-recovery", { method: "POST", body: { incidentId: focus.id } });
           box.innerHTML = recoveryProposalHtml(r, p.total.currency);
         } catch (err) {
-          box.innerHTML = errorBanner(err.message);
+          box.innerHTML = aiErrorHtml(err);
         }
       });
     }
