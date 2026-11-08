@@ -15,6 +15,7 @@ import {
   gateRecoveryAmount,
   INCIDENT_OUTPUT_FIELDS,
   INTENT_OUTPUT_FIELDS,
+  IncidentAnalysisSchema,
   IntentAnalysisSchema,
   planRecoveryForIncident,
   RECOVERY_OUTPUT_FIELDS,
@@ -244,6 +245,33 @@ describe("AI task schemas", () => {
       confidence: "high",
       risks: [],
       requiredApprovals: ["merchant-operator"],
+    });
+    expect(parsed.success).toBe(false);
+  });
+
+  it("coerces a lone string into a one-item array (eval incident-insufficient-evidence)", () => {
+    const parsed = IncidentAnalysisSchema.safeParse({
+      category: "other",
+      interpretation: "carrier note conflicts with buyer claim",
+      evidenceRefs: [],
+      missingInfo: "delivery scan timestamp",
+      uncertainty: "high",
+      escalate: true,
+    });
+    expect(parsed.success).toBe(true);
+    if (parsed.success) {
+      expect(parsed.data.missingInfo).toEqual(["delivery scan timestamp"]);
+    }
+  });
+
+  it("still rejects non-string array items after coercion", () => {
+    const parsed = IncidentAnalysisSchema.safeParse({
+      category: "other",
+      interpretation: "x",
+      evidenceRefs: [42],
+      missingInfo: [],
+      uncertainty: "low",
+      escalate: false,
     });
     expect(parsed.success).toBe(false);
   });

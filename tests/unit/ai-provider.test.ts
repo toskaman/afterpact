@@ -90,6 +90,14 @@ describe("VultrInferenceProvider (stubbed fetch)", () => {
     expect(fetchFn).toHaveBeenCalledTimes(2);
   });
 
+  it("preserves the raw output head on the invalid-output error", async () => {
+    const fetchFn = vi.fn(async () => okJson(completion("not json at all, just prose")));
+    const provider = new VultrInferenceProvider(baseConfig(), fetchFn);
+    const error = await provider.generateStructured(request()).catch((e: unknown) => e);
+    expect(error).toBeInstanceOf(AIInvalidOutputError);
+    expect((error as AIInvalidOutputError).outputHead).toContain("not json at all");
+  });
+
   it("names the failing field in the invalid-output message", async () => {
     const fetchFn = vi.fn(async () => okJson(completion(JSON.stringify({ summary: "x" }))));
     const provider = new VultrInferenceProvider(baseConfig(), fetchFn);
@@ -186,6 +194,14 @@ describe("AIService fallback + ledger", () => {
     expect(result.provenance.fallbackUsed).toBe(true);
     expect(result.provenance.fallbackReason).toContain("provider down");
     expect(service.ledgerSummary()).toMatchObject({ calls: 1, fallbacks: 1, costUsd: 0 });
+  });
+
+  it("carries the raw output head through fallback provenance", async () => {
+    const fetchFn = vi.fn(async () => okJson(completion("garbage prose, no json")));
+    const service = new AIService(new VultrInferenceProvider(baseConfig(), fetchFn));
+    const result = await service.generateWithFallback(request(), () => ({ summary: "fb", score: 0 }));
+    expect(result.provenance.fallbackUsed).toBe(true);
+    expect(result.provenance.outputHead).toContain("garbage prose");
   });
 
   it("records successful calls in the ledger", async () => {

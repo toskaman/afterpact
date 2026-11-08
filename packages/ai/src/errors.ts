@@ -55,8 +55,9 @@ export class AIInvalidOutputError extends AIError {
     message: string,
     public readonly issues: unknown,
     public readonly attempts: number,
+    public readonly outputHead: string | null = null,
   ) {
-    super(message, "ai-invalid-output", { issues, attempts });
+    super(message, "ai-invalid-output", { issues, attempts, outputHead });
     this.name = "AIInvalidOutputError";
   }
 }

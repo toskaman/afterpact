@@ -236,6 +236,7 @@ export class VultrInferenceProvider implements AIProvider {
     const seed = request.seed ?? this.config.seed;
     const reasoningEffort = request.reasoningEffort ?? this.config.reasoningEffort;
     let lastIssues: unknown = null;
+    let lastOutputHead: string | null = null;
     let totalPrompt = 0;
     let totalCompletion = 0;
     let attempts = 0;
@@ -310,7 +311,9 @@ export class VultrInferenceProvider implements AIProvider {
         totalCompletion += usage.completion;
         let parsed: unknown;
         try {
-          parsed = extractJson(contentOf(json));
+          const raw = contentOf(json);
+          lastOutputHead = raw.slice(0, 300);
+          parsed = extractJson(raw);
         } catch {
           lastIssues = [{ path: [], message: "output was not valid JSON" }];
           continue;
@@ -339,6 +342,7 @@ export class VultrInferenceProvider implements AIProvider {
       `model output failed schema "${request.schemaName}" after ${attempts} attempt(s)${summary === "" ? "" : `: ${summary}`}`,
       lastIssues,
       attempts,
+      lastOutputHead,
     );
   }
 

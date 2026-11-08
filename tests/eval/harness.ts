@@ -330,6 +330,7 @@ export interface ScenarioOutcome {
   attempts: number;
   fallbackUsed: boolean;
   fallbackReason: string | null;
+  outputHead: string | null;
   origin: string;
   modelServed: string;
   citationsKept: number;
@@ -431,6 +432,7 @@ export async function runScenario(
     attempts: provenance?.attempts ?? 0,
     fallbackUsed: provenance?.fallbackUsed ?? false,
     fallbackReason: provenance?.fallbackReason ?? null,
+    outputHead: provenance?.outputHead ?? null,
     origin: typeof result["origin"] === "string" ? (result["origin"] as string) : "",
     modelServed: provenance?.modelServed ?? "",
     citationsKept: Array.isArray(result["citations"]) ? (result["citations"] as unknown[]).length : 0,

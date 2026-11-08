@@ -16,23 +16,33 @@ import { parseIntentText, scanInjection } from "./nlparse";
 // after validation regardless of which path produced the values).
 // ---------------------------------------------------------------------------
 
+// Models occasionally emit a lone string where the schema wants string[].
+// Coerce exactly that shape (eval incident-insufficient-evidence); anything
+// else still fails validation and falls back deterministically.
+function looseStringArray(item: z.ZodString, max: number): z.ZodType<string[]> {
+  return z.preprocess(
+    (v) => (typeof v === "string" ? [v] : v),
+    z.array(item).max(max),
+  ) as z.ZodType<string[]>;
+}
+
 export const IntentAnalysisSchema = z.object({
   quantity: z.number().int().min(1),
   budgetMinor: z.number().int().min(0).nullable(),
   currency: z.string().regex(/^[A-Z]{3}$/).nullable(),
   productType: z.string().max(120).nullable(),
   deadlineDays: z.number().int().min(0).nullable(),
-  requirements: z.array(z.string().max(200)).max(20),
-  ambiguities: z.array(z.string().max(200)).max(20),
-  tradeoffs: z.array(z.string().max(200)).max(20),
+  requirements: looseStringArray(z.string().max(200), 20),
+  ambiguities: looseStringArray(z.string().max(200), 20),
+  tradeoffs: looseStringArray(z.string().max(200), 20),
 });
 export type IntentAnalysis = z.infer<typeof IntentAnalysisSchema>;
 
 export const IncidentAnalysisSchema = z.object({
   category: z.string().min(1),
   interpretation: z.string().min(1).max(2000),
-  evidenceRefs: z.array(z.string()).max(20),
-  missingInfo: z.array(z.string().max(300)).max(20),
+  evidenceRefs: looseStringArray(z.string(), 20),
+  missingInfo: looseStringArray(z.string().max(300), 20),
   uncertainty: z.enum(["low", "medium", "high"]),
   escalate: z.boolean(),
 });
@@ -48,11 +58,11 @@ export const RecoveryPlanSchema = z.object({
     "escalate-human",
   ]),
   rationale: z.string().min(1).max(2000),
-  evidenceRefs: z.array(z.string()).max(20),
+  evidenceRefs: looseStringArray(z.string(), 20),
   proposedAmountMinor: z.number().int().min(0).nullable(),
   confidence: z.enum(["low", "medium", "high"]),
-  risks: z.array(z.string().max(300)).max(20),
-  requiredApprovals: z.array(z.string().max(120)).max(10),
+  risks: looseStringArray(z.string().max(300), 20),
+  requiredApprovals: looseStringArray(z.string().max(120), 10),
 });
 export type RecoveryPlan = z.infer<typeof RecoveryPlanSchema>;
 

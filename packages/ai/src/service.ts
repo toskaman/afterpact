@@ -1,4 +1,4 @@
-import { AIError, AINotConfiguredError } from "./errors";
+import { AIError, AIInvalidOutputError, AINotConfiguredError } from "./errors";
 import type {
   AIProvider,
   ChatRequest,
@@ -88,9 +88,10 @@ export class AIService {
       return result;
     } catch (error: unknown) {
       const reason = error instanceof Error ? `${error.name}: ${error.message}` : String(error);
+      const outputHead = error instanceof AIInvalidOutputError ? error.outputHead : null;
       const data = fallback(reason);
       this.ledger.record(this.entry(request, null, true, reason, 0, 0, 0, 1));
-      return { data, provenance: this.fallbackProvenance(reason) };
+      return { data, provenance: this.fallbackProvenance(reason, outputHead) };
     }
   }
 
@@ -155,7 +156,7 @@ export class AIService {
     };
   }
 
-  private fallbackProvenance<T>(reason: string): StructuredAIResult<T>["provenance"] {
+  private fallbackProvenance<T>(reason: string, outputHead: string | null = null): StructuredAIResult<T>["provenance"] {
     return {
       providerId: this.provider?.id ?? "none",
       modelRequested: this.provider?.model ?? "none",
@@ -169,6 +170,7 @@ export class AIService {
       fallbackUsed: true,
       fallbackReason: reason,
       validatedAt: new Date().toISOString(),
+      outputHead,
     };
   }
 }

@@ -40,6 +40,8 @@ export interface AIProvenance {
   fallbackUsed: boolean;
   fallbackReason: string | null;
   validatedAt: string;
+  /** Head of the last raw model output when validation failed (diagnostics). */
+  outputHead?: string | null;
 }
 
 export interface StructuredAIResult<T> {

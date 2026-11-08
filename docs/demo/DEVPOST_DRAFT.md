@@ -64,7 +64,7 @@ interpretation, evidence-cited incident analysis, recovery-proposal
 drafting, and the AG Studio agent's NL-to-widget turns. Every model output
 is schema-validated; the deterministic policy engine + human approval stay
 authoritative — the model proposes, policy + human dispose. 53-scenario
-evaluation corpus incl. adversarial cases (3 keyed runs: 87/90, citation
+evaluation corpus incl. adversarial cases (4 keyed runs: 117/120, citation
 precision 1.000 on the flagship run); the public demo ships a RECORDED
 VERIFIED AI RUN gallery with real latency/cost, never labeled live.
 
@@ -105,7 +105,7 @@ minor units, promises, approvals, 17-state lifecycle, audit chain),
 `policy` (deterministic gates), `payments` (sandbox-only PayPal client),
 `ai` (Vultr Inference client with identity verification, cost ledger,
 strict fallbacks). Single-node JSON snapshot store (documented
-limitation; SQLite/PostgreSQL is future work). 267 automated tests green
+limitation; SQLite/PostgreSQL is future work). 271 automated tests green
 (+33 keyless skips that skip visibly), strict `tsc` clean on 6 projects,
 6 Playwright E2E green, CI `verify`+`e2e`+`drift` green at HEAD. Every
 on-screen capability carries an origin badge (`REAL API`,
@@ -205,7 +205,7 @@ Postman/Newman, Vultr (hosting), Caddy.
 git clone https://github.com/toskaman/afterpact && cd afterpact
 npm install && cp .env.example .env
 npm run build && npm start   # http://localhost:3001
-npm test                     # 267 passed, 33 skipped keyless (live paths need creds)
+npm test                     # 271 passed, 33 skipped keyless (live paths need creds)
 ```
 
 Run the flagship: `POST /api/demo/run {"scenario":"flagship"}` or open

@@ -96,4 +96,5 @@ AI_EVAL_LIVE=1 npx vitest run tests/eval/ai-eval.live.test.ts
 
 Live variance note: the model is non-deterministic. Safety properties hold on
 every path by construction; extraction exactness on simple inputs held 30/30
-in the latest run and 87/90 calls across the three runs above.
+in the latest run and 117/120 calls across the four runs above
+(see FAILURE_ANALYSIS.md for the 3 classified misses).
