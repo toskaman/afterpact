@@ -1,16 +1,22 @@
-# AG Grid status — Commerce Intelligence Studio (Community edition)
+# AG Grid status — Commerce Intelligence Studio (AG Studio + Community)
 
-Date: 2026-11-07. Authoritative for the question "did this project use AG Grid / AG Studio?"
+Date: 2026-11-08. Authoritative for the question "did this project use AG Grid / AG Studio?"
 
 ## Short answer
 
-- **AG Grid Community 36.3.0 (MIT): USED.** The Intelligence Studio renders
-  live datasets with real AG Grid tables (vendored UMD bundle, SHA-256
-  pinned), with custom KPI widgets, app theming, cross-filtering, and a
-  strict NL command box over real dashboard state.
-- **AG Studio: NOT used, NOT claimed.** No AG Studio package, trial license,
-  or Agent Framework integration exists in this build. The UI, API, demo,
-  and docs say so explicitly (`AG STUDIO: NOT CLAIMED` badge in the Studio).
+- **AG Studio 3.1.0 (Commercial, trial): USED.** The `#/studio` view hosts a
+  real AG Studio canvas (vendored UMD, SHA-256 pinned, commercial license
+  filed) over the live promises/incidents/captures/refunds datasets, with
+  the real Agent Framework loop driven by our own Vultr-backed LLM adapter
+  (`POST /api/ai/studio-turn`, key server-side). Verified live: an NL
+  prompt produced a configured bar chart from live rows
+  (`docs/demo/screenshots/studio-agent-trace.png`). Trial watermark shows
+  until `AG_STUDIO_LICENSE_KEY` is installed (owner action documented in
+  `AG_STUDIO_UPGRADE_PATH.md`).
+- **AG Grid Community 36.3.0 (MIT): USED.** The same view keeps real
+  Community tables below the canvas (vendored UMD, SHA-256 pinned), with
+  custom KPI widgets, app theming, cross-filtering, and a strict NL
+  command box over real dashboard state.
 
 ## What was built (Community)
 

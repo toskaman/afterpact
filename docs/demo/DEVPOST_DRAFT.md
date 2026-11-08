@@ -95,8 +95,9 @@ Refunds, Webhooks — Sandbox), Channel3, AG Grid Community, Postman, Render.
 
 - **Channel3:** live client implemented; calls the API when keyed, fails
   closed (HTTP 503) without a key — never fabricates results.
-- **AG Grid:** Community tables on live data + strict NL queries; AG Studio
-  explicitly NOT claimed (upgrade path documented).
+- **AG Grid:** AG Studio canvas + Agent Framework over live data (own LLM
+  adapter, trial watermark until licensed) plus Community tables and strict
+  NL queries.
 - **Postman:** 38-request collection (auth, positive, idempotency, negatives).
 - **Render:** Blueprint + CI + health endpoint; hosted deploy is a human step.
 - **Bryntum / APIMatic:** not in this build; filed non-claims, prizes not pursued.

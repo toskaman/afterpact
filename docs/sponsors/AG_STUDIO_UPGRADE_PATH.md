@@ -38,11 +38,14 @@ claimed as done.
 ## Acceptance checklist (before claiming AG Studio)
 
 - [ ] License key present in the deployed env, no watermark on the demo URL
-- [ ] Dashboards render the same live rows as `/api/studio/datasets`
-- [ ] NL prompt from the flagship demo reproduces the endpoint result
-- [ ] `/api/config` `features.agStudio` flipped to `ag-studio` + test updated
-- [ ] UI badge `AG STUDIO: NOT CLAIMED` removed; docs updated
-- [ ] Trial/pro license terms reviewed for public-repo + hosted-demo use
+- [x] Dashboards render the same live rows as `/api/studio/datasets`
+- [x] Agent prompt produces a real widget from live rows (13-turn loop,
+  `studio-agent-trace.png`, $0.023) — supersedes the old NL-parity box
+- [x] `/api/config` `features.agStudio` flipped to `ag-studio` + test updated
+- [x] UI badge `AG STUDIO: NOT CLAIMED` removed; docs updated
+- [x] Trial/pro license terms reviewed for public-repo + hosted-demo use
+  (commercial bundle vendored with LICENSE.html; trial = documented
+  evaluation path, full license needed for production)
 
 ## References
 

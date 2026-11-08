@@ -51,6 +51,47 @@ export interface AIProvider {
   readonly id: string;
   readonly model: string;
   generateStructured<T>(request: StructuredAIRequest<T>): Promise<StructuredAIResult<T>>;
+  /** Raw chat turn with tools. Optional: only providers with chat support it. */
+  chat?(request: ChatRequest): Promise<ChatResult>;
+}
+
+export interface ChatToolCallInput {
+  id: string;
+  name: string;
+  arguments: string;
+}
+
+export interface ChatMessageInput {
+  role: "system" | "user" | "assistant" | "tool";
+  content: string | null;
+  toolCalls?: ChatToolCallInput[];
+  toolCallId?: string;
+}
+
+export interface ChatToolInput {
+  name: string;
+  description: string;
+  parameters: Record<string, unknown>;
+}
+
+export interface ChatRequest {
+  messages: ChatMessageInput[];
+  tools?: ChatToolInput[];
+  toolChoice?: "auto" | "none" | "required" | { name: string };
+  responseFormat?: "text" | "json";
+  maxTokens?: number;
+  timeoutMs?: number;
+  temperature?: number;
+}
+
+export interface ChatResult {
+  content: string;
+  toolCalls: ChatToolCallInput[];
+  finishReason: string | null;
+  usage: { prompt: number; completion: number };
+  costUsd: number;
+  modelServed: string;
+  latencyMs: number;
 }
 
 export interface PriceTable {

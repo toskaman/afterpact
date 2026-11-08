@@ -99,8 +99,9 @@ describe("health + static shell", () => {
   it("labels sponsor integrations honestly", async () => {
     const res = await get("/api/config");
     const config = data<Record<string, Record<string, string>>>(res.json);
-    // AG Grid Community tables are real; AG Studio itself is NOT claimed.
-    expect(config["features"]?.["agStudio"]).toBe("ag-grid-community");
+    // AG Studio canvas + agent run on the /studio view (trial watermark until
+    // AG_STUDIO_LICENSE_KEY is set); the Community grid stays below it.
+    expect(config["features"]?.["agStudio"]).toBe("ag-studio");
     // No Channel3 key in this test env, so discovery must say so.
     expect(config["features"]?.["channel3"]).toBe("unconfigured");
     expect(config["features"]?.["bryntum"]).toBe("fallback-timeline");

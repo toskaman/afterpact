@@ -1116,11 +1116,12 @@ async function renderDemo() {
 }
 
 /* ================================================================
-   VIEW: Intelligence Studio (real datasets + NL commands)
-   Tables use AG Grid Community (vendored) when available, with an
-   honest native-table fallback. This is NOT AG Studio.
+   VIEW: Intelligence Studio (AG Studio canvas + agent, Community tables)
+   The canvas is real AG Studio (vendored UMD, trial watermark until a
+   licence key is configured). Tables below use AG Grid Community
+   (vendored) when available, with an honest native-table fallback.
    ================================================================ */
-const studio = { datasets: null, entity: "incidents", crossPromiseId: null, nl: null, gridApi: null };
+const studio = { datasets: null, entity: "incidents", crossPromiseId: null, nl: null, gridApi: null, api: null };
 
 function agAvailable() {
   return typeof window.agGrid !== "undefined" && typeof window.agGrid.createGrid === "function";
@@ -1134,6 +1135,69 @@ function destroyStudioGrid() {
   if (studio.gridApi) {
     try { studio.gridApi.destroy(); } catch { /* already gone */ }
     studio.gridApi = null;
+  }
+  if (studio.api) {
+    try { studio.api.destroy(); } catch { /* already gone */ }
+    studio.api = null;
+  }
+}
+
+function loadScriptOnce(src) {
+  return new Promise((resolve, reject) => {
+    if (document.querySelector(`script[data-lazy="${src}"]`)) {
+      resolve();
+      return;
+    }
+    const el = document.createElement("script");
+    el.src = src;
+    el.dataset.lazy = src;
+    el.async = false;
+    el.onload = () => resolve();
+    el.onerror = () => reject(new Error(`failed to load ${src}`));
+    document.head.appendChild(el);
+  });
+}
+
+async function mountAgStudio(datasets) {
+  const host = $("#agStudioHost");
+  if (!host) return;
+  try {
+    await loadScriptOnce("/vendor/ag-studio.min.js");
+    await loadScriptOnce("/ag-studio-adapter.js");
+    const config = await api("/api/config");
+    const key = config.agStudio && typeof config.agStudio.licenseKey === "string" ? config.agStudio.licenseKey : null;
+    if (key) {
+      window.agStudio.AgStudioLicenseManager.setLicenseKey(key);
+    }
+    const pill = $("#studioLicensePill");
+    if (pill) {
+      pill.className = `pill ${key ? "ok" : "warn"}`;
+      pill.textContent = key ? "AG STUDIO · LICENSED" : "AG STUDIO · TRIAL WATERMARK";
+    }
+    window.agStudio.AgStudioModuleRegistry.registerModules([window.agStudio.AgStudioAiModule]);
+    destroyStudioGrid();
+    const adapter = window.AfterpactStudioAdapter.createVultrStudioAdapter("/api/ai/studio-turn");
+    studio.api = window.agStudio.createStudio(host, {
+      data: {
+        sources: [
+          { id: "promises", data: datasets.promises ?? [] },
+          { id: "incidents", data: datasets.incidents ?? [] },
+          { id: "captures", data: datasets.captures ?? [] },
+          { id: "refunds", data: datasets.refunds ?? [] },
+        ],
+      },
+      mode: "edit",
+      ai: ({ api: studioApi }) => window.agStudio.createAiHarness(studioApi, {
+        adapter,
+        promptStarters: [
+          { label: "Open incidents by severity", prompt: "Show a bar chart of open incidents grouped by severity, using the incidents source." },
+          { label: "Refund recovery rate", prompt: "Create a KPI tile with the refunded-to-captured rate plus a table of refunds by status." },
+          { label: "At-risk promises", prompt: "List promises with open incidents and unrefunded balances in a grid, sorted by amount at risk." },
+        ],
+      }),
+    });
+  } catch (err) {
+    host.innerHTML = `<p class="small muted">AG Studio canvas unavailable: ${escapeHtml(err.message)}. The Community tables below stay fully functional.</p>`;
   }
 }
 
@@ -1274,14 +1338,18 @@ function breakdownList(record) {
 async function renderStudio() {
   setNav("studio");
   destroyStudioGrid();
-  view().innerHTML = viewHead("Commerce Intelligence Studio", "Live datasets from the real API — AG Grid Community tables, cross-filtering, theming, and a strict NL command box. Not AG Studio.") + loadingState();
+  view().innerHTML = viewHead("Commerce Intelligence Studio", "AG Studio canvas + AI agent over live API rows, with the Community tables and strict NL command box below.") + loadingState();
   try {
     const datasets = await api("/api/studio/datasets");
     studio.datasets = datasets;
     const k = datasets.kpis;
     const refundRate = k.refundRateBps === null ? "—" : `${(k.refundRateBps / 100).toFixed(2)}%`;
-    view().innerHTML = viewHead("Commerce Intelligence Studio", "Live datasets from the real API — AG Grid Community tables, cross-filtering, theming, and a strict NL command box. Not AG Studio.") + `
-      <div class="badge-row section-gap">${originPill("real-api")} <span id="studioRenderer"></span><span class="pill">AG STUDIO: NOT CLAIMED</span></div>
+    view().innerHTML = viewHead("Commerce Intelligence Studio", "AG Studio canvas + AI agent over live API rows, with the Community tables and strict NL command box below.") + `
+      <div class="badge-row section-gap">${originPill("real-api")} <span id="studioRenderer"></span><span class="pill" id="studioLicensePill">AG STUDIO · …</span></div>
+      <div class="card section-gap"><h2>AG Studio canvas</h2>
+        <div id="agStudioHost" style="min-height:640px">${loadingState("Loading AG Studio…")}</div>
+        <p class="small muted section-gap">Drag-and-drop canvas over the live promises, incidents, captures, and refunds sources. The AI assistant (chat panel) runs on our own model via <span class="mono">/api/ai/studio-turn</span> — the inference key never leaves the server.</p>
+      </div>
       <div class="grid kpi">
         <div class="card"><div class="kpi-value">${k.promiseCount}</div><div class="kpi-label">Promises</div><div class="kpi-sub">${Object.entries(k.promisesByState).map(([s, n]) => `${s} ${n}`).join(" · ") || "none"}</div></div>
         <div class="card"><div class="kpi-value">${k.openIncidentCount}</div><div class="kpi-label">Open incidents</div><div class="kpi-sub">${k.unresolvedRefundIncidentCount} with unresolved refunds</div></div>
@@ -1308,6 +1376,7 @@ async function renderStudio() {
       </div>`;
     renderNlResult();
     renderStudioGrid();
+    void mountAgStudio(datasets);
     document.querySelectorAll("[data-studio-entity]").forEach((b) => {
       b.addEventListener("click", () => {
         studio.entity = b.dataset.studioEntity;

@@ -5,7 +5,8 @@ export type AIErrorCode =
   | "ai-invalid-output"
   | "ai-model-mismatch"
   | "ai-rate-limited"
-  | "ai-disabled";
+  | "ai-disabled"
+  | "ai-unsupported";
 
 export class AIError extends Error {
   constructor(

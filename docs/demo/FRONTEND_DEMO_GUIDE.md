@@ -13,7 +13,7 @@ no Playwright in this repo, so the UI contract is verified over HTTP).
 | `#/copilot` | Purchase Copilot | NL request → heuristic parse → offer compare → promise → bound approval |
 | `#/tx`, `#/tx/:id` | Transactions + Detail | Lifecycle state, policy verdict, PayPal order/capture actions, outcomes, refunds, per-promise history + redacted export |
 | `#/recovery` | Recovery Center | Incident diagnosis, resolution proposals, approve/reject, verified execution |
-| `#/studio` | Intelligence Studio | Real datasets in AG Grid Community tables (NOT AG Studio), KPI widgets, cross-filter, theming, NL command box |
+| `#/studio` | Intelligence Studio | AG Studio canvas + AI agent over live rows (trial watermark until licensed), Community tables, KPI widgets, cross-filter, theming, NL command box |
 | `#/discovery` | Discovery | Channel3 live search/comparison/lookup with attribution; honest unconfigured state without a key |
 | `#/timeline` | Recovery Timeline | Dependency-aware schedule (fallback renderer, no Bryntum); incident shifts recomputed from state |
 | `#/recorder` | Flight Recorder | Filterable hash-chained timeline, step replay, chain-validity badge, redacted export download |
@@ -34,7 +34,8 @@ no Playwright in this repo, so the UI contract is verified over HTTP).
    mismatch detection → partial-refund proposal ($129.99) validated
    against capture bounds → operator approval → provider refund → verified
    status → Flight Recorder chain check → Studio regeneration from live
-   data (Act 9, `real-api`; AG Grid Community, explicitly not AG Studio).
+   data (Act 9, `real-api`; AG Studio canvas regenerates from the same
+   live datasets as the Community tables).
 3. Click the promise ref into `#/tx/:id`: policy verdict, PayPal ids,
    evidence, and history are all real API reads.
 4. Open `#/recorder?promiseId=…`, step the replay, download the redacted
@@ -53,9 +54,10 @@ Every demo act, payment response, and offer list carries an origin marker:
 `CHANNEL3 · LIVE` / `DISCOVERY UNAVAILABLE`, `AG GRID COMMUNITY` /
 `NATIVE TABLE FALLBACK`, `COMPUTED SCHEDULE` / `FALLBACK TIMELINE`,
 `NOT IN THIS BUILD`. The UI never renders unbadged simulated money;
-unconfigured integrations (Channel3 without a key) render no data at all,
-and unclaimed products (AG Studio, Bryntum) are badged `NOT CLAIMED` /
-`FALLBACK` next to the real Community/fallback implementation.
+unconfigured integrations (Channel3 without a key, AI without a key) render
+no data at all, and the Studio canvas shows its trial watermark until
+`AG_STUDIO_LICENSE_KEY` is set. Bryntum stays an explicitly labeled
+`FALLBACK` next to the real fallback implementation.
 
 ## Accessibility (WCAG 2.2 AA where feasible)
 
@@ -69,14 +71,19 @@ the disclosed limitation.
 
 ## Honest limitations
 
-- No LLM runs in this build: intent parsing is deterministic heuristics and
-  says so on screen and in the API (`origin: heuristic-parse`). The Studio
-  NL box is a strict filter language, not model inference.
+- Runtime AI runs through Vultr Inference when `VULTR_INFERENCE_API_KEY` is
+  set (intent interpretation, incident analysis, recovery proposals, Studio
+  agent), with `ai-live` / `ai-off` origin pills everywhere and
+  deterministic fallbacks + policy gates when it is not. The Copilot parse
+  itself stays heuristic (`origin: heuristic-parse`); the Studio NL box is
+  a strict filter language alongside the model-backed agent chat.
 - The fallback offer catalog and logistics events are deterministic
   simulations, always badged; Channel3 live discovery replaces the catalog
   seed only when a key is configured (payment still routes to the
   authorized sandbox merchant).
-- AG Studio is explicitly NOT claimed (Community tables instead); Bryntum
-  is an explicitly labeled fallback renderer. Upgrade paths are documented.
+- AG Studio is genuinely integrated (canvas + Agent Framework with our own
+  model); the demo shows its trial watermark until a licence key is
+  installed. Bryntum is an explicitly labeled fallback renderer with a
+  documented upgrade path.
 - Persistence is a JSON snapshot (`AFTERPACT_DATA_DIR`), not SQLite — the
   chain is still hash-verified on load and writes are atomic.

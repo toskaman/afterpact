@@ -87,7 +87,7 @@ Anything a judge sees carries an origin marker. Summary:
 | `SIMULATED · CATALOG` / `SIMULATED · LOGISTICS` | Fallback catalog / scripted delivery events |
 | `HEURISTIC PARSE` | Deterministic NL parsing (not an LLM) |
 | `CHANNEL3 · LIVE` / `DISCOVERY UNAVAILABLE` | Live discovery vs unconfigured (no key → no data, HTTP 503) |
-| `AG GRID COMMUNITY` / `NATIVE TABLE FALLBACK` | Real AG Grid tables; native fallback if the bundle is missing. **AG Studio is NOT claimed** |
+| `AG GRID COMMUNITY` / `NATIVE TABLE FALLBACK` | Real AG Grid tables; native fallback if the bundle is missing. The Studio canvas above them IS real AG Studio (trial watermark until licensed). |
 | `COMPUTED SCHEDULE` / `FALLBACK TIMELINE` | Real schedule recomputation; **Bryntum is NOT claimed** |
 
 Rules: credentials-needing tests **skip visibly** instead of faking a
@@ -184,7 +184,7 @@ amount-increase attempts are both `blocked` with exact policy reasons.
 
 | Sponsor | Status | Doc |
 |---|---|---|
-| AG Grid | **Community tables used; AG Studio NOT claimed** | `docs/sponsors/AG_GRID_STATUS.md` (+ `AG_STUDIO_UPGRADE_PATH.md`) |
+| AG Grid | **Studio canvas + Agent Framework used (trial watermark until licensed); Community tables kept** | `docs/sponsors/AG_GRID_STATUS.md` |
 | Channel3 | **Live client; calls the API when keyed** | `docs/sponsors/CHANNEL3_INTEGRATION.md` |
 | APIMatic | **Not used; explicitly not claimed** | `docs/sponsors/APIMATIC_EVIDENCE.md` |
 | Bryntum | **Fallback timeline; Bryntum NOT claimed** | `docs/sponsors/BRYNTUM_STATUS.md` (+ `BRYNTUM_UPGRADE_PATH.md`) |
@@ -193,18 +193,24 @@ amount-increase attempts are both `blocked` with exact policy reasons.
 
 ## Limitations (disclosed)
 
-- No LLM inference in the build; AI surfaces are deterministic and labeled.
+- Runtime AI (Vultr Inference, identity-verified) for intent/incident/
+  recovery/Studio-agent tasks when keyed, with deterministic fallbacks and
+  policy gates; see `docs/evals/README.md` for measured evidence.
 - Fallback catalog/logistics are simulations (badged); live discovery
   needs a Channel3 key.
 - Live-sandbox flagship path is implemented but unverified without
   credentials in CI (skips visibly; verify manually before the video).
 - Persistence is a JSON snapshot, not SQLite; Render disk is 1 GB.
-- AG Studio / Bryntum / APIMatic / Render Workflows are not in this
-  build; upgrade paths are documented, prizes not claimed.
+- Bryntum / APIMatic / Render Workflows are not in this build; upgrade
+  paths are documented, prizes not claimed. AG Studio IS integrated
+  (commercial trial bundle vendored with its license file).
 - No third-party usability test (single build session).
 
 ## License
 
 MIT — see [LICENSE](LICENSE). Runtime dependency: `zod` (MIT).
 Vendored frontend: AG Grid Community 36.3.0 (MIT,
-`apps/web/public/vendor/ag-grid-community.LICENSE.txt`).
+`apps/web/public/vendor/ag-grid-community.LICENSE.txt`) and AG Studio
+3.1.0 (Commercial trial,
+`apps/web/public/vendor/ag-studio.LICENSE.html`) — full license needed
+for production use beyond evaluation.

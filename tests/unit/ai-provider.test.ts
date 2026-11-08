@@ -3,7 +3,9 @@ import { z } from "zod";
 import {
   AIInvalidOutputError,
   AIModelMismatchError,
+  AINotConfiguredError,
   AITimeoutError,
+  AITransportError,
   AIService,
   VultrInferenceProvider,
   type StructuredAIRequest,
@@ -106,6 +108,54 @@ describe("VultrInferenceProvider (stubbed fetch)", () => {
     expect(result.provenance.attempts).toBe(2);
   });
 
+  it("chats back plain text with usage", async () => {
+    const fetchFn = vi.fn(async () =>
+      okJson({ model: MODEL, choices: [{ message: { content: "hello", tool_calls: [] }, finish_reason: "stop" }], usage: { prompt_tokens: 8, completion_tokens: 3 } }),
+    );
+    const provider = new VultrInferenceProvider(baseConfig(), fetchFn);
+    const result = await provider.chat({ messages: [{ role: "user", content: "hi" }] });
+    expect(result.content).toBe("hello");
+    expect(result.toolCalls).toEqual([]);
+    expect(result.usage).toEqual({ prompt: 8, completion: 3 });
+    expect(result.modelServed).toBe(MODEL);
+  });
+
+  it("chats back tool calls for agentic turns", async () => {
+    let sentInit: RequestInit | undefined;
+    const fetchFn = vi.fn(async (_url: string, init: RequestInit) => {
+      sentInit = init;
+      return okJson({
+        model: MODEL,
+        choices: [{
+          message: {
+            content: null,
+            tool_calls: [{ id: "call_1", type: "function", function: { name: "addWidget", arguments: "{\"type\":\"bar\"}" } }],
+          },
+          finish_reason: "tool_calls",
+        }],
+        usage: { prompt_tokens: 40, completion_tokens: 12 },
+      });
+    });
+    const provider = new VultrInferenceProvider(baseConfig(), fetchFn);
+    const result = await provider.chat({
+      messages: [{ role: "user", content: "chart it" }],
+      tools: [{ name: "addWidget", description: "add a widget", parameters: { type: "object" } }],
+      toolChoice: "auto",
+    });
+    expect(result.toolCalls).toEqual([{ id: "call_1", name: "addWidget", arguments: "{\"type\":\"bar\"}" }]);
+    expect(result.finishReason).toBe("tool_calls");
+    const sentBody = JSON.parse((sentInit?.body ?? "{}") as string) as Record<string, unknown>;
+    expect(sentBody["tools"]).toEqual([{ type: "function", function: { name: "addWidget", description: "add a widget", parameters: { type: "object" } } }]);
+  });
+
+  it("rejects empty replies with no tool calls", async () => {
+    const fetchFn = vi.fn(async () =>
+      okJson({ model: MODEL, choices: [{ message: { content: "", tool_calls: [] }, finish_reason: "stop" }], usage: { prompt_tokens: 1, completion_tokens: 0 } }),
+    );
+    const provider = new VultrInferenceProvider(baseConfig(), fetchFn);
+    await expect(provider.chat({ messages: [{ role: "user", content: "hi" }] })).rejects.toBeInstanceOf(AITransportError);
+  });
+
   it("times out hung providers", async () => {
     const fetchFn = vi.fn(
       (_url: string, init?: RequestInit) =>
@@ -154,5 +204,23 @@ describe("AIService fallback + ledger", () => {
     const result = await service.generateWithFallback(request(), () => ({ summary: "fb", score: 0 }));
     expect(result.provenance.fallbackUsed).toBe(true);
     expect(result.provenance.fallbackReason).toBe("provider-not-configured");
+  });
+});
+
+describe("AIService chatTurn (strict agent turns)", () => {
+  it("passes chat through and attributes cost to analytics-assistant", async () => {
+    const fetchFn = vi.fn(async () =>
+      okJson({ model: MODEL, choices: [{ message: { content: "done" }, finish_reason: "stop" }], usage: { prompt_tokens: 10, completion_tokens: 5 } }),
+    );
+    const service = new AIService(new VultrInferenceProvider(baseConfig(), fetchFn));
+    const result = await service.chatTurn({ messages: [{ role: "user", content: "hi" }] });
+    expect(result.content).toBe("done");
+    expect(result.costUsd).toBeCloseTo(0.0000045, 12);
+    expect(service.ledgerSummary()).toMatchObject({ calls: 1, fallbacks: 0 });
+  });
+
+  it("throws without fallback when unconfigured", async () => {
+    const service = new AIService(null);
+    await expect(service.chatTurn({ messages: [] })).rejects.toBeInstanceOf(AINotConfiguredError);
   });
 });

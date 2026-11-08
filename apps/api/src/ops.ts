@@ -73,7 +73,8 @@ import {
   planRecoveryForIncident,
   wireAIService,
 } from "./aiTasks";
-import type { AIService, CostLedgerSummary } from "../../../packages/ai/src/index";
+import { AIError, AINotConfiguredError, type AIService, type CostLedgerSummary } from "../../../packages/ai/src/index";
+import { studioTurn, StudioTurnError } from "./studioAgent";
 
 /** HTTP-mapped application error. Routes render {error:{code,message,details}}. */
 export class HttpError extends Error {
@@ -108,6 +109,15 @@ export function toHttpError(error: unknown): HttpError {
   }
   if (error instanceof z.ZodError) {
     return new HttpError(422, "validation-error", "request failed validation", error.issues);
+  }
+  if (error instanceof AINotConfiguredError) {
+    return new HttpError(503, "ai-unavailable", "AI provider is not configured");
+  }
+  if (error instanceof AIError) {
+    return new HttpError(502, "ai-error", error.message, { code: error.code });
+  }
+  if (error instanceof StudioTurnError) {
+    return new HttpError(422, "bad-turn", error.message);
   }
   if (error instanceof Error) {
     switch (error.name) {
@@ -363,7 +373,12 @@ export class Ops {
     };
   }
 
+  agStudioLicenseKey(): string {
+    return (this.env["AG_STUDIO_LICENSE_KEY"] ?? "").trim();
+  }
+
   config(): Record<string, unknown> {
+    const studioKey = this.agStudioLicenseKey();
     return {
       transport: this.wiring.kind,
       paypal: {
@@ -380,11 +395,17 @@ export class Ops {
         catalog: "simulated-catalog",
         logistics: "simulated-logistics",
         nlParse: "heuristic-parse",
-        // Honest sponsor labels: AG Grid Community tables (NOT AG Studio),
-        // Channel3 live only when a key is configured, Bryntum fallback.
-        agStudio: "ag-grid-community",
+        // AG Studio canvas + agent run on the /studio view (trial watermark
+        // until AG_STUDIO_LICENSE_KEY is set); Community grid kept below it.
+        agStudio: "ag-studio",
         channel3: this.channel3.status.configured ? "live" : "unconfigured",
         bryntum: "fallback-timeline",
+      },
+      agStudio: {
+        licensed: studioKey !== "",
+        // AG licence keys install client-side by design (every production
+        // bundle carries one); the key stays out of git via deploy-time env.
+        licenseKey: studioKey === "" ? null : studioKey,
       },
       resetAllowed: this.resetAllowed(),
     };
@@ -969,6 +990,11 @@ export class Ops {
     const record = this.mustRecord(input.promiseId);
     const citable = this.listOutcomes(input.promiseId).map((o) => ({ id: o.id, summary: o.summary }));
     const result = await analyzeIncidentForPromise(this.ai, record.promise, input.observation, citable);
+    return result as unknown as Record<string, unknown>;
+  }
+
+  async aiStudioTurn(raw: unknown): Promise<Record<string, unknown>> {
+    const result = await studioTurn(this.ai, raw);
     return result as unknown as Record<string, unknown>;
   }
 

@@ -268,6 +268,9 @@ async function handleRequest(req: IncomingMessage, res: ServerResponse, ctx: Req
   if (method === "POST" && path === "/api/ai/plan-recovery") {
     return ok(res, await ops.aiPlanRecovery(parseJson(await readBody(req))));
   }
+  if (method === "POST" && path === "/api/ai/studio-turn") {
+    return ok(res, await ops.aiStudioTurn(parseJson(await readBody(req))));
+  }
   if (method === "POST" && path === "/api/webhooks/paypal") {
     const headers: Record<string, string> = {};
     for (const [key, value] of Object.entries(req.headers)) {

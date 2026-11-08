@@ -102,6 +102,39 @@ describe("frontend AI surface contract", () => {
   });
 });
 
+describe("frontend AG Studio contract", () => {
+  it("mounts the Studio canvas with licence pill, harness, and Vultr adapter", () => {
+    const source = readFileSync(join(WEB_DIR, "app.js"), "utf8");
+    for (const token of [
+      "mountAgStudio",
+      "agStudioHost",
+      "studioLicensePill",
+      "AgStudioLicenseManager",
+      "AgStudioModuleRegistry",
+      "AgStudioAiModule",
+      "createAiHarness",
+      "AfterpactStudioAdapter",
+      "/api/ai/studio-turn",
+      "/ag-studio-adapter.js",
+    ]) {
+      expect(source.includes(token), `app.js missing Studio token: ${token}`).toBe(true);
+    }
+    const adapter = readFileSync(join(WEB_DIR, "ag-studio-adapter.js"), "utf8");
+    for (const token of ["createVultrStudioAdapter", "executeTurn", "TEXT_MESSAGE_CONTENT", "TOOL_CALL_START", "AfterpactStudioAdapter"]) {
+      expect(adapter.includes(token), `ag-studio-adapter.js missing: ${token}`).toBe(true);
+    }
+  });
+
+  it("routes the Studio proxy endpoint", async () => {
+    const res = await fetch(`${base}/api/ai/studio-turn`, {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: "{}",
+    });
+    expect(res.status).toBe(422);
+  });
+});
+
 describe("frontend Outcome Twin contract", () => {
   it("registers the twin route, nav entry, and three-reality view", () => {
     const source = readFileSync(join(WEB_DIR, "app.js"), "utf8");

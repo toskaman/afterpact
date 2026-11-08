@@ -42,12 +42,13 @@ they land). Repo URL filled; demo + video URLs pending human steps.
 
 - [x] Feature description (what it does, complete product story).
 - [x] PayPal centrality explicit (Orders v2 + capture + refund + webhooks).
-- [x] **List of AI tools used + how each was used** (deterministic
-      components listed as deterministic; no LLM inference claimed).
+- [x] **List of AI tools used + how each was used** (Vultr Inference
+      model + deterministic gates/fallbacks; usage in `docs/evals/README.md`).
 - [x] Real-vs-simulated disclosure (what is live, what is simulated, what
       needs keys).
-- [x] Sponsor usage stated exactly: AG Grid Community (not Studio),
-      Channel3 live-when-keyed, Bryntum fallback (not Bryntum), Render
+- [x] Sponsor usage stated exactly: AG Studio canvas + agent (trial
+      watermark until licensed) + Community tables, Channel3
+      live-when-keyed, Bryntum fallback (not Bryntum), Render
       hosting, Postman collection. APIMatic/AG Studio/Bryntum prizes NOT
       claimed.
 - [ ] Public repo URL + demo URL + video URL all present and reachable

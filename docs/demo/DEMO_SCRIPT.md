@@ -50,8 +50,8 @@ with proof."
   Download the redacted JSON: "this is the artifact merchant-ops keeps."
 - Act 9: the Studio regenerates from the same live data. Open `#/studio`,
   run `incidents unresolved refunds >$100`, click a promise row to
-  cross-filter. "AG Grid Community tables, real rows — and we label what
-  we don't use: AG Studio is explicitly not claimed."
+  cross-filter. "AG Studio canvas plus Community tables, real rows — and
+  the AI assistant builds widgets from the same live datasets."
 - Open `#/timeline?promiseId=…`: "the incident rescheduled delivery —
   computed from state, dependencies intact."
 
@@ -69,13 +69,17 @@ makes sure the outcome matches the promise."
 - "Is PayPal real?" — Yes when keyed (sandbox ids on screen); the mock
   transport is deterministic and always labeled. Live mode is disabled
   in code.
-- "Where is the AI?" — Deterministic today (parse, rank, detect, draft,
-  filter), each labeled; no LLM inference is claimed. The agent loop
+- "Where is the AI?" — Real inference (Vultr, identity-verified) for
+  intent interpretation, incident analysis, recovery proposals, and the
+  Studio agent, each badged `AI · LIVE` with cost accounting; deterministic
+  gates stay authoritative and fallbacks hold when unkeyed. The agent loop
   (propose → human gate → execute → verify) is the agentic story.
 - "Channel3 without a key?" — Unconfigured state, HTTP 503, zero
   fabricated rows. Set the key and the same UI goes live.
-- "AG Studio? Bryntum?" — Not used, not claimed; Community tables and a
-  real fallback timeline instead, with documented upgrade paths.
+- "AG Studio? Bryntum?" — Studio canvas + Agent Framework genuinely
+  integrated (trial watermark until licensed); Bryntum stays a labeled
+  fallback with a documented upgrade path. Community tables remain below
+  the canvas.
 
 ## Video shot list (<3:00, hard cap 2:50)
 

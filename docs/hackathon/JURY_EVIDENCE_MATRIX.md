@@ -87,13 +87,13 @@ background).
 
 | Requirement | Evidence | Status |
 |---|---|---|
-| Real AG Studio integration | **Not claimed.** No AG Studio package/license in the build. `docs/sponsors/AG_STUDIO_UPGRADE_PATH.md` documents the upgrade path | **NOT PURSUED** |
+| Real AG Studio integration | `ag-studio@3.1.0` UMD vendored (SHA-256 pinned, commercial license filed) driving the `#/studio` canvas over live datasets; trial watermark until `AG_STUDIO_LICENSE_KEY` is set | **PASS** |
 | AG Grid Community integration | AG Grid Community 36.3.0 vendored (SHA-256 `5fc8736c…`, MIT license filed, `scripts/vendor-ag-grid.mjs` verifies) driving `#/studio` grids on live data | **PASS** |
 | Bespoke visualizations / custom widgets | Commerce Intelligence Studio: KPI widgets + incident/merchant views from live store state (`apps/api/src/studio.ts`) | **PASS** |
 | Cross-filtering | Global filters wired across Studio widgets, asserted in `tests/integration/sponsors.studio.timeline.test.ts` | **PASS** |
 | Interactive analytics | Drill-down on incidents/refunds/merchants over live datasets | **PASS** |
 | Strict NL dashboard queries | `incidents unresolved refunds >$100` etc. with rejection+hints (tokenizer fix covered by tests); Act 9 regenerates Studio from live data (`passed/real-api`) | **PASS** |
-| Studio Agent Framework | Not available in this environment; strict NL query language used instead (honestly labeled, not claimed as the Framework) | **NOT PURSUED** |
+| Studio Agent Framework | Real `directLlmRunner` loop with our own Vultr-backed `AgLlmAdapter` via `POST /api/ai/studio-turn`; verified live: NL prompt → Page+Widget delegation → configured bar chart from live rows (13 turns, $0.023, screenshot `studio-agent-trace.png`) | **PASS** |
 
 ### APIMatic (Hassan, Olson)
 

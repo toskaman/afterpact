@@ -289,6 +289,23 @@ describe("AG Grid vendor bundle", () => {
     expect(source).toContain("36.3.0");
     const shell = readFileSync(join(REPO_ROOT, "apps", "web", "public", "index.html"), "utf8");
     expect(shell).toContain("/vendor/ag-grid-community.min.js");
-    expect(shell).not.toContain("AG Studio");
+  });
+});
+
+describe("AG Studio vendor bundle", () => {
+  it("ships the pinned commercial Studio UMD lazily (not in the shell)", () => {
+    const bundle = join(REPO_ROOT, "apps", "web", "public", "vendor", "ag-studio.min.js");
+    expect(existsSync(bundle)).toBe(true);
+    const source = readFileSync(bundle, "utf8");
+    expect(source.length).toBeGreaterThan(5_000_000);
+    expect(source).toContain("3.1.0");
+    expect(source).toContain("agStudio");
+    expect(existsSync(join(REPO_ROOT, "apps", "web", "public", "vendor", "ag-studio.LICENSE.html"))).toBe(true);
+    // Lazy-loaded by the /studio view only: the 6.4 MB bundle must not slow
+    // down every other page.
+    const shell = readFileSync(join(REPO_ROOT, "apps", "web", "public", "index.html"), "utf8");
+    expect(shell).not.toContain("/vendor/ag-studio.min.js");
+    const app = readFileSync(join(REPO_ROOT, "apps", "web", "public", "app.js"), "utf8");
+    expect(app).toContain("/vendor/ag-studio.min.js");
   });
 });

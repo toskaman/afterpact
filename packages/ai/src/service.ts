@@ -1,6 +1,8 @@
-import { AINotConfiguredError } from "./errors";
+import { AIError, AINotConfiguredError } from "./errors";
 import type {
   AIProvider,
+  ChatRequest,
+  ChatResult,
   CostLedgerEntry,
   CostLedgerSummary,
   StructuredAIRequest,
@@ -98,6 +100,33 @@ export class AIService {
       throw new AINotConfiguredError();
     }
     return this.provider.generateStructured(request);
+  }
+
+  /**
+   * Strict chat turn for agentic callers (AG Studio adapter). No fallback:
+   * a failed turn surfaces as an error, never as fabricated content.
+   */
+  async chatTurn(request: ChatRequest): Promise<ChatResult> {
+    if (this.provider === null) {
+      throw new AINotConfiguredError();
+    }
+    if (typeof this.provider.chat !== "function") {
+      throw new AIError("provider does not support chat turns", "ai-unsupported", { providerId: this.provider.id });
+    }
+    const result = await this.provider.chat(request);
+    this.ledger.record({
+      task: "analytics-assistant",
+      providerId: this.provider.id,
+      modelServed: result.modelServed,
+      promptTokens: result.usage.prompt,
+      completionTokens: result.usage.completion,
+      costUsd: result.costUsd,
+      latencyMs: result.latencyMs,
+      attempts: 1,
+      fallbackUsed: false,
+      at: new Date().toISOString(),
+    });
+    return result;
   }
 
   private entry<T>(

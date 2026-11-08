@@ -7,6 +7,9 @@ import {
 } from "./errors";
 import type {
   AIProvider,
+  ChatRequest,
+  ChatResult,
+  ChatToolCallInput,
   PriceTable,
   StructuredAIRequest,
   StructuredAIResult,
@@ -136,6 +139,90 @@ export class VultrInferenceProvider implements AIProvider {
     this.config = config;
     this.model = config.model;
     this.fetchFn = fetchFn ?? ((url, init) => fetch(url, init));
+  }
+
+  /**
+   * Raw chat turn with optional tools. Single attempt (the caller owns any
+   * retry loop), same identity/timeout/cost discipline as structured calls.
+   * Used by the AG Studio agent proxy; never exposes the API key.
+   */
+  async chat(request: ChatRequest): Promise<ChatResult> {
+    const started = Date.now();
+    const timeoutMs = request.timeoutMs ?? this.config.timeoutMs;
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), timeoutMs);
+    try {
+      const toolChoice =
+        request.toolChoice === undefined
+          ? undefined
+          : typeof request.toolChoice === "string"
+            ? request.toolChoice
+            : { type: "function", function: { name: request.toolChoice.name } };
+      const body: Record<string, unknown> = {
+        model: this.config.model,
+        messages: request.messages.map((m) => ({
+          role: m.role,
+          content: m.content,
+          ...(m.toolCalls === undefined ? {} : { tool_calls: m.toolCalls.map((c) => ({ id: c.id, type: "function", function: { name: c.name, arguments: c.arguments } })) }),
+          ...(m.toolCallId === undefined ? {} : { tool_call_id: m.toolCallId }),
+        })),
+        ...(request.tools === undefined ? {} : { tools: request.tools.map((t) => ({ type: "function", function: { name: t.name, description: t.description, parameters: t.parameters } })) }),
+        ...(toolChoice === undefined ? {} : { tool_choice: toolChoice }),
+        ...(request.responseFormat === "json" ? { response_format: { type: "json_object" } } : {}),
+        temperature: request.temperature ?? this.config.temperature,
+        max_tokens: request.maxTokens ?? this.config.maxTokens,
+        reasoning_effort: this.config.reasoningEffort,
+      };
+      let response: Response;
+      try {
+        response = await this.fetchFn(`${this.config.baseUrl}/v1/chat/completions`, {
+          method: "POST",
+          headers: { "content-type": "application/json", authorization: `Bearer ${this.config.apiKey}` },
+          body: JSON.stringify(body),
+          signal: controller.signal,
+        });
+      } catch (error: unknown) {
+        if (error instanceof Error && error.name === "AbortError") throw new AITimeoutError(timeoutMs);
+        throw new AITransportError(error instanceof Error ? error.message : "fetch failed", null);
+      }
+      if (!response.ok) {
+        const detail = await response.text().catch(() => "");
+        throw new AITransportError(`provider HTTP ${response.status}`, response.status, { bodyHead: detail.slice(0, 300) });
+      }
+      const json = (await response.json()) as ChatCompletionsWire;
+      const served = typeof json.model === "string" ? json.model : "";
+      if (served !== "" && served !== this.config.model) {
+        throw new AIModelMismatchError(this.config.model, served);
+      }
+      const choices = Array.isArray(json.choices) ? json.choices : [];
+      const message = choices.length > 0 ? asRecord(asRecord(choices[0])?.["message"]) : null;
+      const content = message?.["content"];
+      const text = typeof content === "string" ? content : "";
+      const rawCalls = message !== null && Array.isArray(message["tool_calls"]) ? (message["tool_calls"] as unknown[]) : [];
+      const toolCalls: ChatToolCallInput[] = [];
+      for (const raw of rawCalls) {
+        const fn = asRecord(asRecord(raw)?.["function"]);
+        const id = asRecord(raw)?.["id"];
+        if (typeof id !== "string" || fn === null || typeof fn["name"] !== "string" || typeof fn["arguments"] !== "string") continue;
+        toolCalls.push({ id, name: fn["name"], arguments: fn["arguments"] });
+      }
+      if (text === "" && toolCalls.length === 0) {
+        throw new AITransportError("provider returned neither content nor tool calls", 200, { hasChoices: choices.length > 0 });
+      }
+      const usage = usageOf(json);
+      const finish = asRecord(choices[0])?.["finish_reason"];
+      return {
+        content: text,
+        toolCalls,
+        finishReason: typeof finish === "string" ? finish : null,
+        usage: { prompt: usage.prompt, completion: usage.completion },
+        costUsd: (usage.prompt * this.config.prices.promptPerMTok + usage.completion * this.config.prices.completionPerMTok) / 1_000_000,
+        modelServed: served === "" ? this.config.model : served,
+        latencyMs: Date.now() - started,
+      };
+    } finally {
+      clearTimeout(timer);
+    }
   }
 
   async generateStructured<T>(
