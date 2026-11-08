@@ -134,6 +134,7 @@ export const INTENT_OUTPUT_FIELDS = [
   'currency:"XXX"|null, productType:string<=120|null, deadlineDays:int>=0|null,',
   "requirements:string[<=20], ambiguities:string[<=20], tradeoffs:string[<=20].",
   "All three arrays required (use [] when empty). Numbers are JSON numbers, never strings.",
+  "A stated amount always carries its currency ($=USD, €=EUR, £=GBP); currency is null only when no amount is stated.",
 ].join(" ");
 
 const INCIDENT_SYSTEM = [
@@ -212,19 +213,24 @@ export async function analyzeIntentText(
     },
     () => heuristicIntent(rawText, nowMs),
   );
+  // Defense in depth: the provider validates, but the task re-validates so a
+  // misbehaving provider can never inject malformed values downstream.
+  const checked = IntentAnalysisSchema.safeParse(result.data);
+  const data = checked.success ? result.data : heuristicIntent(rawText, nowMs);
+  const usedFallback = result.provenance.fallbackUsed || !checked.success;
   return {
     constraints: {
-      quantity: result.data.quantity,
-      budgetMinor: result.data.budgetMinor,
-      currency: result.data.currency,
-      productType: result.data.productType,
-      deadlineDays: result.data.deadlineDays,
+      quantity: data.quantity,
+      budgetMinor: data.budgetMinor,
+      currency: data.currency,
+      productType: data.productType,
+      deadlineDays: data.deadlineDays,
     },
-    requirements: result.data.requirements,
-    ambiguities: result.data.ambiguities,
-    tradeoffs: result.data.tradeoffs,
+    requirements: data.requirements,
+    ambiguities: data.ambiguities,
+    tradeoffs: data.tradeoffs,
     injection,
-    origin: result.provenance.fallbackUsed ? "heuristic-parse" : `ai-model:${result.provenance.modelServed}`,
+    origin: usedFallback ? "heuristic-parse" : `ai-model:${result.provenance.modelServed}`,
     provenance: result.provenance,
   };
 }
@@ -236,6 +242,10 @@ export async function analyzeIncidentForPromise(
   citable: CitableEvidence[],
 ): Promise<{
   gaps: { category: string; severity: string; detail: string }[];
+  /** Post-gate category: always backed by deterministic detection. */
+  category: string;
+  /** True when the model category had no detected gap and was replaced. */
+  categoryGated: boolean;
   interpretation: string;
   citations: string[];
   droppedCitations: string[];
@@ -272,11 +282,15 @@ export async function analyzeIncidentForPromise(
     },
     fallback,
   );
-  let analysis = result.data;
-  if (!result.provenance.fallbackUsed) {
+  const checked = IncidentAnalysisSchema.safeParse(result.data);
+  let analysis = checked.success ? result.data : fallback();
+  const usedFallback = result.provenance.fallbackUsed || !checked.success;
+  let categoryGated = false;
+  if (!usedFallback) {
     const gate = gateIncidentCategory(analysis.category, gaps);
     if (!gate.accepted) {
       analysis = fallback();
+      categoryGated = true;
     }
   }
   const refs = verifyEvidenceRefs(
@@ -285,12 +299,14 @@ export async function analyzeIncidentForPromise(
   );
   return {
     gaps: gaps.map((g) => ({ category: g.category, severity: g.severity, detail: g.detail })),
+    category: analysis.category,
+    categoryGated,
     interpretation: analysis.interpretation,
     citations: refs.kept,
     droppedCitations: refs.dropped,
     uncertainty: analysis.uncertainty,
     escalate: analysis.escalate,
-    origin: result.provenance.fallbackUsed ? "deterministic-detection" : `ai-model:${result.provenance.modelServed}`,
+    origin: usedFallback ? "deterministic-detection" : `ai-model:${result.provenance.modelServed}`,
     provenance: result.provenance,
   };
 }
@@ -336,18 +352,21 @@ export async function planRecoveryForIncident(
     },
     fallback,
   );
-  const gate = gateRecoveryAmount(result.data.proposedAmountMinor, bounds.remainingMinor, bounds.currency);
+  const checked = RecoveryPlanSchema.safeParse(result.data);
+  const data = checked.success ? result.data : fallback();
+  const usedFallback = result.provenance.fallbackUsed || !checked.success;
+  const gate = gateRecoveryAmount(data.proposedAmountMinor, bounds.remainingMinor, bounds.currency);
   return {
-    strategy: result.data.strategy,
-    rationale: result.data.rationale,
+    strategy: data.strategy,
+    rationale: data.rationale,
     amountMinor: gate.amountMinor,
-    confidence: result.data.confidence,
-    risks: result.data.risks,
+    confidence: data.confidence,
+    risks: data.risks,
     requiredApprovals:
-      result.data.requiredApprovals.length > 0 ? result.data.requiredApprovals : ["merchant-operator"],
+      data.requiredApprovals.length > 0 ? data.requiredApprovals : ["merchant-operator"],
     gate: { verdict: gate.verdict, reason: gate.reason },
     executed: false,
-    origin: result.provenance.fallbackUsed ? "deterministic-template" : `ai-model:${result.provenance.modelServed}`,
+    origin: usedFallback ? "deterministic-template" : `ai-model:${result.provenance.modelServed}`,
     provenance: result.provenance,
   };
 }

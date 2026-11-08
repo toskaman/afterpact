@@ -128,6 +128,7 @@ describe("AI task prompts name their exact output keys", () => {
       expect(systems[0]).toContain(key);
     }
     expect(INTENT_OUTPUT_FIELDS).toContain("budgetMinor");
+    expect(INTENT_OUTPUT_FIELDS).toContain("$=USD");
   });
 
   it("incident prompt names every IncidentAnalysis key", async () => {
@@ -176,6 +177,46 @@ describe("AI task prompts name their exact output keys", () => {
       expect(systems[0]).toContain(key);
     }
     expect(RECOVERY_OUTPUT_FIELDS).toContain("proposedAmountMinor");
+  });
+});
+
+describe("AI tasks re-validate provider output", () => {
+  it("intent falls back when a misbehaving provider returns malformed data", async () => {
+    const { service } = stubService({ quantity: "three", budgetMinor: "lots" });
+    const result = await analyzeIntentText(service, "Buy sensor kits under $400", "b", Date.now());
+    expect(result.origin).toBe("heuristic-parse");
+    expect(result.constraints.budgetMinor).toBe(40000);
+    expect(result.constraints.currency).toBe("USD");
+  });
+
+  it("incident falls back and reports no gate trip on malformed data", async () => {
+    const { service } = stubService({ category: 42 });
+    const result = await analyzeIncidentForPromise(service, testPromise(), { deliveredQuantity: 2 }, []);
+    expect(result.origin).toBe("deterministic-detection");
+    expect(result.category).toBe("not-delivered");
+    expect(result.categoryGated).toBe(false);
+  });
+
+  it("recovery falls back to the bounded template on malformed data", async () => {
+    const promise = testPromise();
+    const { service } = stubService({ strategy: "print-money", proposedAmountMinor: -1 });
+    const incident: Incident = {
+      id: "inc-test",
+      promiseId: promise.id,
+      detectedAt: "2026-01-02T00:00:00.000Z",
+      detectedBy: "policy",
+      category: "not-delivered",
+      detail: "ordered 3, got 2",
+      severity: "high",
+      status: "open",
+      linkedOutcomeEventIds: [],
+      linkedEvidenceIds: [],
+    };
+    const result = await planRecoveryForIncident(service, incident, promise, { remainingMinor: 4333, currency: "USD" });
+    expect(result.origin).toBe("deterministic-template");
+    expect(result.strategy).toBe("partial-refund");
+    expect(result.amountMinor).toBe(4333);
+    expect(result.executed).toBe(false);
   });
 });
 

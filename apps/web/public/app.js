@@ -678,6 +678,7 @@ function aiAnalysisHtml(r) {
   return `<div class="card" style="border-style:dashed"><h3>AI incident analysis ${aiOriginPill(r.origin)}</h3>
     <p class="small">${escapeHtml(r.interpretation ?? "—")}</p>
     ${gaps ? `<div class="badge-row">${gaps}</div>` : ""}
+    <p class="small">Model category: <span class="pill">${escapeHtml(r.category ?? "?")}</span>${r.categoryGated ? ' <span class="pill warn">GATED · REPLACED BY DETECTION</span>' : ""}</p>
     ${(r.citations ?? []).length ? `<p class="small muted">Cited evidence: ${r.citations.map((x) => `<span class="mono">${escapeHtml(x)}</span>`).join(", ")}</p>` : ""}
     ${(r.droppedCitations ?? []).length ? `<p class="small"><span class="pill warn">DROPPED ${r.droppedCitations.length} UNGROUNDED CITATION(S)</span></p>` : ""}
     <p class="small muted">Uncertainty: ${escapeHtml(r.uncertainty ?? "?")} · escalation ${r.escalate ? "recommended" : "not needed"} · deterministic detection stays authoritative</p>
