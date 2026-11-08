@@ -36,7 +36,8 @@ jobs:
           curl -fsS -X POST http://localhost:3101/api/demo/run \
             -H 'content-type: application/json' \
             -d '{"scenario":"flagship","label":"ci"}' | grep -o '"status":"completed"'
-          test "$(curl -s -o /dev/null -w '%{http_code}' -X POST http://localhost:3101/api/ai/studio-turn -H 'content-type: application/json' -d '{"input":[{"type":"message"}]}')" = "503"
+          test "$(curl -s -o /dev/null -w '%{http_code}' -X POST http://localhost:3101/api/ai/studio-turn -H 'content-type: application/json' -d '{"input":[{"type":"message","kind":"input","role":"user","content":[{"type":"text","text":"hi"}]}]}')" = "503"
+          test "$(curl -s -o /dev/null -w '%{http_code}' -X POST http://localhost:3101/api/ai/studio-turn -H 'content-type: application/json' -d '{"input":[{"type":"message"}]}')" = "422"
 
   e2e:
     runs-on: ubuntu-latest
