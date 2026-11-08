@@ -1,0 +1,129 @@
+{
+  "rows": [
+    {
+      "id": "intent-simple",
+      "aiRuns": 4,
+      "aiExtractionPass": 4,
+      "baselinePass": true,
+      "baselineFailedChecks": []
+    },
+    {
+      "id": "intent-eur-currency",
+      "aiRuns": 4,
+      "aiExtractionPass": 4,
+      "baselinePass": false,
+      "baselineFailedChecks": [
+        "quantity"
+      ]
+    },
+    {
+      "id": "intent-no-budget",
+      "aiRuns": 4,
+      "aiExtractionPass": 4,
+      "baselinePass": false,
+      "baselineFailedChecks": [
+        "ambiguities"
+      ]
+    },
+    {
+      "id": "intent-singular-qty",
+      "aiRuns": 4,
+      "aiExtractionPass": 4,
+      "baselinePass": true,
+      "baselineFailedChecks": []
+    },
+    {
+      "id": "intent-cent-precision",
+      "aiRuns": 4,
+      "aiExtractionPass": 3,
+      "baselinePass": true,
+      "baselineFailedChecks": []
+    },
+    {
+      "id": "intent-mandatory-ip67",
+      "aiRuns": 4,
+      "aiExtractionPass": 4,
+      "baselinePass": true,
+      "baselineFailedChecks": []
+    },
+    {
+      "id": "intent-injection-contained",
+      "aiRuns": 4,
+      "aiExtractionPass": 4,
+      "baselinePass": true,
+      "baselineFailedChecks": []
+    },
+    {
+      "id": "intent-conflicting",
+      "aiRuns": 4,
+      "aiExtractionPass": 4,
+      "baselinePass": false,
+      "baselineFailedChecks": [
+        "ambiguities"
+      ]
+    },
+    {
+      "id": "intent-short-deadline",
+      "aiRuns": 4,
+      "aiExtractionPass": 4,
+      "baselinePass": true,
+      "baselineFailedChecks": []
+    },
+    {
+      "id": "intent-multi-mandatory",
+      "aiRuns": 4,
+      "aiExtractionPass": 4,
+      "baselinePass": true,
+      "baselineFailedChecks": []
+    },
+    {
+      "id": "intent-large-qty",
+      "aiRuns": 4,
+      "aiExtractionPass": 4,
+      "baselinePass": false,
+      "baselineFailedChecks": [
+        "quantity"
+      ]
+    },
+    {
+      "id": "intent-gbp-currency",
+      "aiRuns": 4,
+      "aiExtractionPass": 4,
+      "baselinePass": true,
+      "baselineFailedChecks": []
+    },
+    {
+      "id": "intent-vague-deadline",
+      "aiRuns": 4,
+      "aiExtractionPass": 4,
+      "baselinePass": false,
+      "baselineFailedChecks": [
+        "ambiguities"
+      ]
+    },
+    {
+      "id": "intent-long-input",
+      "aiRuns": 4,
+      "aiExtractionPass": 4,
+      "baselinePass": true,
+      "baselineFailedChecks": []
+    },
+    {
+      "id": "intent-spelled-quantity",
+      "aiRuns": 4,
+      "aiExtractionPass": 4,
+      "baselinePass": false,
+      "baselineFailedChecks": [
+        "quantity"
+      ]
+    }
+  ],
+  "aiLatencyMeanMs": 2199,
+  "aiCostTotalUsd": 0.014696,
+  "reports": [
+    "report-2026-11-08T01-04-16-487Z.json",
+    "report-2026-11-08T01-06-49-512Z.json",
+    "report-2026-11-08T01-08-51-850Z.json",
+    "report-2026-11-08T11-39-54-355Z.json"
+  ]
+}

@@ -1,4 +1,4 @@
-import { existsSync, mkdirSync, readFileSync, renameSync, writeFileSync } from "node:fs";
+import { copyFileSync, existsSync, mkdirSync, readFileSync, renameSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import {
   appendEvent,
@@ -119,7 +119,13 @@ export class AppStore {
 
   constructor(readonly filePath: string | null) {
     if (filePath !== null && existsSync(filePath)) {
-      this.load(readFileSync(filePath, "utf8"));
+      try {
+        this.load(readFileSync(filePath, "utf8"));
+      } catch (primary) {
+        const backup = `${filePath}.bak`;
+        if (!existsSync(backup)) throw primary;
+        this.load(readFileSync(backup, "utf8"));
+      }
     }
   }
 
@@ -133,6 +139,15 @@ export class AppStore {
   private load(raw: string): void {
     const snap = JSON.parse(raw) as Snapshot;
     if (snap.version !== 1) throw new Error("unsupported snapshot version");
+    const arrays = [
+      snap.intents, snap.offers, snap.promises, snap.outcomes, snap.evidence,
+      snap.incidents, snap.proposals, snap.resolutionApprovals, snap.appAudit,
+      snap.orders, snap.captures, snap.refunds, snap.operations,
+      snap.idempotency, snap.demoRuns,
+    ];
+    if (arrays.some((a) => !Array.isArray(a))) {
+      throw new Error("invalid snapshot shape: expected array collections");
+    }
     for (const v of snap.intents) this.intents.set(v.id, v);
     for (const v of snap.offers) this.offers.set(v.id, v);
     for (const v of snap.promises) this.promises.set(v.promise.id, v);
@@ -205,6 +220,7 @@ export class AppStore {
     if (this.filePath === null) return;
     const tmp = `${this.filePath}.tmp`;
     writeFileSync(tmp, JSON.stringify(this.snapshot(payment)));
+    if (existsSync(this.filePath)) copyFileSync(this.filePath, `${this.filePath}.bak`);
     renameSync(tmp, this.filePath);
   }
 
