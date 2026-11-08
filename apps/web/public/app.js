@@ -1079,7 +1079,7 @@ async function renderDemo() {
       box.scrollIntoView({ block: "start" });
       $("#continueRun")?.addEventListener("click", async () => {
         try {
-          const updated = await api(`/api/demo/runs/${encodeURIComponent(run.id)}/continue`, { method: "POST", body: {} });
+          const updated = await api(`/api/demo/runs/${encodeURIComponent(run.id)}/continue`, { method: "POST", body: { token: demoTokens.get(run.id) } });
           showRun(updated);
           void refreshTopbar();
         } catch (err) {

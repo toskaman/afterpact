@@ -185,6 +185,25 @@ describe("demo sessions: guards", () => {
     }
   });
 
+  it("gates run-continue behind the per-run token", async () => {
+    const { app: gated, base: gatedBase } = await startApp();
+    try {
+      const a = await runDemo(gatedBase, "flagship");
+      const b = await runDemo(gatedBase, "flagship");
+      // Missing token malformed (422), sibling token unauthorized (401) —
+      // both rejected before any state check.
+      expect((await post(gatedBase, `/api/demo/runs/${a.id}/continue`, {})).status).toBe(422);
+      expect((await post(gatedBase, `/api/demo/runs/${a.id}/continue`, { token: b.resetToken })).status).toBe(401);
+      // Own token passes the gate (mock runs complete synchronously, so the
+      // state check answers 409 — proving the token check ran first).
+      const own = await post(gatedBase, `/api/demo/runs/${a.id}/continue`, { token: a.resetToken });
+      expect(own.status).toBe(409);
+      expect(own.json.error.code).toBe("demo-state");
+    } finally {
+      await gated.close();
+    }
+  });
+
   it("rejects an invalid capacity configuration", async () => {
     const { app: broken, base: brokenBase } = await startApp({ AFTERPACT_MAX_DEMO_RUNS: "0" });
     try {

@@ -167,6 +167,14 @@ function demoResetToken(secret: string, runId: string): string {
   return createHmac("sha256", secret).update(`demo-run-reset:${runId}`).digest("hex");
 }
 
+/** Any per-run mutation (reset, continue) requires the run's own token. */
+async function assertDemoToken(req: IncomingMessage, ctx: RequestContext, runId: string): Promise<void> {
+  const body = z.object({ token: z.string().min(1).max(256) }).parse(parseJson(await readBody(req)));
+  if (!tokensEqual(body.token, demoResetToken(ctx.demoSecret, runId))) {
+    throw new HttpError(401, "demo-token-invalid", "valid per-run reset token required");
+  }
+}
+
 function requireOperator(req: IncomingMessage, ctx: RequestContext): void {
   // Open for local dev when no token is configured; mandatory on any
   // deployment that sets OPERATOR_TOKEN (demo box, shared environments).
@@ -304,6 +312,7 @@ async function handleRequest(req: IncomingMessage, res: ServerResponse, ctx: Req
   }
   if (method === "POST" && path.endsWith("/continue") && path.startsWith("/api/demo/runs/")) {
     const id = decodeURIComponent(path.slice("/api/demo/runs/".length, -"/continue".length));
+    await assertDemoToken(req, ctx, id);
     return ok(res, await continueFlagship(ops, id));
   }
   if (method === "POST" && path === "/api/demo/reset") {
@@ -312,10 +321,7 @@ async function handleRequest(req: IncomingMessage, res: ServerResponse, ctx: Req
   }
   if (method === "POST" && path.endsWith("/reset") && path.startsWith("/api/demo/runs/")) {
     const id = decodeURIComponent(path.slice("/api/demo/runs/".length, -"/reset".length));
-    const body = z.object({ token: z.string().min(1).max(256) }).parse(parseJson(await readBody(req)));
-    if (!tokensEqual(body.token, demoResetToken(ctx.demoSecret, id))) {
-      throw new HttpError(401, "demo-token-invalid", "valid per-run reset token required");
-    }
+    await assertDemoToken(req, ctx, id);
     return ok(res, ops.resetDemoRun(id));
   }
   if (method === "POST" && path === "/api/discovery/search") return ok(res, await ops.searchDiscovery(parseJson(await readBody(req))), 201);
