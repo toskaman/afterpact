@@ -11,8 +11,8 @@ Labels: `UNVERIFIED` / `HYPOTHESIS` / `ESTIMATE` / `NOT MEASURED` where applicab
 | 4 | Live demo reachable, chain valid | `https://199.247.9.188.nip.io/api/health` (ok, build `d1e79f2`, auditChainValid) | PASS |
 | 5 | CI green on HEAD | run `42490075428` success | PASS |
 | 6 | Simulated vs recorded vs live labeled | On-screen pills in film + app (`MOCK · SIMULATED`, `RECORDED …`, `AI · OFF`) | PASS |
-| 7 | AI evals 117/120, latest 30/30 | `docs/evals/` reports (carried; re-verify paths in Phase 1 test pass) | PASS (carried) |
-| 8 | AI vs heuristic 59/60 vs 9/15 | `docs/evals/BASELINE_COMPARISON.md` (carried) | PASS (carried) |
+| 7 | AI evals 117/120, latest 30/30 | 4× `docs/evals/report-*.json` re-read 2026-11-08: 28+29+30+30 passes, model `deepseek-v4.1-flash-1017`, citP 1.0 each run; corpus 30 live + 23 offline in `tests/eval/scenarios.ts` | PASS |
+| 8 | AI vs heuristic 59/60 vs 9/15 | `docs/evals/BASELINE_COMPARISON.md` re-read 2026-11-08 (AI = 15 intent scenarios × 4 runs) | PASS |
 | 9 | Human time saved / usability | n=1 internal walkthrough only; 637 ms = machine time; 28 min = ESTIMATE | NOT MEASURED |
 | 10 | AG Studio authorized for judging | Trial key not installed, consent drafted-not-sent | UNVERIFIED → cutoff Nov 11 EOD, else Community-only fallback |
 | 11 | Devpost submitted / video public | Draft ready; upload + submit = owner steps | NOT DONE (owner) |
