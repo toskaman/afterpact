@@ -29,7 +29,7 @@
         {
           "name": "config (sponsor labels)",
           "request": { "method": "GET", "url": "{{baseUrl}}/api/config" },
-          "event": [{ "listen": "test", "script": { "exec": ["pm.test('honest sponsor labels', () => {", "  const f = pm.response.json().data.features;", "  pm.expect(f.agStudio).to.eql('ag-grid-community');", "  pm.expect(['live','unconfigured']).to.include(f.channel3);", "});"], "type": "text/javascript" } }]
+          "event": [{ "listen": "test", "script": { "exec": ["pm.test('honest sponsor labels', () => {", "  const f = pm.response.json().data.features;", "  pm.expect(f.agStudio).to.eql('ag-studio');", "  pm.expect(['live','unconfigured']).to.include(f.channel3);", "});"], "type": "text/javascript" } }]
         },
         { "name": "metrics", "request": { "method": "GET", "url": "{{baseUrl}}/api/metrics" } }
       ]
