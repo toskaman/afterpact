@@ -1,7 +1,8 @@
 # AFTERPACT — Devpost Draft (English, submission-ready pending URLs)
 
-> Replace all `TBD:` markers before submitting. Nothing below claims a live
-> URL, a recorded video, or verified sandbox IDs until those artifacts exist.
+> Replace all `TBD:` markers before submitting. Film file + sandbox IDs are
+> built/verified in-repo (see Video QA); only the public YouTube URL and the
+> Devpost submit itself remain owner steps.
 
 ## Project title
 
@@ -64,8 +65,9 @@ interpretation, evidence-cited incident analysis, recovery-proposal
 drafting, and the AG Studio agent's NL-to-widget turns. Every model output
 is schema-validated; the deterministic policy engine + human approval stay
 authoritative — the model proposes, policy + human dispose. 53-scenario
-evaluation corpus incl. adversarial cases (4 keyed runs: 117/120, citation
-precision 1.000 on the flagship run); the public demo ships a RECORDED
+evaluation corpus incl. adversarial cases (30 live-eligible, 23 offline-only;
+4 keyed runs: 117/120 scenario passes, citation precision 1.000 in every
+run, latest run 30/30); the public demo ships a RECORDED
 VERIFIED AI RUN gallery with real latency/cost, never labeled live.
 
 ## PayPal integration
@@ -91,7 +93,8 @@ paths exist.
   queries. Commercial EULA respected: no bytes committed,
   official-CDN-first loading with a pinned build-time fallback.
 - **Postman:** 38-request collection (auth, positive, idempotency,
-  negatives); Newman 37/37 executed, 18/18 assertions green.
+  negatives); Newman 37/37 executed, 18/18 assertions green (the 38th
+  request is the manual OAuth2 token helper, outside the automated run).
 - **Render:** not pursued (no payment card); `render.yaml` kept as a
   deployment-as-code reference only. Live demo runs on Vultr.
 - **Bryntum / APIMatic / Elastic / KERNEL / Astropods / Zapier:** not in
@@ -105,9 +108,9 @@ minor units, promises, approvals, 17-state lifecycle, audit chain),
 `policy` (deterministic gates), `payments` (sandbox-only PayPal client),
 `ai` (Vultr Inference client with identity verification, cost ledger,
 strict fallbacks). Single-node JSON snapshot store (documented
-limitation; SQLite/PostgreSQL is future work). 281 automated tests green
+limitation; SQLite/PostgreSQL is future work). 288 automated tests green
 (+33 keyless skips that skip visibly), strict `tsc` clean on 6 projects,
-6 Playwright E2E green, CI `verify`+`e2e`+`drift` green at HEAD. Every
+7 Playwright E2E green, CI `verify`+`e2e`+`drift` green at HEAD. Every
 on-screen capability carries an origin badge (`REAL API`,
 `PAYPAL SANDBOX · LIVE`, `SIMULATED · MOCK`, `AI · LIVE` / `AI · OFF`, …)
 so judges see exactly what is live and what is labeled simulation.
@@ -173,8 +176,9 @@ enterprise rollout. Details: `COMMERCIAL_STRATEGY.md`, `UNIT_ECONOMICS.md`
 
 ## Future roadmap
 
-Install the AG Studio trial key and confirm judging-window coverage;
-record the <3-min video; run a live Channel3 search on camera; pilot with
+Install the AG Studio trial key and confirm judging-window coverage
+(else Community-only fallback before judging); publish the built <3-min
+film to YouTube; run a live Channel3 search on camera; pilot with
 one merchant ops team on a single exception category; per-session demo
 isolation; SQLite persistence; then a Bryntum evaluation if its trial
 permits judging use.
@@ -205,7 +209,7 @@ Postman/Newman, Vultr (hosting), Caddy.
 git clone https://github.com/toskaman/afterpact && cd afterpact
 npm install && cp .env.example .env
 npm run build && npm start   # http://localhost:3001
-npm test                     # 281 passed, 33 skipped keyless (live paths need creds)
+npm test                     # 288 passed, 33 skipped keyless (live paths need creds)
 ```
 
 Run the flagship: `POST /api/demo/run {"scenario":"flagship"}` or open
@@ -218,5 +222,7 @@ attacks `blocked` with exact policy reasons). AI evidence without keys:
 
 - GitHub: `https://github.com/toskaman/afterpact`
 - Hosted demo: `https://199.247.9.188.nip.io` (Vultr VPS, mock transport — one-click flagship, no login needed; free through judging, Dec 15, 2026)
-- Demo video (<3 min): `TBD:youtube-url`
+- Demo video (<3 min): `TBD:youtube-url` (file built in-repo:
+  `brag-output/paypal-ai-2026/AFTERPACT_PAYPAL_AI_FINAL.mp4`, 165 s —
+  owner uploads per `DEVPOST_YOUTUBE_METADATA.md`, then replaces this marker)
 - Test credentials/notes: none needed for the hosted demo; live sandbox/Channel3 paths unlock with your own keys per `.env.example` (`docs/demo/KEY_RETRIEVAL_GUIDE.md`)
