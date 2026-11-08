@@ -548,7 +548,7 @@ async function renderTxDetail(promiseId) {
             <li class="${e.type.startsWith("policy.blocked") ? "blocked" : ""}"><span class="dot" aria-hidden="true"></span>
             <span class="event-type">${escapeHtml(e.type)}</span>
             <div class="event-meta">seq ${e.seq} · ${formatTime(e.recordedAt)}</div></li>`).join("")}</ul>
-          <p class="small"><a href="#/recorder?promiseId=${encodeURIComponent(promiseId)}">Replay in Flight Recorder →</a> · <a href="/api/audit/export?promiseId=${encodeURIComponent(promiseId)}" download>Download redacted export</a></p>
+          <p class="small"><a href="#/twin?promiseId=${encodeURIComponent(promiseId)}">Open in Outcome Twin →</a> · <a href="#/recorder?promiseId=${encodeURIComponent(promiseId)}">Replay in Flight Recorder →</a> · <a href="/api/audit/export?promiseId=${encodeURIComponent(promiseId)}" download>Download redacted export</a></p>
         </div>
       </div>
       <div id="txActionResult" class="section-gap"></div>`;
@@ -1518,6 +1518,138 @@ async function renderTimeline(promiseId = "") {
 }
 
 /* ================================================================
+   VIEW: Outcome Twin (promised vs actual vs recovered)
+   ================================================================ */
+async function renderTwin(promiseId = "") {
+  setNav("twin");
+  if (!promiseId) {
+    view().innerHTML = viewHead("Outcome Twin", "Promised vs actual vs recovered — one purchase, three synchronized realities.") + loadingState();
+    try {
+      const promises = await api("/api/promises");
+      if (promises.length === 0) {
+        view().innerHTML = viewHead("Outcome Twin", "") + `<div class="card">${emptyState("⧉", "No purchases yet", "Create a purchase in the Copilot first.", "")}</div>`;
+        return;
+      }
+      view().innerHTML = viewHead("Outcome Twin", "") + `
+        <div class="card"><h2>Select a purchase</h2>
+        <div class="table-wrap"><table><thead><tr><th>Promise</th><th>Merchant</th><th class="num">Total</th><th>State</th><th></th></tr></thead>
+        <tbody>${promises.map((t) => `
+          <tr><td class="mono">${escapeHtml(shortId(t.promise.id))}</td><td>${escapeHtml(t.promise.merchantId)}</td>
+          <td class="num"><strong>${formatMoney(t.promise.total)}</strong></td><td>${statePill(t.state)}</td>
+          <td><a class="button small" href="#/twin?promiseId=${encodeURIComponent(t.promise.id)}">Open twin</a></td></tr>`).join("")}
+        </tbody></table></div></div>`;
+    } catch (err) {
+      view().innerHTML = viewHead("Outcome Twin", "") + errorBanner(err.message);
+    }
+    return;
+  }
+  view().innerHTML = viewHead("Outcome Twin", `Promise ${promiseId}`) + loadingState();
+  try {
+    const v = await api(`/api/promises/${encodeURIComponent(promiseId)}`);
+    const [orders, outcomes, incidentsAll, proposalsAll, audit] = await Promise.all([
+      Promise.all((v.orderIds ?? []).map((id) => api(`/api/payments/orders/${encodeURIComponent(id)}`).catch((e) => ({ error: e.message })))),
+      api(`/api/outcomes?promiseId=${encodeURIComponent(promiseId)}`).catch(() => []),
+      api("/api/incidents").catch(() => []),
+      api("/api/resolutions").catch(() => []),
+      api(`/api/audit?promiseId=${encodeURIComponent(promiseId)}&limit=200`).catch(() => ({ entries: [], chainValid: true })),
+    ]);
+    const p = v.promise;
+    const incidents = incidentsAll.filter((i) => i.promiseId === promiseId);
+    const proposals = proposalsAll.filter((x) => x.promiseId === promiseId);
+    const entries = audit.entries ?? [];
+    const refunds = entries.filter((e) => e.type === "refund.verified");
+    const refundedMinor = refunds.reduce((n, e) => n + (e.payload?.amount?.currency === p.total.currency ? (e.payload.amount.amountMinor ?? 0) : 0), 0);
+    const openIncidents = incidents.filter((i) => i.status === "open" || i.status === "triaged" || i.status === "resolving");
+    const exposureMinor = openIncidents.length > 0 ? Math.max(0, p.total.amountMinor - refundedMinor) : 0;
+    const decidedIds = new Set(entries.filter((e) => e.type === "resolution.approved" || e.type === "resolution.rejected").map((e) => e.payload?.proposalId));
+    const pendingProposals = proposals.filter((x) => !decidedIds.has(x.id));
+    const focus = openIncidents[openIncidents.length - 1] ?? incidents[incidents.length - 1] ?? null;
+
+    const promisedCol = `
+      <div class="card"><h3>What was promised</h3>
+      <dl class="kv">
+        <dt>Total</dt><dd><strong>${formatMoney(p.total)}</strong></dd>
+        <dt>Merchant</dt><dd>${escapeHtml(p.merchantId)}</dd>
+        <dt>Items</dt><dd>${p.items.map((i) => `${escapeHtml(i.name)} × ${i.quantity}`).join("<br>")}</dd>
+        <dt>Delivery</dt><dd>${formatTime(p.expectedDeliveryDate)} <span class="muted small">(±${p.tolerances.maxDelayDays}d)</span></dd>
+        <dt>Approval</dt><dd>${p.approval ? `${escapeHtml(p.approval.approvedBy)} · ${formatTime(p.approval.approvedAt)}` : "—"}</dd>
+        <dt>Resolution rules</dt><dd class="small">auto-refund ${p.resolutionPolicy.autoRefundOnMiss ? "on" : "off"} · buyer approval ${p.resolutionPolicy.requireBuyerApproval ? "required" : "not required"}</dd>
+        <dt>Integrity</dt><dd class="mono small">v${p.version} · ${escapeHtml(p.hash.slice(0, 16))}…</dd>
+      </dl></div>`;
+
+    const ordersHtml = orders.length === 0 ? `<p class="muted small">No payment yet.</p>` : orders.map((o) => o.error
+      ? `<p class="small muted">Order lookup failed.</p>`
+      : `<p class="small"><span class="mono">${escapeHtml(shortId(o.order.providerOrderId ?? o.order.id))}</span> · ${escapeHtml(o.order.status)} · ${formatMoney(o.order.amount)} ${originPill(o.transport)}</p>`).join("");
+    const actualCol = `
+      <div class="card"><h3>What actually happened</h3>
+      <h3>Payment</h3>${ordersHtml}
+      <h3 class="section-gap">Outcomes (${outcomes.length})</h3>
+      ${outcomes.length === 0 ? `<p class="muted small">No outcomes recorded.</p>` : `<ul class="timeline">${outcomes.map((o) => `
+        <li><span class="dot" aria-hidden="true"></span><span class="event-type">${escapeHtml(o.kind)}</span>
+        <div class="small">${escapeHtml(o.summary)}</div>
+        <div class="event-meta">${escapeHtml(o.provenance.source)} · conf ${o.confidence}</div></li>`).join("")}</ul>`}
+      <h3 class="section-gap">Incidents (${incidents.length})</h3>
+      ${incidents.length === 0 ? `<p class="muted small">No gaps detected.</p>` : incidents.map((i) => `
+        <p class="small"><span class="pill ${i.severity === "critical" || i.severity === "high" ? "bad" : "warn"}">${escapeHtml(i.category)}</span>
+        <span class="pill info">${escapeHtml(i.status.toUpperCase())}</span><br>${escapeHtml(i.detail)}</p>`).join("")}
+      <p class="small">Outstanding exposure: <strong>${formatMoney({ currency: p.total.currency, amountMinor: exposureMinor })}</strong></p></div>`;
+
+    const proposalHtml = proposals.length === 0 ? `<p class="muted small">No proposals yet.</p>` : proposals.map((x) => {
+      const decision = entries.find((e) => (e.type === "resolution.approved" || e.type === "resolution.rejected") && e.payload?.proposalId === x.id);
+      const verified = entries.find((e) => e.type === "refund.verified" && e.payload?.proposalId === x.id);
+      const status = verified ? `<span class="pill ok">VERIFIED REFUND</span>` : decision ? `<span class="pill ${decision.type === "resolution.approved" ? "ok" : "bad"}">${escapeHtml(decision.type === "resolution.approved" ? "APPROVED" : "REJECTED")} · ${escapeHtml(decision.actor ?? "?")}</span>` : `<span class="pill warn">AWAITING APPROVAL</span>`;
+      return `<p class="small"><strong>${escapeHtml(x.kind)}</strong> · ${x.amount ? formatMoney(x.amount) : "—"}<br>${status}
+        ${verified ? `<br><span class="mono">provider ${escapeHtml(verified.payload.providerRefundId ?? verified.payload.refundId)} · ${escapeHtml(verified.payload.status)}</span> ${originPill(verified.payload.transport)}` : ""}</p>`;
+    }).join("");
+    const recoveredCol = `
+      <div class="card"><h3>What AFTERPACT recovered</h3>
+      ${focus ? `
+      <div class="button-row">
+        <button class="button small secondary" id="twinAnalyze">Analyze with AI</button>
+        <button class="button small secondary" id="twinPropose">AI recovery proposal</button>
+      </div>
+      <div id="twinAiBox" class="section-gap"></div>` : `<p class="muted small">No incident to analyze.</p>`}
+      <h3 class="section-gap">Resolutions (${proposals.length})</h3>${proposalHtml}
+      <p class="small">Verified refunded: <strong>${formatMoney({ currency: p.total.currency, amountMinor: refundedMinor })}</strong></p>
+      <p class="small">${audit.chainValid ? '<span class="pill ok">CHAIN VALID</span>' : '<span class="pill bad">CHAIN BROKEN</span>'}</p></div>`;
+
+    view().innerHTML = viewHead("Outcome Twin", `Promise ${p.id}`) + `
+      <div class="badge-row" style="margin-bottom:1rem">${statePill(v.state)}
+        <span class="pill ${v.policy.verdict === "Cleared" ? "ok" : v.policy.verdict === "Hold" ? "warn" : "bad"}">POLICY · ${escapeHtml(v.policy.verdict.toUpperCase())}</span>
+        <span class="small"><a href="#/tx/${encodeURIComponent(promiseId)}">Transaction →</a> · <a href="#/recovery">Recovery Center →</a> · <a href="#/twin">All twins →</a></span></div>
+      <div class="grid three">${promisedCol}${actualCol}${recoveredCol}</div>
+      <div class="card section-gap"><h3>If left unresolved — projection from current state, not measured history</h3>
+        <p class="small">Open incidents: <strong>${openIncidents.length}</strong> · Unresolved exposure: <strong>${formatMoney({ currency: p.total.currency, amountMinor: exposureMinor })}</strong> · Proposals awaiting approval: <strong>${pendingProposals.length}</strong></p>
+        <p class="small muted">Assumes no further outcomes or approvals; recomputed live from the data above.</p></div>`;
+
+    if (focus) {
+      $("#twinAnalyze")?.addEventListener("click", async () => {
+        const box = $("#twinAiBox");
+        box.innerHTML = loadingState("Asking the model…");
+        try {
+          const r = await api("/api/ai/analyze-incident", { method: "POST", body: { promiseId, observation: { note: focus.detail.slice(0, 2000) } } });
+          box.innerHTML = aiAnalysisHtml(r);
+        } catch (err) {
+          box.innerHTML = errorBanner(err.message);
+        }
+      });
+      $("#twinPropose")?.addEventListener("click", async () => {
+        const box = $("#twinAiBox");
+        box.innerHTML = loadingState("Asking the model…");
+        try {
+          const r = await api("/api/ai/plan-recovery", { method: "POST", body: { incidentId: focus.id } });
+          box.innerHTML = recoveryProposalHtml(r, p.total.currency);
+        } catch (err) {
+          box.innerHTML = errorBanner(err.message);
+        }
+      });
+    }
+  } catch (err) {
+    view().innerHTML = viewHead("Outcome Twin", "") + errorBanner(err.message);
+  }
+}
+
+/* ================================================================
    Router + init
    ================================================================ */
 function currentRoute() {
@@ -1534,6 +1666,7 @@ async function route() {
   if (path === "/copilot") return renderCopilot();
   if (path === "/tx") return renderTxList();
   if (path.startsWith("/tx/")) return renderTxDetail(decodeURIComponent(path.slice(4)));
+  if (path === "/twin") return renderTwin(params.get("promiseId") ?? "");
   if (path === "/recovery") return renderRecovery();
   if (path === "/studio") return renderStudio();
   if (path === "/discovery") return renderDiscovery();

@@ -101,3 +101,25 @@ describe("frontend AI surface contract", () => {
     }
   });
 });
+
+describe("frontend Outcome Twin contract", () => {
+  it("registers the twin route, nav entry, and three-reality view", () => {
+    const source = readFileSync(join(WEB_DIR, "app.js"), "utf8");
+    const html = readFileSync(join(WEB_DIR, "index.html"), "utf8");
+    const css = readFileSync(join(WEB_DIR, "styles.css"), "utf8");
+    for (const token of [
+      "renderTwin",
+      '"/twin"',
+      "What was promised",
+      "What actually happened",
+      "What AFTERPACT recovered",
+      "projection from current state",
+      "twinAnalyze",
+      "twinPropose",
+    ]) {
+      expect(source.includes(token), `app.js missing twin token: ${token}`).toBe(true);
+    }
+    expect(html.includes('data-route="twin"'), "nav missing twin entry").toBe(true);
+    expect(css.includes(".grid.three"), "styles missing .grid.three").toBe(true);
+  });
+});

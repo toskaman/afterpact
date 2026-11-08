@@ -6,7 +6,7 @@ if (!Number.isSafeInteger(port) || port <= 0) {
   process.exit(1);
 }
 
-const app = createApp();
+const app = createApp({ dataDir: process.env["AFTERPACT_DATA_DIR"] });
 app.listen(port).then(
   (bound) => {
     console.log(JSON.stringify({
