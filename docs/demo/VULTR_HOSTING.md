@@ -1,12 +1,13 @@
 # AFTERPACT — Hosted Demo (Vultr)
 
 **URL:** `https://199.247.9.188.nip.io`
-**Verified:** 2026-11-08 — `/api/health` ok (valid production LE cert),
-build `6a219bf` (= HEAD), `/` 200, remote flagship `completed`, operator
-token gate 401-checked, `features.agStudio=ag-studio`, `/api/ai/status`
-honest `keyed:false` (mock box carries no inference key; AI surfaces show
-`AI · OFF`), gallery + P1-T tokens served live. Operator token rotated
-into gitignored `APIS.txt`.
+**Verified:** 2026-11-08 (T3) — `/api/health` ok (valid production LE
+cert), build `ba9edc8` (= HEAD), `/` 200, remote flagship `completed`,
+operator token gate 401-checked, `features.agStudio=ag-studio`,
+`/api/ai/status` honest `keyed:false` (mock box carries no inference key;
+AI surfaces show `AI · OFF` + gallery pointers), audit chain valid (13
+entries), gallery served live. Operator token rotated into gitignored
+`APIS.txt`.
 
 ## Stack
 

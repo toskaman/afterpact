@@ -1,8 +1,10 @@
 # AFTERPACT — 100-Question Self-Audit
 
-Date: 2026-11-07, re-verified 2026-11-08. Baseline: 281 passed +
-33 skipped, `tsc` clean (6 projects), CI green at HEAD (the 2026-11-07
-run recorded 155+1 at `2a26d05`). Status: **PASS** (evidence in repo),
+Date: 2026-11-07, re-verified 2026-11-08 (OMEGA II), re-verified
+2026-11-08 (TITAN III). Baseline: 288 passed + 33 skipped, `tsc` clean
+(6 projects), 7/7 Playwright, CI green at HEAD `ba9edc8` (run
+42479179914; the 2026-11-07 run recorded 155+1 at `2a26d05`).
+Status: **PASS** (evidence in repo),
 **PARTIAL** (works with a noted gap), **FAIL** (missing/red),
 **UNKNOWN** (could not verify here). Severity: **H**igh/**M**edium/**L**ow.
 Nothing is PASS on confidence alone — every PASS names its artifact.
@@ -16,7 +18,7 @@ Nothing is PASS on confidence alone — every PASS names its artifact.
 | 3 | Is the repo public with an OSI license? | Yes: github.com/toskaman/afterpact is PUBLIC, MIT LICENSE | `gh repo view`, `LICENSE` | H | PASS |
 | 4 | Are install/test instructions reproducible? | Yes: README quickstart + `.env.example`; clean-install verified on isolated copy | README, `docs/RELEASE_GATE.md` gate 5 | H | PASS |
 | 5 | Is a judge-accessible demo available? | Yes: `https://199.247.9.188.nip.io` (Vultr, valid TLS, mock one-click demo); health ok + flagship `completed` verified | `docs/demo/VULTR_HOSTING.md` | H | PASS |
-| 6 | Is the demo video <3 min on public YouTube? | Not recorded; narration + shot list ready | `docs/demo/DEMO_SCRIPT.md` | H | FAIL |
+| 6 | Is the demo video <3 min on public YouTube? | Not recorded/edited; 5 raw 1080p rushes local + script + shot list ready for owner edit | `video-rushes/README.md`, `DEMO_SCRIPT.md` | H | FAIL |
 | 7 | Will the project stay free through Dec 15, 2026? | Code is MIT and local-runnable; hosted demo is the owner's Vultr box (kept until Dec 15, then destroyed); no judge-facing fees | `VULTR_HOSTING.md`, `LICENSE` | M | PARTIAL |
 | 8 | Are submission materials in English? | Yes: README, docs, Devpost draft all English | `docs/demo/DEVPOST_DRAFT.md` | M | PASS |
 | 9 | Is the 1-grand + 1-sponsor limit respected in strategy? | Yes: Grand-1st primary, AG Grid 1st primary sponsor, rest secondary/fallback | `docs/hackathon/PRIZE_STRATEGY.md` | M | PASS |
@@ -44,7 +46,7 @@ Nothing is PASS on confidence alone — every PASS names its artifact.
 | 21 | Is the problem stated in one sentence? | "Payment succeeded but the commercial outcome failed, with no verifiable record or bounded recovery" | README problem | M | PASS |
 | 22 | Who exactly feels it? | Merchant ops teams owning exception/refund queues | `COMMERCIAL_STRATEGY.md` | M | PASS |
 | 23 | Is severity quantified? | Only as labeled hypotheses (2–8% exceptions, 15–45 min/case); no interviews | `COMMERCIAL_STRATEGY.md` P1–P4 | M | PARTIAL |
-| 24 | Is there a controlled impact comparison? | Controlled self-test: 8-touch manual procedure vs measured 3-decision assisted run (20 ms fallback / ~4 s live); no human baseline | `OPERATOR_IMPACT.md`, `operator-benchmark.mjs` | M | PARTIAL |
+| 24 | Is there a controlled impact comparison? | Controlled self-test: 8-touch manual procedure vs measured 3-decision assisted run; UI walkthrough machine time 637 ms (internal n=1, localhost); no human baseline | `OPERATOR_IMPACT.md`, `WALKTHROUGH_INTERNAL.md` | M | PARTIAL |
 | 25 | Are improvements computed from observations? | Yes where claimed (test timings, E2E assertions); no invented % savings | `scripts/bench.mjs`, gate 12 | M | PASS |
 | 26 | Are synthetic data labels honest? | Yes: SIMULATED/HEURISTIC badges on all non-live surfaces | README labeling policy | H | PASS |
 | 27 | Is evidence completeness measurable? | Provenance+confidence on every evidence item; Studio KPI surfaces gaps | `outcome.ts`, `studio.ts` | L | PASS |
@@ -118,12 +120,12 @@ Nothing is PASS on confidence alone — every PASS names its artifact.
 |---|---|---|---|---|---|
 | 71 | Are module boundaries clean? | domain/policy/payments/api/web packages; demo uses same Ops methods as routes | repo layout, gate deliberates | M | PASS |
 | 72 | Zero `tsc` errors on strict settings? | Exit 0 on 6 projects (strict + noUncheckedIndexedAccess) | OMEGA run 2026-11-08 | H | PASS |
-| 73 | Full suite green? | 281 passed + 33 skipped (30 live-eval + 3 probes, keys absent) + 6 Playwright E2E | OMEGA II run 2026-11-08 | H | PASS |
+| 73 | Full suite green? | 288 passed + 33 skipped (30 live-eval + 3 probes, keys absent) + 7/7 Playwright E2E | T3 run 2026-11-08, CI 42479179914 | H | PASS |
 | 74 | Concurrency suite exists? | Same-key serialization + duplicate capture/refund + webhook dedupe | safety + flows tests | M | PASS |
 | 75 | Adversarial suite exists? | Injection double-block, replay/tamper/mismatch/over-refund/expired negatives | `apps.api`, safety tests | M | PASS |
-| 76 | E2E beyond unit/integration? | Playwright chromium in CI: dashboard, copilot, twin, recovery, studio mount, ai-gallery; 6 specs green, 0 page errors | `tests/e2e/`, `ci.yml` e2e job | M | PASS |
+| 76 | E2E beyond unit/integration? | Playwright chromium in CI: dashboard, copilot, twin, recovery, studio mount, ai-gallery + unkeyed-AI-fallback; 7/7 green, 0 page errors, 0 console warnings | `tests/e2e/`, `ci.yml` e2e job | M | PASS |
 | 77 | Performance measured? | Machine bench + AI eval latencies (p50 3.1 s, p95 6.3 s) + operator benchmark; no load test | `IMPACT_BENCHMARK.md`, `docs/evals/` | L | PARTIAL |
-| 78 | Outage behavior specified? | Fail-closed discovery/AI (evals cover timeout/outage/mismatch), kill switch, webhook redelivery; no chaos suite | `channel3.ts`, `config.ts`, `ai-eval` | M | PARTIAL |
+| 78 | Outage behavior specified? | Fail-closed discovery/AI + chaos campaign 9/9 (concurrent capture/refund, retry storms, 429/5xx, replay, corrupt snapshot, boundary amounts); no crash-recovery claim (single node) | `paypal.chaos.test.ts`, `CHAOS_CAMPAIGN.md` | M | PARTIAL |
 | 79 | Secrets handling verified? | No `.env`, placeholders only, redaction tests, presence-boolean status | gate 13, `redact.ts` | H | PASS |
 | 80 | Clean shutdown / no runaway jobs? | Single-process server, no background loops; jobs in-process | `apps/api/src/index.ts` | L | PASS |
 
@@ -133,7 +135,7 @@ Nothing is PASS on confidence alone — every PASS names its artifact.
 |---|---|---|---|---|---|
 | 81 | Does the UI feel like a product, not an admin panel? | 10 views (+ Outcome Twin; Studio hosts the AG Studio canvas) with dark/light + responsive | `apps/web/public/*` | M | PASS |
 | 82 | Empty/loading/error states present? | Yes per-view states; monetary status never color-only | `app.js`, demo guide | M | PASS |
-| 83 | Keyboard + screen-reader support? | Semantic HTML, labels, focus states, contrast, reduced-motion | `FRONTEND_DEMO_GUIDE.md` | M | PASS |
+| 83 | Keyboard + screen-reader support? | Semantic HTML, labels, focus states, contrast, reduced-motion; verified: first Tab = skip-link, Enter jumps to main, 0 console errors | `styles.css`, T3 UX review | M | PASS |
 | 84 | Third-party usability test done? | No (single-session build); disclosed | demo guide limitations | L | FAIL |
 | 85 | Flagship demo reproducible by a judge? | One API call or `#/demo` → Flagship; reset included | README flagship, `demo.ts` | H | PASS |
 | 86 | Real-vs-simulated markers everywhere? | Origin badges on all surfaces; legend in guide | README policy, demo guide | H | PASS |
@@ -173,7 +175,7 @@ Nothing is PASS on confidence alone — every PASS names its artifact.
 | 110 | Can judges reproduce the AI eval? | Offline: yes, deterministic in CI. Live: yes with own key (~$0.015/run) | `tests/eval/`, `docs/evals/README.md` | M | PASS |
 | 111 | Will the demo survive the Dec 1–15 judging window? | Box + code: yes if owner keeps the VPS. Trial key coverage: pending owner form | `VULTR_HOSTING.md`, Q112 | H | PARTIAL |
 | 112 | Does the Studio trial cover the judging window? | UNKNOWN until the owner completes the trial form and confirms dates | `AG_STUDIO_UPGRADE_PATH.md` | H | UNKNOWN |
-| 113 | Is live AI on or off on the public demo? | Undecided: key-on-box = spend risk under rate limits; fallback mode is the safe default | `SECURITY.md` | M | PARTIAL |
+| 113 | Is live AI on or off on the public demo? | DECIDED: keyless by design (unbounded paid endpoint rejected); deterministic fallback labeled + gallery pointers; e2e-pinned | `aiTasks.ts` fallbacks, `twin.e2e.ts` | M | PASS |
 | 114 | Are unused sponsors still honestly non-claimed? | Yes: Bryntum/APIMatic/Render non-claims intact after the Studio flip | `docs/sponsors/*STATUS*.md` | M | PASS |
 
 ## Tally (2026-11-08 delta)
@@ -207,8 +209,8 @@ Both FAILs remain the owner's steps: <3-min video, one usability session.
 
 | # | Question | Status 2026-11-08 | Evidence | Pri | Verdict |
 |---|---|---|---|---|---|
-| 115 | Are all public documentation claims synchronized with the latest commit? | Manifest + drift green at HEAD; tallies 281+33 flipped same-commit | `RELEASE_EVIDENCE_MANIFEST.json`, `check-docs-drift.mjs`, CI `drift` | H | PASS |
-| 116 | Is commercial AG Studio redistribution expressly permitted? | UMD un-vendored; official-CDN-first + pinned fallback + notice; historical git bytes remain; consent drafted, not sent | `vendor/ag-studio.NOTICE.txt`, `AG_GRID_STATUS.md`, Q10 | H | PARTIAL |
+| 115 | Are all public documentation claims synchronized with the latest commit? | Manifest + drift green at HEAD; tallies 288+33 + 7/7 e2e flipped same-commit | `RELEASE_EVIDENCE_MANIFEST.json`, `check-docs-drift.mjs`, CI `drift` | H | PASS |
+| 116 | Is commercial AG Studio redistribution expressly permitted? | UMD un-vendored; official-CDN-first + pinned fallback + notice; historical git bytes remain; consent drafted, not sent; kill-switch `AG_STUDIO_DISABLED=1` tested, cutoff Nov 11 EOD | `vendor/ag-studio.NOTICE.txt`, `sponsors.studio-toggle.test.ts` | H | PARTIAL |
 | 117 | Is the trial valid during the entire judging period? | No trial key obtained; coverage unknown until the owner registers | Q112, owner action | H | UNKNOWN |
 | 118 | Can a judge independently verify the AI without paid inference? | Gallery: 4 runs (117/120), model id, citations, latency/cost + reproduce recipe, keyless | `#/ai-gallery`, `ai.gallery.test.ts` 6/6 | H | PASS |
 | 119 | Is a recorded inference clearly distinguished from a live inference? | RECORDED VERIFIED AI RUN badge + NO INFERENCE labels; e2e asserts no live claims | `gallery.e2e.ts`, contract tests | H | PASS |
@@ -217,19 +219,19 @@ Both FAILs remain the owner's steps: <3-min video, one usability session.
 | 122 | Is the public demo resistant to deliberate resource exhaustion? | Rate limits + max 50 runs + 429; no session TTL/cleanup | `AFTERPACT_MAX_DEMO_RUNS`, rate-limit tests | M | PARTIAL |
 | 123 | Does the Studio look and behave like an integrated product? | Signature theme dark/light via withParams + mode sync, e2e-pinned | `buildAfterpactStudioTheme`, `studio.e2e.ts` | M | PASS |
 | 124 | Does the Studio agent genuinely modify live analytics? | 13-turn live interaction + Vultr adapter + widget-from-data evidence preserved | OMEGA report, `studioAgent` tests | H | PASS |
-| 125 | Does the Outcome Twin reduce the time to understand an incident? | DIVERGENCE strip + 3 realities + text equivalents; no measured timings | `twin-divergence`, `twin.e2e.ts` | M | PARTIAL |
-| 126 | Are human impact figures genuinely measured? | Estimates only; study package ready, zero sessions run | `OPERATOR_IMPACT.md`, `USABILITY_STUDY.md` §6 | H | FAIL |
+| 125 | Does the Outcome Twin reduce the time to understand an incident? | DIVERGENCE strip + 3 realities + text equivalents; machine timings measured (T1 48 ms, T2 28 ms, internal n=1); no human timings | `WALKTHROUGH_INTERNAL.md`, `twin.e2e.ts` | M | PARTIAL |
+| 126 | Are human impact figures genuinely measured? | Machine times measured (637 ms, internal n=1); HUMAN figures still estimates; study package ready, zero sessions run | `WALKTHROUGH_INTERNAL.md`, `USABILITY_STUDY.md` §6 | H | FAIL |
 | 127 | Have real users independently tested the product? | None; owner action to recruit | Q84, `USABILITY_STUDY.md` | H | FAIL |
 | 128 | Are financial claims traceable to provider evidence? | Receipts artifact test-pinned (order/capture/refund ids + statuses) | `paypal-live-receipts.json`, receipts tests 2/2 | H | PASS |
-| 129 | Are test counts current and machine-verifiable? | 281+33 vitest, 6/6 e2e, manifest + drift enforced in CI | CI `verify`+`e2e`+`drift` green | H | PASS |
+| 129 | Are test counts current and machine-verifiable? | 288+33 vitest, 7/7 e2e, manifest + drift enforced in CI | CI `verify`+`e2e`+`drift` green 42479179914 | H | PASS |
 | 130 | Does the README accurately explain every AI component? | Post-P0-D rewrite; drift-governed; gallery + live paths documented | `README.md`, drift check | M | PASS |
 | 131 | Does Devpost accurately reflect current sponsor usage? | Full rewrite: honest per-sponsor statuses, verified counts, TBD video | `DEVPOST_DRAFT.md` | H | PASS |
 | 132 | Can the demo survive an interrupted agent turn? | 503/422 semantics + timeouts tested; no dedicated interruption e2e | smoke expectations, adapter tests | M | PARTIAL |
-| 133 | Can the demo survive a concurrent reset attempt? | Exact-id sweep + token gate + concurrency tests incl. reset races | `demo.sessions.test.ts` 8/8 | M | PASS |
-| 134 | Does the final video communicate without exaggeration? | No video file exists | Q6, `RECORDING_PACKAGE.md`, `TBD:youtube-url` | H | FAIL |
+| 133 | Can the demo survive a concurrent reset attempt? | Exact-id sweep + token gate + concurrency tests incl. reset races | `demo.sessions.test.ts` 9/9 | M | PASS |
+| 134 | Does the final video communicate without exaggeration? | No edited video file exists; 5 raw 1080p rushes (~53 s) captured locally for the owner's edit | Q6, `video-rushes/README.md`, `TBD:youtube-url` | H | FAIL |
 | 135 | Is the AG Studio license key applied correctly and only as permitted? | Mechanism ready (config → LicenseManager); no key installed, watermark remains | `routes.ts` config, `AG_GRID_STATUS.md` | M | PARTIAL |
 | 136 | Are all third-party components properly attributed? | Vendor notice, license files, per-sponsor status docs | `vendor/*.NOTICE*`, `docs/sponsors/` | M | PASS |
-| 137 | Can a clean checkout reproduce the non-secret functionality? | CI Ubuntu `npm ci` → build → 281+33 → e2e authoritative green | CI runs, `RELEASE_GATE.md` | H | PASS |
+| 137 | Can a clean checkout reproduce the non-secret functionality? | Fresh clone `npm ci` → typecheck → 288+33 → drift-ok → build → flagship+injection `completed`; CI Ubuntu green too | T3 clean-verify, CI 42479179914 | H | PASS |
 | 138 | Are all sponsor claims supported by actual usage? | Drift-governed; non-claims filed for unused sponsors | drift check, `DEVPOST_DRAFT.md` | H | PASS |
 | 139 | Is the deployment likely to remain available during December judging? | Box healthy now; depends on owner credits/box to Dec 15 | `VULTR_HOSTING.md`, health checks | M | PARTIAL |
 
@@ -239,4 +241,22 @@ Appendix: PASS 13 · PARTIAL 8 · FAIL 3 (Q126 measured impact, Q127 users,
 Q134 video) · UNKNOWN 1 (Q117 trial coverage). Combined 139: PASS 110 ·
 PARTIAL 22 · FAIL 5 (Q6, Q84, Q126, Q127, Q134 — video + independent users,
 both owner actions) · UNKNOWN 2 (Q112/Q117 trial window, owner action).
+
+## TITAN III appendix (3 questions, 2026-11-08)
+
+| # | Question | Status 2026-11-08 | Evidence | Pri | Verdict |
+|---|---|---|---|---|---|
+| 140 | Does snapshot corruption recover instead of bricking the demo? | .bak rotation + shape check + backup-load; fail-closed when both unusable; 4/4 tests | `store.ts`, `store.test.ts` | M | PASS |
+| 141 | Is the AI's contribution over the heuristic baseline quantified? | Shared 15-scenario live set, same scorer: AI 59/60 vs heuristic 9/15; artifact regenerable with zero new spend | `BASELINE_COMPARISON.md`, `baseline.compare.test.ts` | H | PASS |
+| 142 | Can the entry drop AG Studio instantly if consent is declined? | `AG_STUDIO_DISABLED=1` keeps the trial UMD unloaded, Community tables stay; cutoff Nov 11 EOD | `sponsors.studio-toggle.test.ts` 2/2, `ag-studio-trial.md` | H | PASS |
+
+## Tally (2026-11-08 TITAN III)
+
+T3 appendix: PASS 3 · PARTIAL 0 · FAIL 0 · UNKNOWN 0. Status flip:
+Q113 PARTIAL → PASS (keyless-by-design decided + e2e-pinned).
+Combined 142: PASS 114 · PARTIAL 21 · FAIL 5 (Q6, Q84, Q126, Q127,
+Q134 — video + independent users, owner actions) · UNKNOWN 2
+(Q112/Q117 trial window, owner action). All remaining non-PASS items
+require the owner (humans, video, AG Grid reply) — no engineer-actionable
+gap is left open.
 
