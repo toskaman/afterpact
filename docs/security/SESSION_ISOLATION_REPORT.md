@@ -60,3 +60,18 @@ has no shared-mutable-state crash or duplicate-operation bug under a
 Per-session scoping or SQLite migration only after the submission lock,
 behind the same backup → migrate → rollback-tested procedure, with the
 25-session probe re-run against the new store.
+
+## 6. TITAN VI re-verification (2026-11-09, branch `titan-vi`)
+
+- The one-off probe script is superseded by a durable committed test:
+  `tests/integration/demo.concurrency.test.ts` fires 25 concurrent
+  flagship runs over HTTP and asserts 25/25 completed, 25 unique ids,
+  9 acts each, and a valid audit chain. It runs on every CI build.
+- TITAN VI Workstream C verdict: **honest fallback, no isolation
+  rewrite.** Full per-session isolation (server sessions + ownership on
+  15 collections + scoped audit reads + legacy-record migration) was
+  re-estimated as too invasive 3 days before the deadline: it touches
+  the financial/audit core and the demo UX judges will use. The shared
+  lists stay, the per-run token gates stay, and no tenant-isolation
+  claim is made. The docs-drift gate now fails the build on any
+  per-session-isolation wording (`scripts/check-docs-drift.mjs`).

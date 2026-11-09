@@ -9,14 +9,15 @@ noted gap), **NOT VERIFIED** (real path, unexecuted — needs creds/humans),
 **NOT PURSUED** (deliberately out of scope, with a filed non-claim),
 **NOT DONE** (planned, not built).
 
-Verification baseline (2026-11-08; supersedes the 2026-11-07 baseline at
-`2a26d05`): `tsc --noEmit` exit 0 on all 6 projects; `vitest run` →
-**281 passed, 33 skipped** (skips = keyless live probes + live evals);
+Verification baseline (2026-11-09; supersedes the 2026-11-08 baseline):
+`tsc --noEmit` exit 0 on all 6 projects; `vitest run` →
+**314 passed, 33 skipped** (skips = keyless live probes + live evals);
 `tsc -p apps/api` build exit 0; `node --check` on
 `apps/web/public/app.js` exit 0; Newman executed (37/37 requests, 18/18
-assertions); Playwright E2E 6/6 in CI; no secrets in repo (`.env` absent,
+assertions); Playwright E2E 12/12 in CI; no secrets in repo (`.env` absent,
 `.env.example` placeholders only). Machine source of truth:
-`docs/hackathon/RELEASE_EVIDENCE_MANIFEST.json`.
+`docs/hackathon/RELEASE_EVIDENCE_MANIFEST.json` (authoritative CI run +
+commit inside; historical run pins in this file are not authoritative).
 
 ## Judges
 
@@ -53,14 +54,14 @@ background).
 
 | Requirement | Evidence | Status |
 |---|---|---|
-| Real PayPal operations | Mock full-loop (16 tests) + live full-loop completed 2026-11-07: order 2ER387580K033722V → buyer approval → capture 7R158417X9367771B → partial refund 8DJ895035B173303G (12999 USD, `succeeded`) → Recorder chain-VALID | **PASS** |
+| Real PayPal operations | Mock full-loop (16 tests) + live loop 1 completed 2026-11-07: order 2ER387580K033722V → buyer approval → capture 7R158417X9367771B → partial refund 8DJ895035B173303G (12999 USD, `succeeded`) → Recorder chain-VALID; second independent loop 2026-11-08: order 59A94150344824111 → capture 72S38593LS000452A → FULL refund 15T12360RX6158212 (`docs/demo/paypal-live-receipts-2.json`) | **PASS** |
 | Idempotency | `PayPal-Request-Id` on writes, fingerprint-on-raw-request replays, duplicate-webhook dedupe; `tests/integration/paypal.safety.test.ts` + same-key concurrency test (1 success + 1 duplicate) | **PASS** (mock) |
 | Permission boundaries | Scoped server tools (`packages/payments/src/scopedTools.ts`, incl. provider-import guard test); AI proposes via Zod-validated outputs, deterministic code decides, human approves | **PASS** |
 | Transaction integrity | Integer minor units, currency-aware decimals, PayPal wire format/parse (`packages/domain/src/money.ts`); 17-state lifecycle with `InvalidTransitionError` (`lifecycle.ts`); totals footing (`offer.ts`) | **PASS** |
 | Correct failure recovery | Webhook redelivery/dedupe/replay refusal, tampered-signature rejection, provider-state reconciliation (`reconcile.ts`), restart restores hash-chained audit log (verified in `apps.api.test.ts`) | **PASS** (mock) |
 | Safe concurrency | Concurrent same-key capture+refund serialize to 1 success + 1 duplicate; kill switch refuses new ops while reads/webhooks stay open | **PASS** (mock) |
 | Comprehensive logging | Append-only hash-chained `AuditEvent` log, no update/delete (`packages/domain/src/audit.ts`); Flight Recorder replay + redacted export (`apps/web` `#/recorder`, export test) | **PASS** |
-| Automated tests | 281 passed + 33 skipped across 30 files; `tsc` clean on 6 projects; CI `verify`+`e2e`+`drift` green at HEAD (`actions/runs/42437989920`) | **PASS** |
+| Automated tests | 314 passed + 33 skipped across 38 files; `tsc` clean on 6 projects; CI `verify`+`e2e`+`drift` green at HEAD (authoritative run: manifest `verifiedCiRun`) | **PASS** |
 
 ### AI platform reliability (Ravi / Cosmos.AI lens)
 
@@ -95,7 +96,7 @@ background).
 | Cross-filtering | Global filters wired across Studio widgets, asserted in `tests/integration/sponsors.studio.timeline.test.ts` | **PASS** |
 | Interactive analytics | Drill-down on incidents/refunds/merchants over live datasets | **PASS** |
 | Strict NL dashboard queries | `incidents unresolved refunds >$100` etc. with rejection+hints (tokenizer fix covered by tests); Act 9 regenerates Studio from live data (`passed/real-api`) | **PASS** |
-| Studio Agent Framework | Real `directLlmRunner` loop with our own Vultr-backed `AgLlmAdapter` via `POST /api/ai/studio-turn`; verified live: NL prompt → Page+Widget delegation → configured bar chart from live rows (13 turns, $0.023, screenshot `studio-agent-trace.png`) | **PASS** |
+| Studio Agent Framework | Real Agent Framework loop with our own Vultr-backed `AgLlmAdapter` via `POST /api/ai/studio-turn`; verified live: NL prompt → Page+Widget delegation → configured bar chart from live rows (13 turns, $0.023, screenshot `studio-agent-trace.png`); TITAN VI adds a custom `outcome-risk-analyst` agent (`directLlmRunner`) with 3 read-only custom tools (`api.defineAiTool`) over live datasets — custom-harness mount asserted keyless in `tests/e2e/studio.e2e.ts` | **PASS** |
 
 ### APIMatic (Hassan, Olson)
 
@@ -152,17 +153,22 @@ background).
 | Operational visibility | `GET /api/health` live at the public URL (systemd + journald on the box); no Render dashboard (prize not pursued) | **PASS** (non-Render) |
 | Deployment reproducibility | `render.yaml` Blueprint + `.github/workflows/ci.yml` (test+build+flagship smoke) in repo | **PASS** (config) |
 
-## Demo timestamp map (to fill when the video is cut)
+## Demo timestamp map (film built 2026-11-08; upload pending owner)
+
+Film: `brag-output/paypal-ai-2026/AFTERPACT_PAYPAL_AI_FINAL.mp4` (165.1 s,
+1920×1080, 30 fps, EN narration + subtitles; QA report
+`VIDEO_QA_REPORT.md`). Public YouTube upload is the remaining owner step.
 
 | Video timestamp | Content | Status |
 |---|---|---|
-| TBD 0:00–0:20 | Problem + customer | **NOT DONE** — shot list ready in `docs/demo/DEMO_SCRIPT.md` |
-| TBD 0:20–0:45 | Intent + Channel3 discovery (Acts 1–2) | **NOT DONE** — needs live Channel3 key for the "real search" shot |
-| TBD 0:45–1:10 | Promise + approval + sandbox capture (Acts 3–4) | **NOT DONE** — needs sandbox creds for real IDs |
-| TBD 1:10–1:40 | Incident + AI resolution + operator approval (Acts 5–6) | **NOT DONE** |
-| TBD 1:40–2:10 | Real refund + verified result + negative scenario (Acts 7 + refusal) | **NOT DONE** |
-| TBD 2:10–2:50 | Flight Recorder replay + Studio NL dashboard (Acts 8–9) | **NOT DONE** |
+| 0:00–0:15 | Problem + customer | **PASS** — in the built film |
+| 0:15–0:40 | Intent + promise + PayPal evidence | **PASS** — in the built film |
+| 0:40–1:10 | Failure + Outcome Twin divergence | **PASS** — in the built film |
+| 1:10–1:40 | AI analysis → policy → approval → verified refund | **PASS** — in the built film |
+| 1:40–2:00 | Flight Recorder proof + provider receipt | **PASS** — in the built film |
+| 2:00–2:20 | Recorded AI results + Intelligence Studio | **PASS** — in the built film |
+| 2:20–2:35 | Blocked excessive-refund safety shot | **PASS** — in the built film |
+| 2:35–2:45 | Closing + repo/demo URLs | **PASS** — in the built film |
 
-Total must stay under 3:00; judges need not watch more.
-Video is the highest-impact remaining item (`docs/RELEASE_GATE.md`
-gate 16); the hosted URL is done (gate 10, Vultr).
+Total 165.1 s < 3:00. Remaining video work is owner-only: public
+YouTube upload + URL paste (see `OWNER_SUBMISSION_CHECKLIST.md` §1).

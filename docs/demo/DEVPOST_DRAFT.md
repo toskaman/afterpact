@@ -82,7 +82,10 @@ capture `7R158417X9367771B` → partial refund `8DJ895035B173303G`
 (`docs/demo/paypal-live-receipts.json`, test-pinned). A second independent loop
 (order `59A94150344824111` → capture `72S38593LS000452A` → FULL refund
 `15T12360RX6158212`, `docs/demo/paypal-live-receipts-2.json`) exercises the
-full-refund path against the same provider. No live-money code paths exist.
+full-refund path against the same provider. Live-money paths exist only as
+explicitly gated, disabled-by-default configuration (`PAYPAL_MODE=live`
+AND `PAYPAL_ALLOW_LIVE=true`); no live transaction has ever been
+executed — every provider receipt in this entry is PayPal Sandbox.
 
 ## Sponsor integrations (honest status)
 
@@ -107,12 +110,13 @@ full-refund path against the same provider. No live-money code paths exist.
 TypeScript throughout: a zero-dependency Node HTTP API (`apps/api`), a
 static accessible web UI, and four packages — `domain` (money in integer
 minor units, promises, approvals, 17-state lifecycle, audit chain),
-`policy` (deterministic gates), `payments` (sandbox-only PayPal client),
+`policy` (deterministic gates), `payments` (PayPal client: Sandbox-evidenced,
+live mode explicitly gated and disabled by default),
 `ai` (Vultr Inference client with identity verification, cost ledger,
 strict fallbacks). Single-node JSON snapshot store (documented
-limitation; SQLite/PostgreSQL is future work). 288 automated tests green
+limitation; SQLite/PostgreSQL is future work). 314 automated tests green
 (+33 keyless skips that skip visibly), strict `tsc` clean on 6 projects,
-7 Playwright E2E green, CI `verify`+`e2e`+`drift` green at HEAD. Every
+12 Playwright E2E green, CI `verify`+`e2e`+`drift` green at HEAD. Every
 on-screen capability carries an origin badge (`REAL API`,
 `PAYPAL SANDBOX · LIVE`, `SIMULATED · MOCK`, `AI · LIVE` / `AI · OFF`, …)
 so judges see exactly what is live and what is labeled simulation.
@@ -211,7 +215,7 @@ Postman/Newman, Vultr (hosting), Caddy.
 git clone https://github.com/toskaman/afterpact && cd afterpact
 npm install && cp .env.example .env
 npm run build && npm start   # http://localhost:3001
-npm test                     # 288 passed, 33 skipped keyless (live paths need creds)
+npm test                     # 314 passed, 33 skipped keyless (live paths need creds)
 ```
 
 Run the flagship: `POST /api/demo/run {"scenario":"flagship"}` or open
