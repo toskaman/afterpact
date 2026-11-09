@@ -34,7 +34,7 @@ export interface PromiseRecord {
 
 export interface DemoRun {
   id: string;
-  scenario: "flagship" | "injection";
+  scenario: "flagship" | "injection" | "hold";
   label: string;
   status: "running" | "awaiting-action" | "completed" | "failed";
   startedAt: string;

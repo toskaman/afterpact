@@ -24,6 +24,7 @@ beforeAll(async () => {
       PAYPAL_CLIENT_ID: "",
       PAYPAL_CLIENT_SECRET: "",
       PAYPAL_MODE: "sandbox",
+      VULTR_INFERENCE_API_KEY: "",
       LOG_LEVEL: "silent",
     },
   });
@@ -150,6 +151,31 @@ describe("frontend AG Studio contract", () => {
       body: "{}",
     });
     expect(res.status).toBe(422);
+  });
+
+  it("wires the Outcome Risk Analyst custom agent with read-only tools", () => {
+    const source = readFileSync(join(WEB_DIR, "app.js"), "utf8");
+    for (const token of [
+      "AfterpactStudioRiskTools",
+      "/ag-studio-risk-tools.js",
+      "outcome-risk-analyst",
+      "directLlmRunner",
+      "defineAiTool",
+      "harnessKind",
+    ]) {
+      expect(source.includes(token), `app.js missing risk-analyst token: ${token}`).toBe(true);
+    }
+    const riskTools = readFileSync(join(WEB_DIR, "ag-studio-risk-tools.js"), "utf8");
+    for (const token of [
+      "defineRiskTools",
+      "get_incident_exposure",
+      "get_promise_outcome_comparison",
+      "get_refund_verification_status",
+      "/api/studio/datasets",
+      "RISK_ANALYST_INSTRUCTIONS",
+    ]) {
+      expect(riskTools.includes(token), `ag-studio-risk-tools.js missing: ${token}`).toBe(true);
+    }
   });
 });
 
