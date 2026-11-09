@@ -26,10 +26,11 @@ position file; TITAN V documents stay frozen as history.
 ## Observed test results (2026-11-09, keyless, branch `titan-vi`)
 
 - `npm run typecheck`: exit 0 (6 projects).
-- `npm test`: **317 passed, 0 failed, 33 skipped** (350 total, 39 files).
-  Baseline was 288/0/33; +29 from TITAN VI (hold 2, concurrency 1,
-  risk-tools 7, drift 15, studio contract 1, webhook-amount regression 1,
-  metrics-summary 1, receipts loop-2 pin 1).
+- `npm test`: **319 passed, 0 failed, 33 skipped** (352 total, 39 files).
+  Baseline was 288/0/33; +31 from TITAN VI + AG-consent follow-up (hold 2,
+  concurrency 1, risk-tools 7, drift 15, studio contract 1, webhook-amount
+  regression 1, metrics-summary 1, receipts loop-2 pin 1, studio keyed
+  config 2).
 - `npx playwright test`: **12/12** (judge 3→5 incl. Hold + mobile/keyboard).
 - `node scripts/check-docs-drift.mjs`: FAIL→fix loop in progress; must be
   green before merge (currently flags exactly the intended sync items).

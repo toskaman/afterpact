@@ -129,7 +129,7 @@ labeled without them):
 npm run typecheck        # strict tsc over domain, policy, payments, ai, api, tests (6 projects)
 npm run test:unit        # pure domain/policy unit tests (no creds, no network)
 npm run test:integration # API + PayPal + sponsor suites (live-sandbox skips visibly without creds)
-npm test                 # everything: 317 passed, 33 skipped keyless (2026-11-09; manifest-verified)
+npm test                 # everything: 319 passed, 33 skipped keyless (2026-11-09; manifest-verified)
 node --check apps/web/public/app.js
 ```
 

@@ -2,6 +2,13 @@
 
 Date: 2026-11-08. This is the authoritative trial record (referenced by
 `scripts/vendor-ag-studio.mjs`).
+Update 2026-11-09: owner authorized the full consent flow. Sponsor page
+re-verified live: 45-day trial via web form; hackathon contact channel
+is the AG Grid team on the PayPal Discord
+(discord.com/invite/sJ2G6DyvSK), info@ag-grid.com as fallback. Consent
+send + trial-form submit stay owner-side (owner mailbox and identity —
+the agent has no email/Discord access); key-install plumbing is done
+and tested (Trial key, step 3).
 
 ## Installed
 
@@ -18,10 +25,18 @@ Date: 2026-11-08. This is the authoritative trial record (referenced by
 
 ## Trial key (owner action, ~5 min)
 
-1. Register at https://www.ag-grid.com/studio/ for the 45-day trial key.
-2. Save the key to local `APIS.txt` / `.env` (never commit).
-3. Agent installs it on the demo box via `AG_STUDIO_LICENSE_KEY` and
-   redeploys; watermark removal is then verified by screenshot.
+1. Complete the 45-day trial form (owner, ~2 min):
+   https://www.ag-grid.com/studio/javascript/enterprise-licence/#request-a-45-day-trial-licence
+   (form verified live 2026-11-09; for trial issues use the PayPal
+   Discord AG Grid channel). The key arrives by email.
+2. Save the key to local `APIS.txt` / `.env` (never commit) and hand it
+   to the agent (paste in chat — never in a screenshot or file).
+3. Agent installs it the same day into the root-only file
+   `/root/afterpact-studio-key` (chmod 600) on the demo box, redeploys
+   (`scripts/afterpact_deploy.sh` exports it as `AG_STUDIO_LICENSE_KEY`;
+   empty file = current watermark behavior), and verifies watermark
+   removal by screenshot. Key passthrough is covered by
+   `tests/integration/sponsors.studio-toggle.test.ts` (fake key).
 4. Confirm in writing that the trial covers the judging window
    (Dec 1–15, 2026) and the public demo URL — status UNKNOWN until then.
 
@@ -32,8 +47,9 @@ Note: the website advertises 45 days while EULA v40 cl.13.2(b) describes
 
 EULA v40 limits trial use to internal evaluation and bars redistribution
 without prior written consent (cl.16.1); git history also still contains
-the previously vendored bytes. Send this to the AG Grid hackathon
-contact (or info@ag-grid.com) and file the reply here:
+the previously vendored bytes. Send this to the AG Grid team on the
+PayPal Discord (primary channel per the sponsor page) or to
+info@ag-grid.com, and file the reply here:
 
 > Subject: Hackathon consent request — AG Studio 3.1.0 in public demo
 > repo (AFTERPACT, PayPal AI Hackathon 2026)
