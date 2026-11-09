@@ -24,6 +24,9 @@ but parity unproven by SHA).
 
 **Corrective action.** Per-session demo isolation + documented restore drill
 before judging (Phase 3) — kills the two biggest architectural objections.
+**PARTIAL 2026-11-09:** 25-session probe 25/25 + restore drill done
+(`docs/security/SESSION_ISOLATION_REPORT.md`); full per-session scoping
+still deferred as too risky pre-deadline, limitation documented.
 
 ## Reviewer 2 — Fintech / Payments Expert — 8/10
 

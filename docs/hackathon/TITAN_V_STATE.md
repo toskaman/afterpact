@@ -34,6 +34,9 @@ direct Devpost fetch blocked by 403 bot protection — owner to confirm on the e
 - [x] Second sandbox loop order→capture→FULL refund executed 2026-11-08
   (`59A94150344824111`/`72S38593LS000452A`/`15T12360RX6158212`, receipts-2).
 - [x] Judge Mode `#/judge` implemented (frontend-only, 10/10 e2e) + guide.
+- [x] Deployed `c4299fa` to Vultr (backup sha `7d2986f8…`, health ok,
+  Judge live, flagship smoke completed, chain valid, token rotated).
+- [x] 25-session probe 25/25 + restore drill verified → isolation report.
 - AG Grid: cutoff Nov 11 EOD — fallback `AG_STUDIO_DISABLED=1` + Community-only
   claims if no written consent by then (fallback test green).
 - Usability: protocol ready; participants = owner blocker (document honestly).
