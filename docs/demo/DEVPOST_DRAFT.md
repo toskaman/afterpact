@@ -116,7 +116,7 @@ live mode explicitly gated and disabled by default),
 strict fallbacks). Single-node JSON snapshot store (documented
 limitation; SQLite/PostgreSQL is future work). 319 automated tests green
 (+33 keyless skips that skip visibly), strict `tsc` clean on 6 projects,
-12 Playwright E2E green, CI `verify`+`e2e`+`drift` green at HEAD. Every
+15 Playwright E2E green, CI `verify`+`e2e`+`drift` green at HEAD. Every
 on-screen capability carries an origin badge (`REAL API`,
 `PAYPAL SANDBOX · LIVE`, `SIMULATED · MOCK`, `AI · LIVE` / `AI · OFF`, …)
 so judges see exactly what is live and what is labeled simulation.

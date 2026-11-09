@@ -62,6 +62,31 @@ function confirmDialog(title, text, okLabel = "Confirm") {
   });
 }
 
+async function copyText(text, label) {
+  const done = () => toast(`${label} copied`, "ok");
+  try {
+    await navigator.clipboard.writeText(text);
+    done();
+    return;
+  } catch {
+    /* clipboard API unavailable (permissions, insecure context): legacy fallback */
+  }
+  const ta = document.createElement("textarea");
+  ta.value = text;
+  ta.setAttribute("readonly", "");
+  ta.style.position = "absolute";
+  ta.style.opacity = "0";
+  document.body.appendChild(ta);
+  ta.select();
+  try {
+    document.execCommand("copy");
+    done();
+  } catch {
+    toast(`${label} copy failed — select the id manually`, "error");
+  }
+  ta.remove();
+}
+
 /* ---------- origin markers (real vs simulated) ---------- */
 const ORIGINS = {
   "real-api": { label: "REAL API", cls: "ok" },
@@ -236,10 +261,11 @@ async function renderCommand() {
         ${m.chainValid ? '<span class="pill ok">FLIGHT RECORDER · VALID</span>' : '<span class="pill bad">FLIGHT RECORDER · BROKEN</span>'}
         ${m.killSwitch ? '<span class="pill bad">KILL-SWITCH ENGAGED</span>' : ""}
       </div>
+      <p class="small section-gap" data-landing-tour-link>New here? <a href="#/judge">Play the 60-second guided story →</a></p>
       ${states.length === 0 ? `<div class="card section-gap">
         <h2>AI agents can already buy. AFTERPACT makes sure the outcome matches the promise.</h2>
         <p class="muted small">Watch a purchase go wrong — short delivery, detected automatically — then see evidence-backed AI analysis, a human approval, and a verified PayPal refund.</p>
-        <div class="button-row"><a class="button" href="#/demo">Run the 2-minute flagship demo</a><a class="button secondary" href="#/copilot">Open Purchase Copilot</a></div>
+        <div class="button-row"><a class="button" href="#/judge">Play the 60-second story</a><a class="button secondary" href="#/copilot">Open Purchase Copilot</a></div>
       </div>` : ""}
       <div class="grid kpi">
         <div class="card"><div class="kpi-label">Amount at risk</div><div class="kpi-value">${formatMoney({ ...money, amountMinor: m.atRiskMinor })}</div><div class="kpi-sub">Captured, not yet verified</div></div>
@@ -1198,6 +1224,16 @@ async function renderJudge() {
     <p class="judge-lifecycle">Promise → Payment → Observation → Recovery → Proof</p>
     <p class="small muted">One minute: 1. Run a scenario below → 2. Read each act's origin badge → 3. Open the Twin and Recorder links for the proof. Recover, Hold, and Refuse are three real policy outcomes, not three videos.</p>
     <div class="button-row section-gap"><button class="button" id="judgeRun" type="button">Run the flagship scenario</button><a class="button secondary" href="#/recorder">Explore the evidence</a></div>
+    <div class="card section-gap" data-tour-panel>
+      <h2>The 60-second story</h2>
+      <p class="small muted">One click runs Recover → Hold → Refuse back-to-back. Each step is a real scenario execution with its own origin badges and proof links — not a recording.</p>
+      <ol class="tour-steps" data-tour-steps>
+        <li data-tour-step="flagship" data-state="queued"><strong>1 · Recover</strong><span class="tour-status">queued</span></li>
+        <li data-tour-step="hold" data-state="queued"><strong>2 · Hold</strong><span class="tour-status">queued</span></li>
+        <li data-tour-step="injection" data-state="queued"><strong>3 · Refuse</strong><span class="tour-status">queued</span></li>
+      </ol>
+      <div class="button-row"><button class="button" id="judgeTour" type="button">Play the 60-second story</button></div>
+    </div>
     <div class="grid four section-gap">
       <div class="card" data-scenario-card="flagship">
         <h2>Scenario 1 — Recover</h2>
@@ -1231,7 +1267,7 @@ async function renderJudge() {
     const promiseId = run.context?.promiseId ?? run.context?.promiseA ?? "";
     $("#judgeResult").innerHTML = `<div class="card">
       <h2>Run ${escapeHtml(shortId(run.id))} · ${escapeHtml(run.scenario)} · ${escapeHtml(String(run.status).toUpperCase())}</h2>
-      <div class="badge-row" style="margin-bottom:0.8rem">${originPill(run.transport === "paypal-sandbox-live" ? "paypal-sandbox-live" : "mock-simulated")}</div>
+      <div class="badge-row" style="margin-bottom:0.8rem">${originPill(run.transport === "paypal-sandbox-live" ? "paypal-sandbox-live" : "mock-simulated")}<button class="button small secondary" data-copy="${escapeHtml(run.id)}" data-copy-label="Run id" type="button">Copy run id</button>${promiseId ? `<button class="button small secondary" data-copy="${escapeHtml(promiseId)}" data-copy-label="Promise id" type="button">Copy promise id</button>` : ""}${demoTokens.get(run.id) !== undefined && config.resetAllowed ? `<button class="button small secondary" id="judgeResetRun" type="button">Reset this run</button>` : ""}</div>
       ${run.error ? errorBanner(run.error) : ""}
       <div data-judge-acts>
       ${run.acts.map((a) => `
@@ -1243,6 +1279,21 @@ async function renderJudge() {
       </div>
       ${promiseId ? `<p class="small"><a href="#/twin?promiseId=${encodeURIComponent(promiseId)}">Open in Outcome Twin →</a> · <a href="#/recorder?promiseId=${encodeURIComponent(promiseId)}">Replay in Flight Recorder →</a> · <a href="#/tx/${encodeURIComponent(promiseId)}">Transaction →</a></p>` : ""}
     </div>`;
+    $("#judgeResult").querySelectorAll("[data-copy]").forEach((b) => {
+      b.addEventListener("click", () => void copyText(b.dataset.copy, b.dataset.copyLabel ?? "Value"));
+    });
+    $("#judgeResetRun")?.addEventListener("click", async () => {
+      if (!(await confirmDialog("Reset this run", "Delete only this run's records? Other visitors' runs are untouched; audit entries stay (append-only).", "Reset this run"))) return;
+      try {
+        const result = await api(`/api/demo/runs/${encodeURIComponent(run.id)}/reset`, { method: "POST", body: { token: demoTokens.get(run.id) } });
+        demoTokens.delete(run.id);
+        toast(`Run reset: ${Object.values(result.cleared).reduce((a, b) => a + b, 0)} records cleared`, "ok");
+        void renderJudge();
+        void refreshTopbar();
+      } catch (err) {
+        toast(err.message, "error");
+      }
+    });
     $("#judgeResult").scrollIntoView({ block: "start" });
   };
 
@@ -1258,6 +1309,78 @@ async function renderJudge() {
     }
   };
 
+  const TOUR_ORDER = [["flagship", "Recover"], ["hold", "Hold"], ["injection", "Refuse"]];
+  const setTourStep = (scenario, state, statusText) => {
+    const li = document.querySelector(`[data-tour-step="${scenario}"]`);
+    if (!li) return;
+    li.dataset.state = state;
+    const status = li.querySelector(".tour-status");
+    if (status) status.textContent = statusText;
+  };
+
+  const showTourFinale = (completed, failure) => {
+    const rows = completed.map(([label, run]) => {
+      const promiseId = run.context?.promiseId ?? run.context?.promiseA ?? "";
+      return `<div class="act ${escapeHtml(run.status)}">
+        <div class="act-head"><strong>${escapeHtml(label)}</strong>
+        <span class="pill ${run.status === "passed" ? "ok" : run.status === "blocked" ? "bad" : ""}">${escapeHtml(String(run.status).toUpperCase())}</span></div>
+        <p class="act-detail">Run ${escapeHtml(shortId(run.id))} · ${run.acts.length} acts · transport ${escapeHtml(run.transport === "paypal-sandbox-live" ? "paypal-sandbox-live" : "mock-simulated")}</p>
+        ${promiseId ? `<p class="small"><a href="#/twin?promiseId=${encodeURIComponent(promiseId)}">Open in Outcome Twin →</a> · <a href="#/recorder?promiseId=${encodeURIComponent(promiseId)}">Replay in Flight Recorder →</a> · <a href="#/tx/${encodeURIComponent(promiseId)}">Transaction →</a></p>` : ""}
+      </div>`;
+    }).join("");
+    $("#judgeResult").innerHTML = `<div class="card" data-tour-finale>
+      <h2>The 60-second story · ${completed.length}/3 steps</h2>
+      <div class="badge-row" style="margin-bottom:0.8rem">${originPill(config.transport === "paypal-sandbox-live" ? "paypal-sandbox-live" : "mock-simulated")}</div>
+      ${failure ? errorBanner(`Tour stopped at ${failure.scenario}: ${failure.message}`) : ""}
+      ${rows}
+      ${completed.length > 0 && config.resetAllowed ? `<div class="button-row"><button class="button small secondary" id="judgeTourReset" type="button">Reset tour runs</button></div>` : ""}
+    </div>`;
+    $("#judgeResult").scrollIntoView({ block: "start" });
+    $("#judgeTourReset")?.addEventListener("click", async () => {
+      if (!(await confirmDialog("Reset tour runs", `Delete only the ${completed.length} tour runs' records? Other visitors' runs are untouched; audit entries stay (append-only).`, "Reset tour runs"))) return;
+      let cleared = 0;
+      for (const [, run] of completed) {
+        try {
+          const result = await api(`/api/demo/runs/${encodeURIComponent(run.id)}/reset`, { method: "POST", body: { token: demoTokens.get(run.id) } });
+          demoTokens.delete(run.id);
+          cleared += Object.values(result.cleared).reduce((a, b) => a + b, 0);
+        } catch (err) {
+          toast(`Reset failed for run ${shortId(run.id)}: ${err.message}`, "error");
+        }
+      }
+      toast(`Tour reset: ${cleared} records cleared`, "ok");
+      void renderJudge();
+      void refreshTopbar();
+    });
+  };
+
+  const runTour = async () => {
+    const btn = $("#judgeTour");
+    btn.disabled = true;
+    const completed = [];
+    try {
+      for (const [scenario, label] of TOUR_ORDER) {
+        setTourStep(scenario, "running", "running…");
+        try {
+          const run = await api("/api/demo/run", { method: "POST", body: { scenario, label: "judge-tour" } });
+          if (typeof run.resetToken === "string") demoTokens.set(run.id, run.resetToken);
+          completed.push([label, run]);
+          setTourStep(scenario, "done", run.status);
+        } catch (err) {
+          setTourStep(scenario, "failed", "failed");
+          showTourFinale(completed, { scenario: label, message: err.message });
+          void refreshTopbar();
+          return;
+        }
+      }
+      showTourFinale(completed, null);
+      void refreshTopbar();
+    } finally {
+      btn.disabled = false;
+    }
+  };
+
+  $("#judgeTour").addEventListener("click", () => void runTour());
   $("#judgeRun").addEventListener("click", (ev) => { ev.preventDefault(); void runScenario("flagship"); });
   document.querySelectorAll("[data-judge-run]").forEach((b) => {
     b.addEventListener("click", () => void runScenario(b.dataset.judgeRun));

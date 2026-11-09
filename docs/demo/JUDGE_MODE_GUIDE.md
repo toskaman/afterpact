@@ -45,4 +45,6 @@ instead of faking a Hold badge.
   append-only.
 - Screenshot: `docs/demo/screenshots/judge-mode.png` (current 4-card
   layout, keyless pills). E2E: `tests/e2e/judge.e2e.ts` (5 tests incl.
-  Hold, mobile viewport + keyboard, green in CI).
+  Hold, mobile viewport + keyboard, green in CI) +
+  `tests/e2e/tour.e2e.ts` (3 tests: landing funnel, 60-second tour with
+  per-step proof links, result copy/reset).
