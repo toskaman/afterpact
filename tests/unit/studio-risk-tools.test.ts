@@ -100,7 +100,7 @@ describe("studio risk tools", () => {
 
   it("ranks open incidents by unrefunded exposure and caps rows", async () => {
     const { defs, fetchCalls } = loadTools(okDatasets(FIXTURE));
-    const tool = defs[0];
+    const tool = defs[0]!;
     const result = await tool.execute({ top_n: 2 }, ctx());
     expect(result.ok).toBe(true);
     // Open incidents first, exposure-descending; the big resolved row sorts last.
@@ -121,7 +121,7 @@ describe("studio risk tools", () => {
 
   it("compares promised versus observed outcomes with evidence coverage", async () => {
     const { defs } = loadTools(okDatasets(FIXTURE));
-    const tool = defs[1];
+    const tool = defs[1]!;
     const all = await tool.execute({}, ctx());
     expect(all.ok).toBe(true);
     expect(all.text).toContain("sandbox-merchant");
@@ -135,7 +135,7 @@ describe("studio risk tools", () => {
 
   it("reports refund verification status and rejects unknown statuses", async () => {
     const { defs } = loadTools(okDatasets(FIXTURE));
-    const tool = defs[2];
+    const tool = defs[2]!;
     const all = await tool.execute({}, ctx());
     expect(all.ok).toBe(true);
     expect(all.text).toContain("succeeded=1");

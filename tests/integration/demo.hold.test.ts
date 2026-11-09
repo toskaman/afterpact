@@ -65,13 +65,14 @@ describe("demo scenario: hold (unapproved promise never pays)", () => {
     expect(promiseId).toBeTruthy();
 
     // Act 1 records the verdict the policy engine actually returned.
-    const verdictAct = run.acts[0];
+    expect(run.acts).toHaveLength(2);
+    const verdictAct = run.acts[0]!;
     expect(verdictAct.status).toBe("passed");
     expect(verdictAct.detail).toContain("Hold");
     expect(verdictAct.detail).toContain("approval-missing");
 
     // Act 2 is the refused order attempt: blocked, never executed.
-    const orderAct = run.acts[1];
+    const orderAct = run.acts[1]!;
     expect(orderAct.status).toBe("blocked");
     expect(orderAct.detail).toMatch(/refused|blocked|missing|state/i);
 
