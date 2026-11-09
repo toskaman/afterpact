@@ -2,7 +2,9 @@
 
 > Companion to `docs/demo/DEMO_SCRIPT.md` (live 10-min walkthrough). This
 > file is the exact shot plan for the <3:00 submission video. Status:
-> PACKAGE READY — no video file exists yet (`TBD:youtube-url`).
+> FILM FILE BUILT 2026-11-09 (`brag-output/paypal-ai-2026/AFTERPACT_PAYPAL_AI_FINAL.mp4`,
+> 165.1 s, QA-passed) — owner uploads or remakes, then replaces
+> `TBD:youtube-url`. This shot plan stays authoritative for any remake.
 
 ## Pre-flight checklist (do not skip)
 
