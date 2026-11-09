@@ -56,7 +56,7 @@ UNVERIFIED · NOT DONE · NOT MEASURED · ESTIMATE · OWNER ACTION REQUIRED.
 | 26 | Studio 3.1.0 canvas + Agent Framework over live data | VERIFIED | CDN-first SRI mount + `studio.e2e.ts` + `studio-agent-trace.png` (base loop) |
 | 27 | Custom Outcome Risk Analyst agent + 3 read-only tools | VERIFIED | `ag-studio-risk-tools.js` + `studio-risk-tools.test.ts` (7) + `data-harness-kind` e2e assertion |
 | 28 | No commercial bytes committed; EULA filed; CDN-first | VERIFIED | `git ls-files vendor/` empty of bundle + `vendor/*.LICENSE/NOTICE` + manifest `bundleTrackedInGit=false` |
-| 29 | Trial key installed / consent received / judging window covered | OWNER ACTION REQUIRED | key none; consent drafted-not-sent; coverage UNKNOWN; fallback tested |
+| 29 | Trial key installed / consent reply / judging window covered | PARTIAL | key AG-151025 installed 2026-11-09 (expires 2026-12-24, LICENSED verified); consent SENT 2026-11-09, reply pending — redistribution consent NOT granted; fallback armed |
 | 30 | Live keyed trace of the new custom tools | NOT DONE | needs inference key (owner); base-harness trace only |
 
 ## Impact & commercial claims

@@ -15,9 +15,10 @@ Date: 2026-11-08. Authoritative for the question "did this project use AG Grid /
   (2026-11-09) the harness declares a custom **Outcome Risk Analyst**
   agent (`directLlmRunner`) with three read-only custom tools
   (`api.defineAiTool`) over the same live datasets — see
-  `docs/demo/AG_GRID_AGENT_DEMO.md`. Trial watermark shows
-  until `AG_STUDIO_LICENSE_KEY` is installed (owner action documented in
-  `AG_STUDIO_UPGRADE_PATH.md`).
+  `docs/demo/AG_GRID_AGENT_DEMO.md`. Trial key AG-151025 (Pro Enterprise
+  eval-only, expires 2026-12-24) installed 2026-11-09 via deploy-time env;
+  the canvas shows `AG STUDIO · LICENSED`
+  (`docs/demo/screenshots/studio-licensed.png`).
 - **AG Grid Community 36.3.0 (MIT): USED.** The same view keeps real
   Community tables below the canvas (vendored UMD, SHA-256 pinned), with
   custom KPI widgets, app theming, cross-filtering, and a strict NL
@@ -36,7 +37,7 @@ Date: 2026-11-08. Authoritative for the question "did this project use AG Grid /
 | Licensed cleanly | MIT bundle vendored with license file + pinned SHA-256 + reproduce script | `apps/web/public/vendor/`, `scripts/vendor-ag-grid.mjs` |
 | Degrades honestly | If the bundle is missing, native tables render with a `NATIVE TABLE FALLBACK` badge | `renderStudioGrid` fallback branch |
 
-## AG Studio licensing posture (updated 2026-11-08)
+## AG Studio licensing posture (updated 2026-11-09)
 
 The "Why not AG Studio" evaluation below is superseded: Studio IS used
 (see Short answer). Current posture:
@@ -47,12 +48,14 @@ The "Why not AG Studio" evaluation below is superseded: Studio IS used
   vendor:ag-studio`, gitignored) is fallback only. EULA text is filed for
   attribution at `apps/web/public/vendor/ag-studio.LICENSE.html` with a
   carve-out in `LICENSE` + `ag-studio.NOTICE.txt`.
-- **Trial key pending (owner).** Until `AG_STUDIO_LICENSE_KEY` is
-  installed, the canvas shows the AG trial watermark (disclosed in-UI).
-- **Consent pending (owner sends).** A written-consent request for
-  hackathon-demo use is drafted in `docs/sponsors/ag-studio-trial.md`
-  (not yet sent); judging-window coverage (Dec 1–15) is UNKNOWN until
-  AG Grid confirms.
+- **Trial key installed (2026-11-09).** AG-151025 Pro Enterprise
+  eval-only key via deploy-time env (never committed); expiry
+  2026-12-24 covers the Dec 1–15 judging window by the key's own terms.
+  `AG STUDIO · LICENSED` verified by screenshot.
+- **Consent request sent, reply pending.** The owner sent the written-
+  consent request by email on 2026-11-09 (draft + record in
+  `docs/sponsors/ag-studio-trial.md`); no reply yet, so redistribution
+  consent is NOT yet granted and the Community fallback stays armed.
 - **Prize intent: pursue Best Use of AG Grid** (official Devpost name;
   AG Grid's blog calls it "Best Use of AG Studio") as the single sponsor
   prize, on genuine usage (real canvas + real Agent Framework over live

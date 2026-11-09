@@ -43,10 +43,11 @@ position file; TITAN V documents stay frozen as history.
 ## Sponsor status
 
 - AG Grid (single sponsor target): Studio 3.1.0 trial USED + Community
-  36.3.0 USED + NEW custom `outcome-risk-analyst` agent with 3 read-only
-  tools (keyless mount asserted). Trial key: NOT installed. Consent:
-  drafted, NOT sent. Judging-window coverage: UNKNOWN. Fallback cutoff:
-  Nov 11 EOD (`AG_STUDIO_DISABLED=1`, tested). Owner actions unchanged.
+  36.3.0 USED + custom `outcome-risk-analyst` agent with 3 read-only
+  tools. Trial key AG-151025 INSTALLED 2026-11-09 (expires 2026-12-24,
+  LICENSED pill verified). Consent: SENT 2026-11-09 by owner, reply
+  pending — redistribution consent NOT granted. Judging coverage: by key
+  terms. Fallback stays armed to Nov 11 EOD if reply declines.
 - Channel3 / others: filed non-claims stand (no prize pursued).
 
 ## Owner-only blockers (unchanged from TITAN V)

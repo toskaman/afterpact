@@ -24,12 +24,14 @@ only the items below need the owner's account, inbox, or decision.
 
 ## 3. AG Grid trial + consent (before Nov 11 EOD or fallback triggers)
 
-1. Register the 45-day Studio trial key (ag-grid.com/studio), save to local
-   `APIS.txt` (never commit), hand to agent for `AG_STUDIO_LICENSE_KEY` deploy.
-2. Send the consent mail drafted in `docs/sponsors/ag-studio-trial.md`
-   (covers demo thru Dec 15 + history bytes); file the reply there.
-3. No written consent by Nov 11 EOD → agent ships Community-only
-   (`AG_STUDIO_DISABLED=1`) and retracts Studio claims. No action = fallback.
+1. ~~Register the 45-day Studio trial key~~ DONE 2026-11-09 (AG-151025,
+   expires 2026-12-24, installed, LICENSED verified).
+2. ~~Send the consent mail~~ SENT 2026-11-09 by owner — file AG Grid's
+   reply in `docs/sponsors/ag-studio-trial.md` on arrival (covers demo
+   thru Dec 15 + history bytes).
+3. Reply declines, or no reply by Nov 11 EOD → agent ships
+   Community-only (`AG_STUDIO_DISABLED=1`) and retracts Studio claims.
+   No reply = fallback.
 
 ## 4. Usability (any 1–5 volunteers, 30 min each)
 

@@ -9,6 +9,13 @@ is the AG Grid team on the PayPal Discord
 send + trial-form submit stay owner-side (owner mailbox and identity —
 the agent has no email/Discord access); key-install plumbing is done
 and tested (Trial key, step 3).
+Update 2026-11-09 (key day): owner completed the trial form and sent
+the consent email; key AG-151025 (Pro Enterprise eval-only, single
+application, deactivates 2026-12-24) saved to gitignored `APIS.txt`
+and installed on the box (`/root/afterpact-studio-key`, chmod 600);
+redeploy `771cb2f` serves it byte-exact (`licensed: true`,
+`AG STUDIO · LICENSED` in `studio-licensed.png`). Consent reply still
+pending — redistribution consent NOT granted; fallback stays armed.
 
 ## Installed
 
@@ -47,9 +54,10 @@ Note: the website advertises 45 days while EULA v40 cl.13.2(b) describes
 
 EULA v40 limits trial use to internal evaluation and bars redistribution
 without prior written consent (cl.16.1); git history also still contains
-the previously vendored bytes. Send this to the AG Grid team on the
-PayPal Discord (primary channel per the sponsor page) or to
-info@ag-grid.com, and file the reply here:
+the previously vendored bytes. SENT 2026-11-09 by the owner via email
+(confirmation: owner's message; exact recipient retained by owner).
+Reply: PENDING — file it here on arrival. The sent draft, kept for the
+record:
 
 > Subject: Hackathon consent request — AG Studio 3.1.0 in public demo
 > repo (AFTERPACT, PayPal AI Hackathon 2026)

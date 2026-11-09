@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-11-09T13:29:18.036Z",
-  "verifiedCommit": "72db07274994b68768b5973c4ac5d5aedc9803b5",
-  "verifiedCiRun": "https://github.com/toskaman/afterpact/actions/runs/42625654973",
+  "generatedAt": "2026-11-09T13:43:51.564Z",
+  "verifiedCommit": "771cb2fd1dc274b318ed268cef0973a40a61b07a",
+  "verifiedCiRun": "https://github.com/toskaman/afterpact/actions/runs/42627494532",
   "suite": {
     "passed": 319,
     "failed": 0,
@@ -136,6 +136,7 @@
       "/docs/demo/screenshots/judge-mode.png",
       "/docs/demo/screenshots/studio-agent-trace.png",
       "/docs/demo/screenshots/studio-canvas-live.png",
+      "/docs/demo/screenshots/studio-licensed.png",
       "/docs/demo/screenshots/studio-unlicensed-probe.png",
       "/docs/demo/screenshots/twin-smoke.png"
     ],
@@ -159,9 +160,11 @@
     "evidence": "docs/sponsors/channel3-live-report.json"
   },
   "agStudioTrial": {
-    "keyInstalled": false,
-    "consent": "drafted-not-sent",
-    "judgingWindowCovered": "unknown"
+    "keyInstalled": true,
+    "keyId": "AG-151025",
+    "keyExpiry": "2026-12-24",
+    "consent": "sent-2026-11-09-reply-pending",
+    "judgingWindowCovered": "covered-key-expires-2026-12-24"
   },
   "hosting": {
     "url": "https://199.247.9.188.nip.io",
