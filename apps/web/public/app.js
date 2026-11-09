@@ -77,6 +77,7 @@ const ORIGINS = {
   "ai-live": { label: "AI · LIVE", cls: "accent" },
   "ai-off": { label: "AI · OFF (HEURISTIC)", cls: "info" },
   "recorded-ai": { label: "RECORDED VERIFIED AI RUN", cls: "violet" },
+  "recorded-sandbox": { label: "RECORDED SANDBOX EVIDENCE", cls: "accent" },
   "ag-grid-community": { label: "AG GRID COMMUNITY", cls: "ok" },
   "native-table": { label: "NATIVE TABLE FALLBACK", cls: "info" },
   "computed-schedule": { label: "COMPUTED SCHEDULE", cls: "violet" },
@@ -1176,6 +1177,88 @@ async function renderDemo() {
 }
 
 /* ================================================================
+   VIEW: Judge Mode (30-second guided entry for hackathon judges)
+   Frontend-only: runs the same flagship/injection scenarios through
+   POST /api/demo/run and cites recorded sandbox artifacts. No new
+   backend paths, no simulated-as-live presentation.
+   ================================================================ */
+async function renderJudge() {
+  setNav("judge");
+  view().innerHTML = viewHead("A successful payment is not a successful purchase.", "AFTERPACT verifies whether an AI-initiated purchase actually delivered what was promised — and safely resolves the gap.") + loadingState();
+  let config;
+  try {
+    config = await api("/api/config");
+  } catch (err) {
+    view().innerHTML = viewHead("Judge Mode", "") + errorBanner(err.message);
+    return;
+  }
+  const transportPill = originPill(config.transport === "paypal-sandbox-live" ? "paypal-sandbox-live" : "mock-simulated");
+  view().innerHTML = viewHead("A successful payment is not a successful purchase.", "AFTERPACT verifies whether an AI-initiated purchase actually delivered what was promised — and safely resolves the gap.") + `
+    <div class="badge-row section-gap">${transportPill}<span class="pill">DEMO MODE: ${escapeHtml(String(config.transport).toUpperCase())}</span></div>
+    <p class="judge-lifecycle">Promise → Payment → Observation → Recovery → Proof</p>
+    <div class="button-row section-gap"><a class="button" href="#/judge" id="judgeRun">Run the flagship scenario</a><a class="button secondary" href="#/recorder">Explore the evidence</a></div>
+    <div class="grid three section-gap">
+      <div class="card" data-scenario-card="flagship">
+        <h2>Scenario 1 — Short delivery</h2>
+        <p class="small muted">Three kits promised, two delivered. AFTERPACT detects the gap, proposes a bounded partial refund, requires approval, and verifies the provider result.</p>
+        <div class="button-row"><button class="button small" data-judge-run="flagship">Run short-delivery scenario</button></div>
+      </div>
+      <div class="card" data-scenario-card="injection">
+        <h2>Scenario 2 — Blocked attack</h2>
+        <p class="small muted">A hostile description attempts a merchant swap and an amount increase. The deterministic policy must refuse both — AFTERPACT knows when NOT to act.</p>
+        <div class="button-row"><button class="button small secondary" data-judge-run="injection">Run refusal scenario</button></div>
+      </div>
+      <div class="card" data-scenario-card="receipts">
+        <h2>Scenario 3 — Provider-verified proof</h2>
+        <div class="badge-row">${originPill("recorded-sandbox")}</div>
+        <p class="small muted">Two independent PayPal Sandbox loops, recorded with credentials redacted (sandbox test money, never live):</p>
+        <ul class="small mono"><li>Loop 1 (partial)<br />order <span style="white-space:nowrap">2ER387580K033722V</span><br />capture <span style="white-space:nowrap">7R158417X9367771B</span><br />refund <span style="white-space:nowrap">8DJ895035B173303G</span></li>
+        <li>Loop 2 (full)<br />order <span style="white-space:nowrap">59A94150344824111</span><br />capture <span style="white-space:nowrap">72S38593LS000452A</span><br />refund <span style="white-space:nowrap">15T12360RX6158212</span></li></ul>
+        <p class="small muted">Artifacts: <span class="mono">docs/demo/paypal-live-receipts.json</span> + <span class="mono">paypal-live-receipts-2.json</span>.</p>
+      </div>
+    </div>
+    <div id="judgeResult" class="section-gap"></div>
+    <div class="card section-gap"><h2>Technical evidence</h2>
+      <p class="small"><a href="#/ai-gallery">AI Evidence Gallery →</a> · <a href="#/recorder">Flight Recorder →</a> · <a href="#/twin">Outcome Twin →</a> · <a href="#/developer">Developer Center →</a></p></div>`;
+
+  const showJudgeRun = (run) => {
+    const promiseId = run.context?.promiseId ?? run.context?.promiseA ?? "";
+    $("#judgeResult").innerHTML = `<div class="card">
+      <h2>Run ${escapeHtml(shortId(run.id))} · ${escapeHtml(run.scenario)} · ${escapeHtml(String(run.status).toUpperCase())}</h2>
+      <div class="badge-row" style="margin-bottom:0.8rem">${originPill(run.transport === "paypal-sandbox-live" ? "paypal-sandbox-live" : "mock-simulated")}</div>
+      ${run.error ? errorBanner(run.error) : ""}
+      <div data-judge-acts>
+      ${run.acts.map((a) => `
+        <div class="act ${a.status}" data-act-status="${escapeHtml(a.status)}">
+          <div class="act-head"><strong>Act ${a.act} · ${escapeHtml(a.title)}</strong>${originPill(a.origin)}
+          <span class="pill ${a.status === "passed" ? "ok" : a.status === "blocked" ? "bad" : ""}">${escapeHtml(a.status.toUpperCase())}</span>${a.status === "blocked" ? `<span class="pill bad">REFUSED</span>` : ""}</div>
+          <p class="act-detail">${escapeHtml(a.detail)}</p>
+        </div>`).join("")}
+      </div>
+      ${promiseId ? `<p class="small"><a href="#/twin?promiseId=${encodeURIComponent(promiseId)}">Open in Outcome Twin →</a> · <a href="#/recorder?promiseId=${encodeURIComponent(promiseId)}">Replay in Flight Recorder →</a> · <a href="#/tx/${encodeURIComponent(promiseId)}">Transaction →</a></p>` : ""}
+    </div>`;
+    $("#judgeResult").scrollIntoView({ block: "start" });
+  };
+
+  const runScenario = async (scenario) => {
+    $("#judgeResult").innerHTML = loadingState(`Running ${scenario} scenario…`);
+    try {
+      const run = await api("/api/demo/run", { method: "POST", body: { scenario, label: "judge-mode" } });
+      if (typeof run.resetToken === "string") demoTokens.set(run.id, run.resetToken);
+      showJudgeRun(run);
+      void refreshTopbar();
+    } catch (err) {
+      $("#judgeResult").innerHTML = errorBanner(err.message);
+    }
+  };
+
+  $("#judgeRun").addEventListener("click", (ev) => { ev.preventDefault(); void runScenario("flagship"); });
+  document.querySelectorAll("[data-judge-run]").forEach((b) => {
+    b.addEventListener("click", () => void runScenario(b.dataset.judgeRun));
+  });
+}
+
+/* ================================================================
    VIEW: Intelligence Studio (AG Studio canvas + agent, Community tables)
    The canvas is real AG Studio (official CDN, SRI-pinned, trial
    watermark until a licence key is configured). Tables below use AG
@@ -1976,6 +2059,7 @@ async function route() {
   if (path === "/recorder") return renderRecorder(params.get("promiseId") ?? "");
   if (path === "/developer") return renderDeveloper();
   if (path === "/demo") return renderDemo();
+  if (path === "/judge") return renderJudge();
   if (path === "/ai-gallery") return renderAiGallery();
   setNav("");
   view().innerHTML = viewHead("Not found", "") + `<div class="card">${emptyState("◈", "Unknown view", "That route does not exist.", '<p><a class="button small" href="#/">Back to Command Center</a></p>')}</div>`;

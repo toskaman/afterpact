@@ -1,16 +1,16 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-11-08T12:12:41.555Z",
-  "verifiedCommit": "a3e705a",
-  "verifiedCiRun": "https://github.com/toskaman/afterpact/actions/runs/42479138322",
+  "generatedAt": "2026-11-09T01:39:48.747Z",
+  "verifiedCommit": "a504c23",
+  "verifiedCiRun": "https://github.com/toskaman/afterpact/actions/runs/42521904370",
   "suite": {
     "passed": 288,
     "failed": 0,
     "skipped": 33
   },
   "e2e": {
-    "passed": 7,
-    "total": 7
+    "passed": 10,
+    "total": 10
   },
   "statics": {
     "suiteFiles": [
@@ -51,10 +51,11 @@
     "e2eFiles": [
       "/tests/e2e/dashboard.e2e.ts",
       "/tests/e2e/gallery.e2e.ts",
+      "/tests/e2e/judge.e2e.ts",
       "/tests/e2e/studio.e2e.ts",
       "/tests/e2e/twin.e2e.ts"
     ],
-    "e2eStaticBlocks": 7,
+    "e2eStaticBlocks": 10,
     "typecheckProjects": [
       "packages/domain",
       "packages/policy",
@@ -127,6 +128,7 @@
       "/docs/demo/screenshots/06-studio.png",
       "/docs/demo/screenshots/07-timeline.png",
       "/docs/demo/screenshots/08-discovery.png",
+      "/docs/demo/screenshots/judge-mode.png",
       "/docs/demo/screenshots/studio-agent-trace.png",
       "/docs/demo/screenshots/studio-canvas-live.png",
       "/docs/demo/screenshots/studio-unlicensed-probe.png",

@@ -86,6 +86,8 @@ clearly second-class; judges on laptops won't care, phone-checkers will notice.
 
 **Corrective action.** Ship the Judge Mode entry (headline + Run flagship +
 3 scenario cards) pre-judging — the single biggest Design-score lever.
+**DONE 2026-11-08:** `#/judge` live (frontend-only, 3 e2e green,
+`docs/demo/JUDGE_MODE_GUIDE.md`).
 
 ## Reviewer 5 — Merchant Operations Buyer — 6/10
 
