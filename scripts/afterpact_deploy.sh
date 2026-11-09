@@ -66,7 +66,9 @@ Environment=LOG_LEVEL=info
 Environment=PAYPAL_MODE=sandbox
 Environment=OPERATOR_TOKEN=$OPERATOR_TOKEN
 Environment=AFTERPACT_BUILD_SHA=$BUILD_SHA
-Environment=AG_STUDIO_LICENSE_KEY=$STUDIO_KEY
+# Quoted: trial keys contain spaces ("24 December 2026"); an unquoted
+# Environment= value would truncate at the first space.
+Environment="AG_STUDIO_LICENSE_KEY=$STUDIO_KEY"
 ExecStart=/usr/bin/node /opt/afterpact/repo/apps/api/dist/apps/api/src/index.js
 Restart=on-failure
 RestartSec=5
