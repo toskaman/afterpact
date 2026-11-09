@@ -22,9 +22,10 @@ position file; TITAN V documents stay frozen as history.
 ## Observed test results (2026-11-09, keyless, branch `titan-vi`)
 
 - `npm run typecheck`: exit 0 (6 projects).
-- `npm test`: **315 passed, 0 failed, 33 skipped** (348 total, 38 files).
-  Baseline was 288/0/33; +27 from TITAN VI (hold 2, concurrency 1,
-  risk-tools 7, drift 15, studio contract 1, webhook-amount regression 1).
+- `npm test`: **317 passed, 0 failed, 33 skipped** (350 total, 39 files).
+  Baseline was 288/0/33; +29 from TITAN VI (hold 2, concurrency 1,
+  risk-tools 7, drift 15, studio contract 1, webhook-amount regression 1,
+  metrics-summary 1, receipts loop-2 pin 1).
 - `npx playwright test`: **12/12** (judge 3→5 incl. Hold + mobile/keyboard).
 - `node scripts/check-docs-drift.mjs`: FAIL→fix loop in progress; must be
   green before merge (currently flags exactly the intended sync items).
@@ -63,6 +64,13 @@ position file; TITAN V documents stay frozen as history.
   amount with a regression test in `paypal.chaos.test.ts`).
 - Studio e2e flaked locally on the 5 s pill default (CDN-first bundle
   load ~4 s on a slow link); raised to 30 s, assertion unchanged.
+- Jury-sim fixes (all verified): Studio tab markup `>`; `.judge-lifecycle`
+  styling + scroll-margin; route() focus to #main; CTA link→button;
+  metrics table generated from reports (latencies corrected on 4 rows);
+  baseline heuristic scored as shipped (9/15→12/15, artifacts regen);
+  eval README counts (22/16/11/4) + F1 narrative + suite-version caveat;
+  receipts loop-2 pinned; dead `offer-evaluation` task id removed;
+  Studio tool-kind comment corrected + pinned in tests.
 - JURY cited 1 PayPal loop (now 2), video rows all NOT DONE (now built),
   stale CI pin (now points at manifest `verifiedCiRun`).
 - Gallery KPI hardcoded "(3 runs)" vs 4 recorded runs → computed from data.

@@ -16,6 +16,10 @@ test("studio canvas mounts with live sources and trial pill", async ({ page, req
   // The custom Outcome Risk Analyst agent (not the base harness) must win
   // against the real bundle — keyless mount still builds the full harness.
   await expect(host).toHaveAttribute("data-harness-kind", "outcome-risk-analyst", { timeout: 30000 });
+  // Dataset tabs render real labels, not attribute soup (regression: a
+  // missing '>' once collapsed entity names into the button markup).
+  await expect(page.locator('[data-studio-entity="incidents"]')).toContainText("incidents");
+  await expect(page.locator('[data-studio-entity="promises"]')).toContainText("promises");
   await expect(page.locator("html[data-ag-theme-mode]")).toHaveCount(1);
   expect(errors).toEqual([]);
 });

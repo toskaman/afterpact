@@ -1,9 +1,9 @@
 import type { z } from "zod";
 
-/** Stable task identifiers for prompts, evals, and cost attribution. */
+/** Stable task identifiers for prompts, evals, and cost attribution.
+ * Only implemented tasks are listed (offer evaluation has no AI task yet). */
 export type AITaskId =
   | "purchase-intelligence"
-  | "offer-evaluation"
   | "incident-intelligence"
   | "recovery-planning"
   | "analytics-assistant";

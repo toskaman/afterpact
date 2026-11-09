@@ -1197,7 +1197,7 @@ async function renderJudge() {
     <div class="badge-row section-gap">${transportPill}<span class="pill">DEMO MODE: ${escapeHtml(String(config.transport).toUpperCase())}</span></div>
     <p class="judge-lifecycle">Promise → Payment → Observation → Recovery → Proof</p>
     <p class="small muted">One minute: 1. Run a scenario below → 2. Read each act's origin badge → 3. Open the Twin and Recorder links for the proof. Recover, Hold, and Refuse are three real policy outcomes, not three videos.</p>
-    <div class="button-row section-gap"><a class="button" href="#/judge" id="judgeRun">Run the flagship scenario</a><a class="button secondary" href="#/recorder">Explore the evidence</a></div>
+    <div class="button-row section-gap"><button class="button" id="judgeRun" type="button">Run the flagship scenario</button><a class="button secondary" href="#/recorder">Explore the evidence</a></div>
     <div class="grid four section-gap">
       <div class="card" data-scenario-card="flagship">
         <h2>Scenario 1 — Recover</h2>
@@ -1635,7 +1635,7 @@ async function renderStudio() {
       </div>
       <div class="card section-gap"><h2>Datasets</h2>
         <div class="button-row" role="tablist" aria-label="Studio datasets">
-          ${["incidents", "promises", "refunds", "captures"].map((e) => `<button class="button small${studio.entity === e ? "" : " secondary"}" data-studio-entity="${e}" role="tab" aria-selected="${studio.entity === e}"${e} (${(datasets[e] ?? []).length})</button>`).join("")}
+          ${["incidents", "promises", "refunds", "captures"].map((e) => `<button class="button small${studio.entity === e ? "" : " secondary"}" data-studio-entity="${e}" role="tab" aria-selected="${studio.entity === e}">${e} (${(datasets[e] ?? []).length})</button>`).join("")}
         </div>
         <div id="studioCross" class="section-gap"></div>
         <div id="studioGrid"></div>
@@ -2100,6 +2100,10 @@ async function route() {
   const { path, params } = currentRoute();
   $("#sidenav").classList.remove("open");
   $("#navToggle").setAttribute("aria-expanded", "false");
+  // SPA focus management: move focus to the persistent main landmark so
+  // keyboard/screen-reader users land on the new view, not the old one.
+  const main = $("#main");
+  if (main && document.activeElement !== main) main.focus({ preventScroll: true });
   if (path === "/") return renderCommand();
   if (path === "/copilot") return renderCopilot();
   if (path === "/tx") return renderTxList();

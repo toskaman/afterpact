@@ -12,9 +12,12 @@ import type {
  * The browser adapter posts Studio conversation turns here; this module maps
  * them onto provider chat calls. The inference key never leaves the server.
  * Turns are STRICT: failures surface as errors, never as fabricated turns.
- * Only `client` tools are forwarded — Studio executes those in the browser
- * against its own API; provider-hosted or server-executed tools have no
- * executor in this loop and are dropped (documented, tested).
+ * Tool kinds `undefined` (Studio built-ins), `client`, and `server` are
+ * forwarded to the model — the browser adapter executes every returned
+ * tool call against its own API and reposts the results, so the kind
+ * label describes the tool's origin, not a separate executor. Any other
+ * kind (e.g. provider-hosted tools) has no executor in this loop and is
+ * dropped (documented, tested).
  */
 
 const MAX_ITEMS = 40;

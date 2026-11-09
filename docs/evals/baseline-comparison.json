@@ -20,10 +20,8 @@
       "id": "intent-no-budget",
       "aiRuns": 4,
       "aiExtractionPass": 4,
-      "baselinePass": false,
-      "baselineFailedChecks": [
-        "ambiguities"
-      ]
+      "baselinePass": true,
+      "baselineFailedChecks": []
     },
     {
       "id": "intent-singular-qty",
@@ -57,10 +55,8 @@
       "id": "intent-conflicting",
       "aiRuns": 4,
       "aiExtractionPass": 4,
-      "baselinePass": false,
-      "baselineFailedChecks": [
-        "ambiguities"
-      ]
+      "baselinePass": true,
+      "baselineFailedChecks": []
     },
     {
       "id": "intent-short-deadline",
@@ -96,10 +92,8 @@
       "id": "intent-vague-deadline",
       "aiRuns": 4,
       "aiExtractionPass": 4,
-      "baselinePass": false,
-      "baselineFailedChecks": [
-        "ambiguities"
-      ]
+      "baselinePass": true,
+      "baselineFailedChecks": []
     },
     {
       "id": "intent-long-input",

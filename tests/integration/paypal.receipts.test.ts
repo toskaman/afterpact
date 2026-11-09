@@ -32,4 +32,24 @@ describe("paypal live receipts artifact", () => {
     const raw = readFileSync(path, "utf8");
     expect(raw).not.toMatch(/client_secret|Basic [A-Za-z0-9+/=]{20,}|Bearer [A-Za-z0-9._-]{20,}/);
   });
+
+  it("pins the second provider-confirmed sandbox loop (full refund)", () => {
+    const path2 = join(REPO_ROOT, "docs", "demo", "paypal-live-receipts-2.json");
+    expect(existsSync(path2)).toBe(true);
+    const receipts = JSON.parse(readFileSync(path2, "utf8"));
+    expect(receipts.provider).toBe("api-m.sandbox.paypal.com");
+    expect(receipts.order.id).toBe("59A94150344824111");
+    expect(receipts.order.status).toBe("COMPLETED");
+    expect(receipts.order.amount).toEqual({ currency: "USD", amountMinor: 500 });
+    expect(receipts.capture.id).toBe("72S38593LS000452A");
+    expect(receipts.capture.status).toBe("REFUNDED");
+    expect(receipts.capture.amount).toEqual({ currency: "USD", amountMinor: 500 });
+    expect(receipts.refund.id).toBe("15T12360RX6158212");
+    expect(receipts.refund.status).toBe("COMPLETED");
+    expect(receipts.refund.amount).toEqual({ currency: "USD", amountMinor: 500 });
+    expect(receipts.refund.partial).toBe(false);
+    expect(typeof receipts.fetchedAt).toBe("string");
+    const raw = readFileSync(path2, "utf8");
+    expect(raw).not.toMatch(/client_secret|Basic [A-Za-z0-9+/=]{20,}|Bearer [A-Za-z0-9._-]{20,}/);
+  });
 });

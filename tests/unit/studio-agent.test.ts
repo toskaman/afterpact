@@ -58,9 +58,11 @@ describe("studioToolsToChatTools", () => {
     const tools = studioToolsToChatTools([
       { name: "addWidget", description: "add", parameters: { type: "object" }, kind: "client" },
       { name: "query", description: "q", parameters: {} },
+      { name: "serverList", description: "s", parameters: {}, kind: "server" },
       { name: "webSearch", description: "w", parameters: {}, kind: "provided" },
+      { name: "otherHosted", description: "h", parameters: {}, kind: "hosted" },
     ]);
-    expect(tools?.map((t) => t.name)).toEqual(["addWidget", "query"]);
+    expect(tools?.map((t) => t.name)).toEqual(["addWidget", "query", "serverList"]);
   });
 
   it("returns undefined when no tools are offered", () => {

@@ -8,7 +8,7 @@ UNVERIFIED · NOT DONE · NOT MEASURED · ESTIMATE · OWNER ACTION REQUIRED.
 
 | # | Claim | State | Artifact |
 |---|---|---|---|
-| 1 | Vitest 315 passed / 0 failed / 33 skipped (keyless) | VERIFIED | `npm test` 2026-11-09 branch `titan-vi` (38 files, 348 total); CI `verify` after push |
+| 1 | Vitest 317 passed / 0 failed / 33 skipped (keyless) | VERIFIED | `npm test` 2026-11-09 branch `titan-vi` (39 files, 350 total); CI `verify` after push |
 | 2 | Playwright 12/12 incl. Hold + mobile/keyboard judge tests | VERIFIED | `npx playwright test` 2026-11-09; `tests/e2e/*.e2e.ts` |
 | 3 | Strict tsc clean on 6 projects | VERIFIED | `npm run typecheck` exit 0, 2026-11-09 |
 | 4 | Newman 37/37 requests, 18/18 assertions | VERIFIED | `postman/newman-report.json` (unchanged; no route shape changed) |
@@ -32,7 +32,7 @@ UNVERIFIED · NOT DONE · NOT MEASURED · ESTIMATE · OWNER ACTION REQUIRED.
 | 12 | Runtime inference via Vultr `deepseek-v4.1-flash-1017`, identity-verified | VERIFIED | `packages/ai/src/vultr.ts` + `ai-provider.test.ts`; committed eval reports (4 runs) |
 | 13 | Eval corpus 53 (30 live / 23 offline); 117/120 across 4 runs, latest 30/30, citation precision 1.000 | VERIFIED | `docs/evals/report-*.json`, `METRICS_SUMMARY.md`, `FAILURE_ANALYSIS.md` |
 | 14 | Citation recall | NOT MEASURED | explicitly unclaimed (precision ≠ recall) |
-| 15 | AI 59/60 vs heuristic 9/15 (shared 15 intents) | VERIFIED with caveat | `BASELINE_COMPARISON.md` (asymmetric: 4 AI runs vs 1 heuristic run — caveat kept) |
+| 15 | AI 59/60 vs heuristic 12/15 (shared 15 intents, heuristic scored as shipped) | VERIFIED with caveat | `BASELINE_COMPARISON.md` (asymmetric: 4 AI runs vs 1 heuristic run — caveat kept; TITAN VI fixed a baseline harness bug that had hardcoded ambiguities `[]` and understated the heuristic at 9/15) |
 | 16 | Gallery shows RECORDED runs, never fake-live | VERIFIED | `apps/web/public/gallery/ai-gallery.json` + `ai.gallery.test.ts` + `gallery.e2e.ts` |
 | 17 | AI proposes only; policy + human dispose; over-refunds refused never clamped | VERIFIED | `aiTasks.ts` gates + `ai.tasks/ai-tasks.test.ts` + policy engine tests |
 

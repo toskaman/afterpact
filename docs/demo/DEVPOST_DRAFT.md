@@ -114,7 +114,7 @@ minor units, promises, approvals, 17-state lifecycle, audit chain),
 live mode explicitly gated and disabled by default),
 `ai` (Vultr Inference client with identity verification, cost ledger,
 strict fallbacks). Single-node JSON snapshot store (documented
-limitation; SQLite/PostgreSQL is future work). 315 automated tests green
+limitation; SQLite/PostgreSQL is future work). 317 automated tests green
 (+33 keyless skips that skip visibly), strict `tsc` clean on 6 projects,
 12 Playwright E2E green, CI `verify`+`e2e`+`drift` green at HEAD. Every
 on-screen capability carries an origin badge (`REAL API`,
@@ -215,7 +215,7 @@ Postman/Newman, Vultr (hosting), Caddy.
 git clone https://github.com/toskaman/afterpact && cd afterpact
 npm install && cp .env.example .env
 npm run build && npm start   # http://localhost:3001
-npm test                     # 315 passed, 33 skipped keyless (live paths need creds)
+npm test                     # 317 passed, 33 skipped keyless (live paths need creds)
 ```
 
 Run the flagship: `POST /api/demo/run {"scenario":"flagship"}` or open

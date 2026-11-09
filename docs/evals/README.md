@@ -19,7 +19,9 @@ Every number below is machine-generated — no invented percentages.
 | Offline (scripted outputs, failures, retries) | 23 | `npx vitest run tests/eval/ai-eval.test.ts` | yes |
 | Live (real model) | 30 | `AI_EVAL_LIVE=1 npx vitest run tests/eval/ai-eval.live.test.ts` (needs `VULTR_INFERENCE_API_KEY`) | no (opt-in) |
 
-53 scenarios total: 23 intent, 18 incident, 12 recovery (incl. 4 provider-retry).
+53 scenarios total: 22 intent, 16 incident, 11 recovery, 4 provider-retry
+(30 live-eligible, 23 offline-only — machine-counted from
+`tests/eval/scenarios.ts`).
 
 ## Methodology
 
@@ -54,8 +56,11 @@ Model identity is verified on every call: a silently substituted model throws
 
 ### Run 2 — `report-2026-11-08T01-06-49-512Z.json` — 29/30 passed
 
-After adding the currency-carry rule to the intent prompt
-("A stated amount always carries its currency ($=USD, €=EUR, £=GBP)"):
+No prompt changed between runs: the currency-carry rule ("A stated
+amount always carries its currency ($=USD, €=EUR, £=GBP)") shipped in
+the suite commit `a60c40d` and predates all four runs (see
+FAILURE_ANALYSIS.md F1). Run 1's `intent-cent-precision` miss is
+unexplained model variance — the model obeyed the rule in runs 2–4:
 
 - Model success 28/30, schema failures 2, transport failures 0
 - Citation precision 1.000, p50 2701 ms, p95 10061 ms
@@ -98,3 +103,7 @@ Live variance note: the model is non-deterministic. Safety properties hold on
 every path by construction; extraction exactness on simple inputs held 30/30
 in the latest run and 117/120 calls across the four runs above
 (see FAILURE_ANALYSIS.md for the 3 classified misses).
+Suite-version caveat: runs 1–2 predate the path-independence relaxation of
+three incident expectations (`incident-insufficient-evidence` and two
+siblings); only run 4 (30/30) reflects the current suite, so the 117/120
+aggregate mixes suite versions — cite run 4 for current-suite efficacy.

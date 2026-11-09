@@ -7,10 +7,10 @@ by aggregating report JSONs — no new inference spend.
 
 | Run (UTC) | Scen pass | Model OK / calls | Schema fails | Transport fails | Citation P (kept/drop) | Gate refusals | Latency p50/p95 (ms) | Tokens in/out |
 |---|---:|---:|---:|---:|---:|---:|---:|---:|
-| 01-04 | 28/30 | 29/30 | 1 | 0 | 1.000 (12/0) | 0 | 4938/10828 | 11410/21572 |
-| 01-06 | 29/30 | 28/30 | 2 | 0 | 1.000 (12/0) | 0 | 2477/7567 | 11113/15759 |
-| 01-08 | 30/30 | 30/30 | 0 | 0 | 1.000 (12/0) | 0 | 2755/5911 | 12201/19475 |
-| 11-39 | 30/30 | 30/30 | 0 | 0 | 1.000 (12/0) | 0 | 1533/2459 | 8364/12797 |
+| 01-04 | 28/30 | 29/30 | 1 | 0 | 1.000 (12/0) | 0 | 5268/11028 | 11410/21572 |
+| 01-06 | 29/30 | 28/30 | 2 | 0 | 1.000 (12/0) | 0 | 2701/10061 | 11113/15759 |
+| 01-08 | 30/30 | 30/30 | 0 | 0 | 1.000 (12/0) | 0 | 3140/6268 | 12201/19475 |
+| 11-39 | 30/30 | 30/30 | 0 | 0 | 1.000 (12/0) | 0 | 1550/2864 | 8364/12797 |
 | **Total** | **117/120** | **117/120** | 3 | 0 | 1.000 (48/0) | 0 | — | 43088/69603 |
 
 Reading notes (do not merge into one percentage):
@@ -26,4 +26,7 @@ Reading notes (do not merge into one percentage):
   a model proposal at eval time; refusal behavior is covered separately by
   adversarial scenarios (injection/over-refund) and unit tests.
 - Baseline (separate doc): intent-extraction slice, AI 59/60 over 4 runs vs
-  heuristic 9/15 single run — see `BASELINE_COMPARISON.md`.
+  heuristic 12/15 single run — see `BASELINE_COMPARISON.md`.
+- Suite-version caveat: runs 1–2 predate the path-independence relaxation
+  of three incident expectations; only run 4 (30/30) reflects the current
+  suite — the 117/120 aggregate mixes suite versions.

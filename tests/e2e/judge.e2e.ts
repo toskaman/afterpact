@@ -5,18 +5,20 @@ test("judge mode entry explains the product in one screen", async ({ page }) => 
   const errors = collectPageErrors(page);
   await page.goto("/#/judge");
   await expect(page.getByRole("heading", { name: "A successful payment is not a successful purchase." })).toBeVisible();
-  await expect(page.getByRole("link", { name: "Run the flagship scenario" })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Run the flagship scenario" })).toBeVisible();
   await expect(page.getByRole("link", { name: "Explore the evidence" })).toBeVisible();
   await expect(page.locator("[data-scenario-card]")).toHaveCount(4);
   await expect(page.getByText("Promise → Payment → Observation → Recovery → Proof")).toBeVisible();
   await expect(page.getByText("Recover, Hold, and Refuse are three real policy outcomes")).toBeVisible();
+  // SPA route change moves focus to the main landmark for keyboard/SR users.
+  await expect(page.locator("#main")).toBeFocused();
   expect(errors).toEqual([]);
 });
 
 test("judge mode runs the flagship scenario with a guided sequence", async ({ page }) => {
   const errors = collectPageErrors(page);
   await page.goto("/#/judge");
-  await page.getByRole("link", { name: "Run the flagship scenario" }).click();
+  await page.getByRole("button", { name: "Run the flagship scenario" }).click();
   await expect(page.locator("[data-judge-acts]").first()).toBeVisible({ timeout: 60000 });
   await expect(page.locator("[data-judge-acts] [data-act-status='passed']").first()).toBeVisible();
   await expect(page.locator('a[href^="#/twin?promiseId="]').first()).toBeVisible();

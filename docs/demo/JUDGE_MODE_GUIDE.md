@@ -43,6 +43,6 @@ instead of faking a Hold badge.
 - Demo runs you start are resettable only with your own browser's reset
   token; you cannot delete other visitors' runs. The audit chain is
   append-only.
-- Screenshot: `docs/demo/screenshots/judge-mode.png` (3-card layout; 4-card
-  refresh pending). E2E: `tests/e2e/judge.e2e.ts` (5 tests incl. Hold,
-  mobile viewport + keyboard, green in CI).
+- Screenshot: `docs/demo/screenshots/judge-mode.png` (current 4-card
+  layout, keyless pills). E2E: `tests/e2e/judge.e2e.ts` (5 tests incl.
+  Hold, mobile viewport + keyboard, green in CI).
