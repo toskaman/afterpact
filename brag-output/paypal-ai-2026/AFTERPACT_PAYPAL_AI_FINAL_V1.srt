@@ -1,0 +1,118 @@
+1
+00:00:01,200 --> 00:00:03,970
+An AI agent just bought something for you.
+
+2
+00:00:04,300 --> 00:00:07,370
+The payment succeeded. But the delivery
+went wrong.
+
+3
+00:00:07,800 --> 00:00:09,120
+Who makes it right?
+
+4
+00:00:16,000 --> 00:00:20,000
+Meet Afterpact ... the assurance layer for
+agentic commerce.
+
+5
+00:00:20,500 --> 00:00:28,920
+Every purchase becomes a structured
+promise: exact items, exact amount, exact merchant ... approved to the version and the hash.
+
+6
+00:00:30,000 --> 00:00:33,860
+Then PayPal executes. Real orders. Real
+captures.
+
+7
+00:00:39,500 --> 00:00:42,650
+Recorded sandbox runs prove the loop end
+to end.
+
+8
+00:00:47,500 --> 00:00:49,580
+But here's what nobody shows you.
+
+9
+00:00:50,200 --> 00:00:53,160
+Three sensor kits were promised. Two
+arrived.
+
+10
+00:00:53,800 --> 00:00:59,320
+The Outcome Twin lays it bare: what was
+promised, what actually happened ... and what's still missing.
+
+11
+00:01:00,500 --> 00:01:05,610
+One kit. A hundred twenty-nine dollars and
+ninety-nine cents. Unaccounted for.
+
+12
+00:01:15,000 --> 00:01:16,960
+So Afterpact goes to work.
+
+13
+00:01:17,600 --> 00:01:21,390
+AI reads the evidence and proposes a
+partial refund.
+
+14
+00:01:22,200 --> 00:01:26,120
+A deterministic policy checks every cent
+against the capture.
+
+15
+00:01:31,000 --> 00:01:37,350
+A human approves. And PayPal confirms the
+refund ... verified at the provider, not just on screen.
+
+16
+00:01:43,000 --> 00:01:45,360
+Every step lands in the Flight Recorder.
+
+17
+00:01:46,000 --> 00:01:50,960
+A hash-chained, replayable record you can
+hand to your ops team ... or your auditor.
+
+18
+00:01:51,700 --> 00:01:55,260
+This isn't a demo trick. It's the artifact
+merchants keep.
+
+19
+00:02:01,000 --> 00:02:03,770
+The same evidence powers real
+intelligence.
+
+20
+00:02:04,300 --> 00:02:10,590
+Recorded model runs ... every citation
+checked ... and a live analytics studio over the same data.
+
+21
+00:02:11,500 --> 00:02:14,500
+Nothing here is faked. And everything is
+labeled.
+
+22
+00:02:21,000 --> 00:02:25,410
+And when something malicious shows up ...
+a merchant swap, an inflated amount ...
+
+23
+00:02:26,200 --> 00:02:30,840
+the policy engine refuses. Same input,
+same refusal. Forever.
+
+24
+00:02:36,000 --> 00:02:37,700
+AI can buy anything.
+
+25
+00:02:38,200 --> 00:02:41,200
+Afterpact makes sure the outcome matches
+the promise.

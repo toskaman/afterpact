@@ -3,7 +3,7 @@ AFTERPACT — PayPal AI Hackathon 2026 submission film narration (EN, Kokoro af_
 [00:00:04,300] L02: The payment succeeded. But the delivery went wrong.
 [00:00:07,800] L03: Who makes it right?
 [00:00:16,000] L04: Meet Afterpact ... the assurance layer for agentic commerce.
-[00:00:20,500] L05: Every purchase becomes a structured promise: exact items, exact amount, exact merchant ... approved to the version and the hash.
+[00:00:20,500] L05: No setup. No script to follow. One click runs the whole story ... a delivery gone wrong, recovered, held, and refused ... every step proven.
 [00:00:30,000] L06: Then PayPal executes. Real orders. Real captures.
 [00:00:39,500] L07: Recorded sandbox runs prove the loop end to end.
 [00:00:47,500] L08: But here's what nobody shows you.
@@ -18,8 +18,8 @@ AFTERPACT — PayPal AI Hackathon 2026 submission film narration (EN, Kokoro af_
 [00:01:46,000] L17: A hash-chained, replayable record you can hand to your ops team ... or your auditor.
 [00:01:51,700] L18: This isn't a demo trick. It's the artifact merchants keep.
 [00:02:01,000] L19: The same evidence powers real intelligence.
-[00:02:04,300] L20: Recorded model runs ... every citation checked ... and a live analytics studio over the same data.
-[00:02:11,500] L21: Nothing here is faked. And everything is labeled.
+[00:02:04,300] L20: Recorded model runs ... every citation checked ... and a licensed analytics studio, with its own AI risk analyst, over the same data.
+[00:02:13,200] L21: Nothing here is faked. And everything is labeled.
 [00:02:21,000] L22: And when something malicious shows up ... a merchant swap, an inflated amount ...
 [00:02:26,200] L23: the policy engine refuses. Same input, same refusal. Forever.
 [00:02:36,000] L24: AI can buy anything.

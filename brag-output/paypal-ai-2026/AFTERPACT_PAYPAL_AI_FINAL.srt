@@ -17,9 +17,9 @@ Meet Afterpact ... the assurance layer for
 agentic commerce.
 
 5
-00:00:20,500 --> 00:00:28,920
-Every purchase becomes a structured
-promise: exact items, exact amount, exact merchant ... approved to the version and the hash.
+00:00:20,500 --> 00:00:29,690
+No setup. No script to follow. One click
+runs the whole story ... a delivery gone wrong, recovered, held, and refused ... every step proven.
 
 6
 00:00:30,000 --> 00:00:33,860
@@ -89,12 +89,12 @@ The same evidence powers real
 intelligence.
 
 20
-00:02:04,300 --> 00:02:10,590
+00:02:04,300 --> 00:02:13,120
 Recorded model runs ... every citation
-checked ... and a live analytics studio over the same data.
+checked ... and a licensed analytics studio, with its own AI risk analyst, over the same data.
 
 21
-00:02:11,500 --> 00:02:14,500
+00:02:13,200 --> 00:02:16,200
 Nothing here is faked. And everything is
 labeled.
 
