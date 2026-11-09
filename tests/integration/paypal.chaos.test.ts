@@ -262,6 +262,33 @@ describe("paypal chaos: webhook disorder", () => {
     expect(second.outcome).not.toBe("ignored");
   });
 
+  it("records a provider-initiated partial refund at its exact webhook amount", async () => {
+    const ctx = setup();
+    const order = await approvedOrder(ctx, "providerpartial");
+    const captured = await ctx.service.captureOrder({ orderId: order.id, idempotencyKey: "providerpartial-cap" });
+    const providerCaptureId = captured.value.providerCaptureId ?? "";
+    expect(providerCaptureId).not.toBe("");
+    const delivery = ctx.transport.issueWebhook(
+      "PAYMENT.CAPTURE.REFUNDED",
+      {
+        id: "PROVIDER-RFN-partial-1",
+        status: "COMPLETED",
+        amount: { currency_code: "USD", value: "5.00" },
+        links: [{ rel: "up", href: `https://api.sandbox.paypal.com/v2/payments/captures/${providerCaptureId}` }],
+      },
+      { transmissionId: "trans-providerpartial" },
+    );
+    const result = await ctx.service.handleWebhook(delivery.headers, delivery.body);
+    expect(result.outcome).toBe("applied");
+    const refunds = [...ctx.store.refunds.values()];
+    expect(refunds).toHaveLength(1);
+    // Exact webhook amount ($5.00), NOT the full $25.00 capture.
+    expect(refunds[0]?.amount).toEqual({ currency: "USD", amountMinor: 500 });
+    expect(refunds[0]?.providerRefundId).toBe("PROVIDER-RFN-partial-1");
+    // Bounds math follows the recorded amount: $20.00 still refundable.
+    expect(ctx.store.refundedMinorForCapture(captured.value.id)).toBe(500);
+  });
+
   it("applies an approval webhook once across 5 redeliveries", async () => {
     const ctx = setup();
     const created = await ctx.service.createOrder({

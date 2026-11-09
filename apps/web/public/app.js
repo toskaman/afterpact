@@ -1196,20 +1196,26 @@ async function renderJudge() {
   view().innerHTML = viewHead("A successful payment is not a successful purchase.", "AFTERPACT verifies whether an AI-initiated purchase actually delivered what was promised — and safely resolves the gap.") + `
     <div class="badge-row section-gap">${transportPill}<span class="pill">DEMO MODE: ${escapeHtml(String(config.transport).toUpperCase())}</span></div>
     <p class="judge-lifecycle">Promise → Payment → Observation → Recovery → Proof</p>
-    <div class="button-row section-gap"><a class="button" href="#/judge" id="judgeRun">Run the flagship scenario</a><a class="button secondary" href="#/recorder">Explore the evidence</a></div>
-    <div class="grid three section-gap">
+    <p class="small muted">One minute: 1. Run a scenario below → 2. Read each act's origin badge → 3. Open the Twin and Recorder links for the proof. Recover, Hold, and Refuse are three real policy outcomes, not three videos.</p>
+    <div class="button-row section-gap"><button class="button" id="judgeRun" type="button">Run the flagship scenario</button><a class="button secondary" href="#/recorder">Explore the evidence</a></div>
+    <div class="grid four section-gap">
       <div class="card" data-scenario-card="flagship">
-        <h2>Scenario 1 — Short delivery</h2>
-        <p class="small muted">Three kits promised, two delivered. AFTERPACT detects the gap, proposes a bounded partial refund, requires approval, and verifies the provider result.</p>
+        <h2>Scenario 1 — Recover</h2>
+        <p class="small muted">Short delivery: three kits promised, two delivered. AFTERPACT detects the gap, proposes a bounded partial refund, requires approval, and verifies the provider result.</p>
         <div class="button-row"><button class="button small" data-judge-run="flagship">Run short-delivery scenario</button></div>
       </div>
+      <div class="card" data-scenario-card="hold">
+        <h2>Scenario 2 — Hold</h2>
+        <p class="small muted">No approval attached: the policy evaluates to Hold and the order attempt is refused. No order record, nothing charged — restraint you can inspect.</p>
+        <div class="button-row"><button class="button small secondary" data-judge-run="hold">Run hold scenario</button></div>
+      </div>
       <div class="card" data-scenario-card="injection">
-        <h2>Scenario 2 — Blocked attack</h2>
-        <p class="small muted">A hostile description attempts a merchant swap and an amount increase. The deterministic policy must refuse both — AFTERPACT knows when NOT to act.</p>
+        <h2>Scenario 3 — Refuse</h2>
+        <p class="small muted">Blocked attack: a hostile description attempts a merchant swap and an amount increase. The deterministic policy must refuse both — AFTERPACT knows when NOT to act.</p>
         <div class="button-row"><button class="button small secondary" data-judge-run="injection">Run refusal scenario</button></div>
       </div>
       <div class="card" data-scenario-card="receipts">
-        <h2>Scenario 3 — Provider-verified proof</h2>
+        <h2>Scenario 4 — Provider-verified proof</h2>
         <div class="badge-row">${originPill("recorded-sandbox")}</div>
         <p class="small muted">Two independent PayPal Sandbox loops, recorded with credentials redacted (sandbox test money, never live):</p>
         <ul class="small mono"><li>Loop 1 (partial)<br />order <span style="white-space:nowrap">2ER387580K033722V</span><br />capture <span style="white-space:nowrap">7R158417X9367771B</span><br />refund <span style="white-space:nowrap">8DJ895035B173303G</span></li>
@@ -1364,6 +1370,42 @@ function buildAfterpactStudioTheme() {
   );
 }
 
+// Outcome Risk Analyst: custom agent + read-only custom tools over live
+// Studio datasets. Returns the custom harness, or null when any API is
+// missing so the caller falls back to the base harness (never half-wired).
+function createRiskAnalystHarness(studioApi, adapter, promptStarters) {
+  try {
+    const S = window.agStudio;
+    const risk = window.AfterpactStudioRiskTools;
+    if (!risk || typeof S.directLlmRunner !== "function" || typeof studioApi.defineAiTool !== "function") return null;
+    const customTools = risk.defineRiskTools(studioApi);
+    if (!Array.isArray(customTools) || customTools.length !== risk.TOOL_NAMES.length) return null;
+    return S.createAiHarness(studioApi, ({ tools }) => {
+      const studioTools = tools && tools.studio ? tools.studio : null;
+      const builtins = [];
+      if (studioTools) {
+        for (const name of ["viewSchema", "viewPage", "executeQuery", "addWidget"]) {
+          if (typeof studioTools[name] === "function") builtins.push(studioTools[name]());
+        }
+      }
+      return {
+        agents: [
+          S.directLlmRunner({
+            id: "outcome-risk-analyst",
+            adapter,
+            instructions: () => risk.RISK_ANALYST_INSTRUCTIONS,
+            tools: () => [...builtins, ...customTools],
+          }),
+        ],
+        primary: "outcome-risk-analyst",
+        promptStarters,
+      };
+    });
+  } catch {
+    return null;
+  }
+}
+
 async function mountAgStudio(datasets) {
   const host = $("#agStudioHost");
   if (!host) return;
@@ -1375,6 +1417,11 @@ async function mountAgStudio(datasets) {
     }
     await loadAgStudioBundle();
     await loadScriptOnce("/ag-studio-adapter.js");
+    try {
+      await loadScriptOnce("/ag-studio-risk-tools.js");
+    } catch {
+      /* risk tools optional: the base harness below stays fully functional */
+    }
     syncAgStudioThemeMode();
     const key = config.agStudio && typeof config.agStudio.licenseKey === "string" ? config.agStudio.licenseKey : null;
     if (key) {
@@ -1389,6 +1436,13 @@ async function mountAgStudio(datasets) {
     destroyStudioGrid();
     const adapter = window.AfterpactStudioAdapter.createVultrStudioAdapter("/api/ai/studio-turn");
     const signatureTheme = buildAfterpactStudioTheme();
+    const risk = window.AfterpactStudioRiskTools;
+    const promptStarters = [
+      { label: "Open incidents by severity", prompt: "Show a bar chart of open incidents grouped by severity, using the incidents source." },
+      { label: "Refund recovery rate", prompt: "Create a KPI tile with the refunded-to-captured rate plus a table of refunds by status." },
+      { label: "At-risk promises", prompt: "List promises with open incidents and unrefunded balances in a grid, sorted by amount at risk." },
+    ];
+    if (risk && risk.RISK_STARTER) promptStarters.push(risk.RISK_STARTER);
     studio.api = window.agStudio.createStudio(host, {
       ...(signatureTheme ? { theme: signatureTheme } : {}),
       data: {
@@ -1400,14 +1454,13 @@ async function mountAgStudio(datasets) {
         ],
       },
       mode: "edit",
-      ai: ({ api: studioApi }) => window.agStudio.createAiHarness(studioApi, {
-        adapter,
-        promptStarters: [
-          { label: "Open incidents by severity", prompt: "Show a bar chart of open incidents grouped by severity, using the incidents source." },
-          { label: "Refund recovery rate", prompt: "Create a KPI tile with the refunded-to-captured rate plus a table of refunds by status." },
-          { label: "At-risk promises", prompt: "List promises with open incidents and unrefunded balances in a grid, sorted by amount at risk." },
-        ],
-      }),
+      ai: ({ api: studioApi }) => {
+        const custom = createRiskAnalystHarness(studioApi, adapter, promptStarters);
+        studio.harnessKind = custom ? "outcome-risk-analyst" : "base";
+        host.dataset.harnessKind = studio.harnessKind;
+        if (custom) return custom;
+        return window.agStudio.createAiHarness(studioApi, { adapter, promptStarters });
+      },
     });
   } catch (err) {
     host.innerHTML = `<p class="small muted">AG Studio canvas unavailable: ${escapeHtml(err.message)}. The Community tables below stay fully functional.</p>`;
@@ -1582,7 +1635,7 @@ async function renderStudio() {
       </div>
       <div class="card section-gap"><h2>Datasets</h2>
         <div class="button-row" role="tablist" aria-label="Studio datasets">
-          ${["incidents", "promises", "refunds", "captures"].map((e) => `<button class="button small${studio.entity === e ? "" : " secondary"}" data-studio-entity="${e}" role="tab" aria-selected="${studio.entity === e}"${e} (${(datasets[e] ?? []).length})</button>`).join("")}
+          ${["incidents", "promises", "refunds", "captures"].map((e) => `<button class="button small${studio.entity === e ? "" : " secondary"}" data-studio-entity="${e}" role="tab" aria-selected="${studio.entity === e}">${e} (${(datasets[e] ?? []).length})</button>`).join("")}
         </div>
         <div id="studioCross" class="section-gap"></div>
         <div id="studioGrid"></div>
@@ -2019,7 +2072,7 @@ async function renderAiGallery() {
     const tasks = ["all", "intent", "incident", "recovery"];
     const list = g.featured.filter((f) => aiGallery.task === "all" || f.task === aiGallery.task);
     const kpis = `<div class="grid kpi section-gap">
-      <div class="card"><div class="kpi-value">${escapeHtml(String(g.totals.passed))}/${escapeHtml(String(g.totals.scenarios))}</div><div class="kpi-label">Scenarios passed (3 runs)</div><div class="kpi-sub">Failures kept in the record, not hidden</div></div>
+      <div class="card"><div class="kpi-value">${escapeHtml(String(g.totals.passed))}/${escapeHtml(String(g.totals.scenarios))}</div><div class="kpi-label">Scenarios passed (${escapeHtml(String(g.runs.length))} runs)</div><div class="kpi-sub">Failures kept in the record, not hidden</div></div>
       <div class="card"><div class="kpi-value">${escapeHtml(String(Math.min(...g.runs.map((r) => r.citationPrecision)).toFixed(3)))}</div><div class="kpi-label">Min citation precision</div><div class="kpi-sub">${escapeHtml(String(g.runs.reduce((n, r) => n + r.citationsKept, 0)))} kept, ${escapeHtml(String(g.runs.reduce((n, r) => n + r.citationsDropped, 0)))} dropped</div></div>
       <div class="card"><div class="kpi-value">${formatCostUsd(g.totals.costUsd)}</div><div class="kpi-label">Total recorded inference cost</div><div class="kpi-sub">${escapeHtml(g.provider)} · <span class="mono">${escapeHtml(g.model)}</span></div></div>
     </div>`;
@@ -2047,6 +2100,10 @@ async function route() {
   const { path, params } = currentRoute();
   $("#sidenav").classList.remove("open");
   $("#navToggle").setAttribute("aria-expanded", "false");
+  // SPA focus management: move focus to the persistent main landmark so
+  // keyboard/screen-reader users land on the new view, not the old one.
+  const main = $("#main");
+  if (main && document.activeElement !== main) main.focus({ preventScroll: true });
   if (path === "/") return renderCommand();
   if (path === "/copilot") return renderCopilot();
   if (path === "/tx") return renderTxList();

@@ -211,6 +211,32 @@ reconciliation) via its ledger + verification core.
   opening 3 independent full bodies (2 GitHub READMEs, Leash live site)
   covering the closest competitors; only mandate-xuztcy Devpost page
   returned 200 (truncated).
+
+## TITAN VI addendum (2026-11-09): OmegaCommerce — closest AG Grid rival
+
+Source: project Devpost page fetched 200 on 2026-11-09
+(`devpost.com/software/omegacommerce`, published 2026-10-23) + live
+Vercel demo link + public GitHub repo link (repo body not opened).
+
+- Problem: agents that can actually pay across two money rails.
+- Product: Commerce MCP server (agent identity, x402 quotes/settlement,
+  PayPal payouts, ledger) + fund-provenance dashboard in AG Grid/AG
+  Studio showing every settlement on both rails (x402 USDC + PayPal).
+- PayPal: sandbox invoices + payouts to real people (different API
+  surface from AFTERPACT's Orders/capture/refund loop; both meaningful).
+- AI: MCP surface agents call + "optional AG Studio AI" for the Studio
+  assistant (custom-agent/tool depth not visible in seen evidence).
+- Lifecycle: Intent → Quote → Payment → provenance Ledger. NO
+  post-payment promise/outcome verification, exception workflow,
+  recovery planning, or refund execution described — same lifecycle
+  tail gap as the rest of the observed field.
+- AFTERPACT differentiation vs OmegaCommerce (cited gaps only):
+  (a) assurance tail (verification → exception → resolution → verified
+  result) vs settlement ledger; (b) custom Studio agent
+  (`outcome-risk-analyst`) + 3 tested read-only custom tools vs
+  "optional Studio AI" of unknown depth; (c) buyer-side verified-result
+  loop vs agent-payment rails. No claim about their demo quality,
+  which the seen evidence shows as live and credible.
 - LinkedIn article bodies truncated by auth wall; corroborated by independent
   snippets.
 - No observed submission states sponsors beyond PayPal/Channel3/AG Grid tech

@@ -4,7 +4,7 @@ import { existsSync, readFileSync, statSync } from "node:fs";
 import { extname, join, normalize, resolve, sep } from "node:path";
 import { z } from "zod";
 import { HttpError, Ops, toHttpError, type OpsOptions } from "./ops";
-import { continueFlagship, runFlagship, runInjection } from "./demo";
+import { continueFlagship, runFlagship, runHold, runInjection } from "./demo";
 
 export interface ServerOptions extends OpsOptions {
   webDir?: string | null;
@@ -302,12 +302,16 @@ async function handleRequest(req: IncomingMessage, res: ServerResponse, ctx: Req
     return ok(res, ops.setKillSwitch(input.engaged, input.actor));
   }
   if (method === "POST" && path === "/api/demo/run") {
-    const input = z.object({ scenario: z.enum(["flagship", "injection"]), label: z.string().max(200).default("jury-demo") }).parse(parseJson(await readBody(req)));
+    const input = z.object({ scenario: z.enum(["flagship", "injection", "hold"]), label: z.string().max(200).default("jury-demo") }).parse(parseJson(await readBody(req)));
     const maxRuns = ops.maxDemoRuns();
     if (ops.store.demoRuns.size >= maxRuns) {
       throw new HttpError(429, "demo-capacity", `demo run capacity reached (${maxRuns} runs); reset a run to free a slot`);
     }
-    const run = input.scenario === "flagship" ? await runFlagship(ops, input.label) : await runInjection(ops, input.label);
+    const run = input.scenario === "flagship"
+      ? await runFlagship(ops, input.label)
+      : input.scenario === "hold"
+        ? await runHold(ops, input.label)
+        : await runInjection(ops, input.label);
     return ok(res, { ...run, resetToken: demoResetToken(ctx.demoSecret, run.id) }, 201);
   }
   if (method === "POST" && path.endsWith("/continue") && path.startsWith("/api/demo/runs/")) {

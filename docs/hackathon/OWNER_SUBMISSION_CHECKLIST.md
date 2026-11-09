@@ -14,7 +14,7 @@ only the items below need the owner's account, inbox, or decision.
 ## 2. Devpost submit (~20 min)
 
 1. Paste sections from `docs/demo/DEVPOST_DRAFT.md` (all fields written; numbers
-   verified 2026-11-08: 288 tests, 7 E2E, evals 117/120, Newman 37/37+18/18).
+   verified 2026-11-09: 317 tests, 12 E2E, evals 117/120, Newman 37/37+18/18).
 2. Links: repo `https://github.com/toskaman/afterpact`, demo
    `https://199.247.9.188.nip.io`, YouTube URL from step 1.
 3. Confirm on the form: deadline, track, sponsor-prize selection (AG Grid only),

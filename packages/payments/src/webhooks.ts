@@ -13,7 +13,7 @@ import {
 } from "./errors";
 import type { PaymentStore } from "./store";
 import type { PayPalTransport } from "./transport";
-import { parentIdOfUpLink, PayPalMoneyWireSchema } from "./wire";
+import { parentIdOfUpLink, PayPalMoneyWireSchema, wireToMoney } from "./wire";
 
 export const PayPalWebhookEventSchema = z.object({
   id: z.string().min(1),
@@ -335,7 +335,10 @@ export class WebhookHandler {
       id: `whrfn-${event.id}`,
       captureId: capture.id,
       promiseId: capture.promiseId,
-      amount: capture.amount,
+      // Exact provider amount from the verified webhook body — never the
+      // full capture (a partial provider-side refund must not consume the
+      // whole remaining balance in bounds math).
+      amount: wireToMoney(resource.amount),
       reason: "provider-initiated refund observed via webhook",
       idempotencyKey: `webhook_${event.id}`.slice(0, 160),
       status: "succeeded",

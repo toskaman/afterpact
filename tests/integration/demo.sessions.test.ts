@@ -14,6 +14,8 @@ function mockEnv(extra: Record<string, string> = {}): Record<string, string | un
     PAYPAL_CLIENT_ID: "",
     PAYPAL_CLIENT_SECRET: "",
     PAYPAL_MODE: "sandbox",
+    CHANNEL3_API_KEY: "",
+    VULTR_INFERENCE_API_KEY: "",
     LOG_LEVEL: "silent",
     AFTERPACT_ALLOW_DEMO_RESET: "1",
     ...extra,

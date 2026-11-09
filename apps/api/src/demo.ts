@@ -221,6 +221,76 @@ async function runFlagshipRecovery(ops: Ops, run: DemoRun): Promise<void> {
   run.status = "completed";
 }
 
+/** Hold scenario: an unapproved promise evaluates to policy Hold and the
+ * order attempt is refused. Demonstrates restraint with real policy
+ * execution — no approval, no payment, no order record. */
+export async function runHold(ops: Ops, label: string): Promise<DemoRun> {
+  const run: DemoRun = {
+    id: randomUUID(),
+    scenario: "hold",
+    label,
+    status: "running",
+    startedAt: ops.now(),
+    updatedAt: ops.now(),
+    transport: ops.transport,
+    acts: [],
+    context: {},
+  };
+  ops.store.demoRuns.set(run.id, run);
+  try {
+    const { intent } = ops.createIntent({ rawText: FLAGSHIP_INTENT_TEXT, buyerId: "jury-buyer" });
+    const offer = ops.flagshipOfferFor(intent);
+    const created = ops.createPromise({ intentId: intent.id, offerId: offer.id });
+    run.context["promiseId"] = created.promise.id;
+
+    // Deliberately NO approval: read the verdict the policy engine
+    // actually returns for this promise. Anything but Hold is a bug in
+    // the demo's premise, reported loudly instead of faked.
+    const view = ops.viewOf(created.promise.id);
+    if (view.policy.verdict !== "Hold") {
+      run.acts.push(act(1, "failed",
+        `BUG: expected policy Hold for the unapproved promise, got ${view.policy.verdict} (${view.policy.reasons.join(", ")}).`,
+        "real-api", { promiseId: created.promise.id }));
+      run.status = "failed";
+      run.error = "policy did not hold the unapproved promise";
+    } else {
+      run.acts.push(act(1, "passed",
+        `No approval attached: policy evaluates to Hold (${view.policy.reasons.join(", ")}). Payment is not authorized while the promise is on hold.`,
+        "real-api", { promiseId: created.promise.id }));
+      try {
+        await ops.createOrder({ promiseId: created.promise.id });
+        run.acts.push(act(2, "failed",
+          "BUG: order creation unexpectedly succeeded for a promise on hold.",
+          "real-api", { promiseId: created.promise.id }));
+        run.status = "failed";
+        run.error = "order executed despite policy hold";
+      } catch (error: unknown) {
+        if (error instanceof HttpError) {
+          run.acts.push(act(2, "blocked",
+            `Order creation refused (${error.code}: ${error.message}). No order record exists; nothing executed, nothing charged. Attach an approval to proceed — that path is the flagship scenario.`,
+            "real-api", { promiseId: created.promise.id }));
+        } else {
+          throw error;
+        }
+      }
+    }
+
+    if (run.status !== "failed") {
+      run.status = "completed";
+    }
+    run.updatedAt = ops.now();
+    ops.persist();
+    return run;
+  } catch (error: unknown) {
+    const http = error instanceof HttpError ? error : new HttpError(500, "demo-failed", String(error));
+    run.status = "failed";
+    run.error = `${http.code}: ${http.message}`;
+    run.updatedAt = ops.now();
+    ops.persist();
+    return run;
+  }
+}
+
 /** Negative scenario: prompt-injection attempts blocked by deterministic policy. */
 export async function runInjection(ops: Ops, label: string): Promise<DemoRun> {
   const run: DemoRun = {

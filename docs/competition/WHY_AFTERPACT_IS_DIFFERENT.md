@@ -4,7 +4,8 @@
 > Full per-entry evidence in `docs/competition/COMPETITIVE_LANDSCAPE.md`
 > (15+ submissions inspected; snippet-only entries marked). No "world
 > first" claims — only cited lifecycle gaps. Fresh names checked
-> 2026-11-08: Cobra, ClearLedger AI, Payment Review Copilot (§4).
+> 2026-11-08: Cobra, ClearLedger AI, Payment Review Copilot (§4);
+> 2026-11-09: OmegaCommerce (Devpost page opened — closest AG Grid rival).
 
 ## The one-line thesis
 
@@ -36,6 +37,7 @@ partial · ○ = absent in seen evidence · ? = snippet-only, unclear.
 | Dispute copilots (?) | ○ | ○ | ○ | ○ | ○ | ● | ○ | ◐ | ● | ◐ | ○ | ◐ | ○ |
 | Cobra (snippet, §4) | ○ | ○ | ○ | ◐ | ○ | ○ | ○ | ○ | ◐ | ○ | ○ | ○ | ○ |
 | ClearLedger AI (snippet, §4) | ○ | ○ | ○ | ○ | ◐ | ◐ | ○ | ○ | ○ | ○ | ? | ○ | ○ |
+| OmegaCommerce (Devpost page, 2026-11-09) | ● | ○ | ◐ | ● | ○ | ● | ○ | ○ | ◐ | ○ | ◐ | ◐ | ● |
 | **AFTERPACT (this repo)** | ● | ● | ● | ● | ● | ● | ● | ● | ● | ● | ● | ● | ● |
 
 Reading the table: 90%+ of observed entries implement stages 1–4 + 9 and

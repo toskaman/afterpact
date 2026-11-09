@@ -44,7 +44,10 @@ function baselineChecks(scenario: EvalScenario): { check: string; pass: boolean 
       productType: parsed.categories[0] ?? null,
       deadlineDays: parsed.deadlineDays,
     },
-    ambiguities: [],
+    // Score the heuristic as shipped: the runtime fallback surfaces
+    // parsed.notes as ambiguities (aiTasks heuristicIntent), so the
+    // baseline must too — hardcoding [] would rig ambiguity checks.
+    ambiguities: parsed.notes,
     requirements: parsed.mandatory,
     injection,
   };
