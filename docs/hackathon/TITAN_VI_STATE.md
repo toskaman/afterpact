@@ -6,16 +6,17 @@ position file; TITAN V documents stay frozen as history.
 ## Position
 
 - Branch: `titan-vi` (from `main` @ `5e78098`).
-- HEAD at last verification: `db63963` + uncommitted drift/docs sync (see
-  below); final SHAs recorded after the branch CI run, before merge.
-- Working tree: governed docs + `scripts/check-docs-drift.mjs` modified,
-  `scripts/drift-lib.mjs` + `tests/unit/drift.test.ts` new; nothing else.
-  (`.npm-cache/` untracked, pre-existing, untouched.)
+- Final code SHA: `56a541c`. Manifest commit: this sync (docs-only).
+- Working tree at sync: manifest + scorecard + final report + this file;
+  nothing else. (`.npm-cache/` untracked, pre-existing, untouched.)
 - Latest CI on `main`: run #59 (`42547352382`, verify+e2e+drift green).
-- Branch CI: pending push of `titan-vi` (this file updated with the run URL).
+- Branch CI: run
+  [#42619291765](https://github.com/toskaman/afterpact/actions/runs/42619291765)
+  on `56a541c`: verify ✓ (317/33), e2e ✓ (12/12), drift ✗ only for
+  manifest staleness (resolved by this regen; final CI expected all-green).
 - Deployment: `c4299fa` live on `https://199.247.9.188.nip.io`
-  (mock-simulated, keyless). Redeploy of the TITAN VI code: decision at
-  merge time (backup → deploy → verify, same procedure as TITAN V).
+  (mock-simulated, keyless). Redeploy of the TITAN VI code: at merge —
+  backup → deploy → verify, same TITAN V procedure.
 - Submission: NOT submitted. Video file built, YouTube upload owner-side.
   Devpost draft current, submit owner-side.
 
@@ -84,23 +85,21 @@ position file; TITAN V documents stay frozen as history.
   not exist and were never claimed in governed docs — TITAN VI now ships
   real ones under verified names (`get_incident_exposure`, …).
 
-## Workstream status
+## Workstream status (all agent work DONE)
 
-- A evidence truth: implementation done, manifest regen after branch CI.
+- A evidence truth: DONE (drift v2 + regen manifest @ code SHA + CI run).
 - B judge mode: DONE (Hold scenario + 4 cards + 5 e2e).
 - C isolation: DONE as honest fallback (report §6 + drift tripwire).
 - D AG Grid agent: DONE (custom agent + tools + tests + demo doc).
-- E impact pack: TODO (facilitation pack + ROI + pilot docs).
-- F safety/security: suite green; unopened-body inspections TODO.
-- G presentation/competitive: TODO (refresh pass).
-- H+I submission/ops: changelog TODO (this batch), freeze/ops docs TODO.
-- J jury sim: TODO after implementation (second workflow).
-- Merge/deploy: TODO after green branch CI + final verification.
+- E impact pack: DONE (facilitation + ROI + pilot; sessions owner-side).
+- F safety/security: DONE (webhook-amount fix + inspections + scans).
+- G presentation/competitive: DONE (OmegaCommerce + screenshot + pass).
+- H+I submission/ops: DONE (changelog + runbook + freeze inputs).
+- J jury sim: DONE (30/50 as-simulated; agent fixes applied + verified).
+- Merge/deploy: THIS STEP (explicit merge + redeploy + verify).
 
 ## Next actions (priority order)
 
-1. Commit drift gate + doc sync; push `titan-vi`; record green CI run.
-2. Regen manifest at the code commit + CI run; final docs-only sync.
-3. E impact pack, F inspections, G refresh, H+I ops docs.
-4. Jury-sim workflow → scorecard + final report.
-5. Merge to `main` (explicit, reported) + redeploy decision + verify.
+1. Push manifest sync → confirm final CI all-green.
+2. Merge `titan-vi` → `main` (explicit, reported) + redeploy + verify.
+3. Owner: YouTube + submit + consent + usability + upkeep (§7 report).

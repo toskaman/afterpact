@@ -1,16 +1,16 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-11-09T01:39:48.747Z",
-  "verifiedCommit": "a504c23",
-  "verifiedCiRun": "https://github.com/toskaman/afterpact/actions/runs/42521904370",
+  "generatedAt": "2026-11-09T12:44:09.451Z",
+  "verifiedCommit": "56a541cfccbc67f0865c630467f6aecd15f94fc7",
+  "verifiedCiRun": "https://github.com/toskaman/afterpact/actions/runs/42619291765",
   "suite": {
-    "passed": 288,
+    "passed": 317,
     "failed": 0,
     "skipped": 33
   },
   "e2e": {
-    "passed": 10,
-    "total": 10
+    "passed": 12,
+    "total": 12
   },
   "statics": {
     "suiteFiles": [
@@ -19,14 +19,17 @@
       "/tests/unit/ai.test.ts",
       "/tests/unit/approval.test.ts",
       "/tests/unit/audit.test.ts",
+      "/tests/unit/drift.test.ts",
       "/tests/unit/idempotency.test.ts",
       "/tests/unit/lifecycle.test.ts",
+      "/tests/unit/metrics-summary.test.ts",
       "/tests/unit/money.test.ts",
       "/tests/unit/policy.test.ts",
       "/tests/unit/promise.test.ts",
       "/tests/unit/refund.test.ts",
       "/tests/unit/store.test.ts",
       "/tests/unit/studio-agent.test.ts",
+      "/tests/unit/studio-risk-tools.test.ts",
       "/tests/integration/ai-studio-turn.test.ts",
       "/tests/integration/ai.gallery.test.ts",
       "/tests/integration/ai.live.test.ts",
@@ -34,6 +37,8 @@
       "/tests/integration/apps.api.test.ts",
       "/tests/integration/channel3.live.test.ts",
       "/tests/integration/channel3.report.test.ts",
+      "/tests/integration/demo.concurrency.test.ts",
+      "/tests/integration/demo.hold.test.ts",
       "/tests/integration/demo.sessions.test.ts",
       "/tests/integration/frontend.contract.test.ts",
       "/tests/integration/paypal.chaos.test.ts",
@@ -46,8 +51,8 @@
       "/tests/integration/sponsors.studio-toggle.test.ts",
       "/tests/integration/sponsors.studio.timeline.test.ts"
     ],
-    "suiteFileCount": 31,
-    "suiteStaticBlocks": 244,
+    "suiteFileCount": 36,
+    "suiteStaticBlocks": 273,
     "e2eFiles": [
       "/tests/e2e/dashboard.e2e.ts",
       "/tests/e2e/gallery.e2e.ts",
@@ -55,7 +60,7 @@
       "/tests/e2e/studio.e2e.ts",
       "/tests/e2e/twin.e2e.ts"
     ],
-    "e2eStaticBlocks": 10,
+    "e2eStaticBlocks": 12,
     "typecheckProjects": [
       "packages/domain",
       "packages/policy",
