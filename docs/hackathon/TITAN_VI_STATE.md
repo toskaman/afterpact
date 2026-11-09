@@ -14,9 +14,12 @@ position file; TITAN V documents stay frozen as history.
   [#42619291765](https://github.com/toskaman/afterpact/actions/runs/42619291765)
   on `56a541c`: verify ✓ (317/33), e2e ✓ (12/12), drift ✗ only for
   manifest staleness (resolved by this regen; final CI expected all-green).
-- Deployment: `c4299fa` live on `https://199.247.9.188.nip.io`
-  (mock-simulated, keyless). Redeploy of the TITAN VI code: at merge —
-  backup → deploy → verify, same TITAN V procedure.
+- Deployment: `f605790` live on `https://199.247.9.188.nip.io`
+  (mock-simulated, keyless; verified 2026-11-09: health ok, chain valid,
+  flagship + hold smokes completed, risk-analyst markers served).
+  Pre-deploy backup `/root/afterpact-backup-20261109-f6057900.tgz`
+  (sha256 `6c3f2865…aa63f`); operator token rotated into gitignored
+  `APIS.txt` and hash-verified against the live unit.
 - Submission: NOT submitted. Video file built, YouTube upload owner-side.
   Devpost draft current, submit owner-side.
 
