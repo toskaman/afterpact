@@ -230,5 +230,6 @@ attacks `blocked` with exact policy reasons). AI evidence without keys:
 - Hosted demo: `https://199.247.9.188.nip.io` (Vultr VPS, mock transport — one-click flagship, no login needed; free through judging, Dec 15, 2026)
 - Demo video (<3 min): `TBD:youtube-url` (file built in-repo:
   `brag-output/paypal-ai-2026/AFTERPACT_PAYPAL_AI_FINAL.mp4`, 165 s —
-  owner uploads per `DEVPOST_YOUTUBE_METADATA.md`, then replaces this marker)
+  owner uploads per `brag-output/paypal-ai-2026/DEVPOST_YOUTUBE_METADATA.md`,
+  then replaces this marker)
 - Test credentials/notes: none needed for the hosted demo; live sandbox/Channel3 paths unlock with your own keys per `.env.example` (`docs/demo/KEY_RETRIEVAL_GUIDE.md`)

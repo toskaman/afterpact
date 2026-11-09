@@ -52,6 +52,17 @@ The "Why not AG Studio" evaluation below is superseded: Studio IS used
   eval-only key via deploy-time env (never committed); expiry
   2026-12-24 covers the Dec 1–15 judging window by the key's own terms.
   `AG STUDIO · LICENSED` verified by screenshot.
+- **Key visibility (accepted, by design — reviewed 2026-11-09).**
+  `/api/config` serves `agStudio.licenseKey` because the browser MUST
+  receive the key: `AgStudioLicenseManager.setLicenseKey()` runs
+  client-side (`apps/web/public/app.js`), and every production AG Grid
+  bundle carries its key in client-reachable code. Redacting it from the
+  API without a replacement delivery would silently unlicense the canvas,
+  so the exposure is inherent to genuine licensed use, not a leak with a
+  code fix. Mitigations: key stays out of git (deploy-time env only);
+  PayPal/Channel3 secrets are never served (presence booleans only);
+  owner step — confirm the pending AG Grid consent reply covers public
+  demo display, and request key rotation after judging (Dec 16+).
 - **Consent request sent, reply pending.** The owner sent the written-
   consent request by email on 2026-11-09 (draft + record in
   `docs/sponsors/ag-studio-trial.md`); no reply yet, so redistribution
