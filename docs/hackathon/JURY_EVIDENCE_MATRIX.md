@@ -11,7 +11,7 @@ noted gap), **NOT VERIFIED** (real path, unexecuted — needs creds/humans),
 
 Verification baseline (2026-11-09; supersedes the 2026-11-08 baseline):
 `tsc --noEmit` exit 0 on all 6 projects; `vitest run` →
-**314 passed, 33 skipped** (skips = keyless live probes + live evals);
+**315 passed, 33 skipped** (skips = keyless live probes + live evals);
 `tsc -p apps/api` build exit 0; `node --check` on
 `apps/web/public/app.js` exit 0; Newman executed (37/37 requests, 18/18
 assertions); Playwright E2E 12/12 in CI; no secrets in repo (`.env` absent,
@@ -61,7 +61,7 @@ background).
 | Correct failure recovery | Webhook redelivery/dedupe/replay refusal, tampered-signature rejection, provider-state reconciliation (`reconcile.ts`), restart restores hash-chained audit log (verified in `apps.api.test.ts`) | **PASS** (mock) |
 | Safe concurrency | Concurrent same-key capture+refund serialize to 1 success + 1 duplicate; kill switch refuses new ops while reads/webhooks stay open | **PASS** (mock) |
 | Comprehensive logging | Append-only hash-chained `AuditEvent` log, no update/delete (`packages/domain/src/audit.ts`); Flight Recorder replay + redacted export (`apps/web` `#/recorder`, export test) | **PASS** |
-| Automated tests | 314 passed + 33 skipped across 38 files; `tsc` clean on 6 projects; CI `verify`+`e2e`+`drift` green at HEAD (authoritative run: manifest `verifiedCiRun`) | **PASS** |
+| Automated tests | 315 passed + 33 skipped across 38 files; `tsc` clean on 6 projects; CI `verify`+`e2e`+`drift` green at HEAD (authoritative run: manifest `verifiedCiRun`) | **PASS** |
 
 ### AI platform reliability (Ravi / Cosmos.AI lens)
 

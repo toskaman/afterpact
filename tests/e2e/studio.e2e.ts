@@ -9,7 +9,9 @@ test("studio canvas mounts with live sources and trial pill", async ({ page, req
   await expect(host).toBeVisible();
   // Canvas mounts (or degrades with an honest message, never a blank crash).
   await expect(host).not.toBeEmpty({ timeout: 30000 });
-  await expect(page.locator("#studioLicensePill")).toContainText("TRIAL");
+  // 30 s like the neighbors: the CDN-first bundle load is network-bound
+  // (locally ~4 s through a slow sandbox link; the assertion is unchanged).
+  await expect(page.locator("#studioLicensePill")).toContainText("TRIAL", { timeout: 30000 });
   await expect(page.getByText("AI Assistant").first()).toBeVisible({ timeout: 30000 });
   // The custom Outcome Risk Analyst agent (not the base harness) must win
   // against the real bundle — keyless mount still builds the full harness.

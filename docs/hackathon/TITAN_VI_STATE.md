@@ -22,9 +22,9 @@ position file; TITAN V documents stay frozen as history.
 ## Observed test results (2026-11-09, keyless, branch `titan-vi`)
 
 - `npm run typecheck`: exit 0 (6 projects).
-- `npm test`: **314 passed, 0 failed, 33 skipped** (347 total, 38 files).
-  Baseline was 288/0/33; +26 from TITAN VI (hold 2, concurrency 1,
-  risk-tools 7, drift 15, studio contract 1).
+- `npm test`: **315 passed, 0 failed, 33 skipped** (348 total, 38 files).
+  Baseline was 288/0/33; +27 from TITAN VI (hold 2, concurrency 1,
+  risk-tools 7, drift 15, studio contract 1, webhook-amount regression 1).
 - `npx playwright test`: **12/12** (judge 3→5 incl. Hold + mobile/keyboard).
 - `node scripts/check-docs-drift.mjs`: FAIL→fix loop in progress; must be
   green before merge (currently flags exactly the intended sync items).
@@ -58,6 +58,11 @@ position file; TITAN V documents stay frozen as history.
   314/33 + 12/12 everywhere (governed docs).
 - DEVPOST "No live-money code paths exist" vs README gated config →
   corrected to gated wording; drift-banned the absolute form.
+- Provider-initiated partial refunds recorded the FULL capture amount
+  (found by inspection, reproduced RED, fixed to the exact webhook
+  amount with a regression test in `paypal.chaos.test.ts`).
+- Studio e2e flaked locally on the 5 s pill default (CDN-first bundle
+  load ~4 s on a slow link); raised to 30 s, assertion unchanged.
 - JURY cited 1 PayPal loop (now 2), video rows all NOT DONE (now built),
   stale CI pin (now points at manifest `verifiedCiRun`).
 - Gallery KPI hardcoded "(3 runs)" vs 4 recorded runs → computed from data.

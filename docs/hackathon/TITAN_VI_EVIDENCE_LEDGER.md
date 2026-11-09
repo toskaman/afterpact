@@ -8,7 +8,7 @@ UNVERIFIED · NOT DONE · NOT MEASURED · ESTIMATE · OWNER ACTION REQUIRED.
 
 | # | Claim | State | Artifact |
 |---|---|---|---|
-| 1 | Vitest 314 passed / 0 failed / 33 skipped (keyless) | VERIFIED | `npm test` 2026-11-09 branch `titan-vi` (38 files, 347 total); CI `verify` after push |
+| 1 | Vitest 315 passed / 0 failed / 33 skipped (keyless) | VERIFIED | `npm test` 2026-11-09 branch `titan-vi` (38 files, 348 total); CI `verify` after push |
 | 2 | Playwright 12/12 incl. Hold + mobile/keyboard judge tests | VERIFIED | `npx playwright test` 2026-11-09; `tests/e2e/*.e2e.ts` |
 | 3 | Strict tsc clean on 6 projects | VERIFIED | `npm run typecheck` exit 0, 2026-11-09 |
 | 4 | Newman 37/37 requests, 18/18 assertions | VERIFIED | `postman/newman-report.json` (unchanged; no route shape changed) |
