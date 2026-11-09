@@ -1,16 +1,16 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-11-09T13:43:51.564Z",
-  "verifiedCommit": "771cb2fd1dc274b318ed268cef0973a40a61b07a",
-  "verifiedCiRun": "https://github.com/toskaman/afterpact/actions/runs/42627494532",
+  "generatedAt": "2026-11-09T19:06:18.344Z",
+  "verifiedCommit": "b6751dad19dae68f09e0dc97a174852c313c17ce",
+  "verifiedCiRun": "https://github.com/toskaman/afterpact/actions/runs/42628060557",
   "suite": {
     "passed": 319,
     "failed": 0,
     "skipped": 33
   },
   "e2e": {
-    "passed": 12,
-    "total": 12
+    "passed": 15,
+    "total": 15
   },
   "statics": {
     "suiteFiles": [
@@ -58,9 +58,10 @@
       "/tests/e2e/gallery.e2e.ts",
       "/tests/e2e/judge.e2e.ts",
       "/tests/e2e/studio.e2e.ts",
+      "/tests/e2e/tour.e2e.ts",
       "/tests/e2e/twin.e2e.ts"
     ],
-    "e2eStaticBlocks": 12,
+    "e2eStaticBlocks": 15,
     "typecheckProjects": [
       "packages/domain",
       "packages/policy",
