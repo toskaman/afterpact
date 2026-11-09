@@ -1,5 +1,9 @@
 # Video V2 — jury optimization report (OMEGA V, 2026-11-09)
 
+> Superseded by the **V3 cut** (same day): retempo to 137.1 s, all holds/tails
+> removed, `music-bed-v3.wav` + VO carve. See `VIDEO_QA_REPORT.md` (v3) and
+> `VIDEO_SHOT_MAP.md` (v3). This file stays as the V2 historical record.
+
 ## Why V2 is stronger
 
 V1 predates the product's signature: the Judge 60-second tour. V2 puts

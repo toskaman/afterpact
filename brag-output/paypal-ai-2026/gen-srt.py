@@ -46,7 +46,7 @@ def wrap(text: str, width: int = 42) -> str:
 
 srt, nar = [], []
 for i, (start, end, lid) in enumerate(clips):
-    nxt = clips[i + 1][0] if i + 1 < len(clips) else 165.0
+    nxt = clips[i + 1][0] if i + 1 < len(clips) else 137.0
     end = min(end + 0.25, nxt - 0.08)  # small padding, never overlap next cue
     if end <= start:
         end = start + 0.5

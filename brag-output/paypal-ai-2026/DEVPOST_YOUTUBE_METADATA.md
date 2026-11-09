@@ -28,9 +28,9 @@
 - Tags: `paypal ai hackathon`, `afterpact`, `agentic commerce`, `paypal api`,
   `ai agents`, `purchase assurance`, `ag grid`, `fintech`, `payPal sandbox`
 - Category: Science & Technology. Language: English.
-- Thumbnail plan: 1280×720 still from 1:02 (Outcome Twin triple panel +
+- Thumbnail plan: 1280×720 still from 0:47 (Outcome Twin triple panel +
   `1 KIT · $129.99 MISSING` pill) with title band "AFTERPACT — outcome matches
-  the promise". No faces, no third-party logos.
+  the promise". No faces, no third-party logos. (V3 cut: 2:17 runtime.)
 
 ## Devpost video field
 
@@ -44,7 +44,7 @@
 
 - Footage: original Playwright captures of the team's own application (MIT repo).
 - Voice: Kokoro TTS, Apache-2.0, local render, no API cost.
-- Music/SFX: project-owned bed (`music-bed.wav`) + 7 SFX from the composition
-  asset pack; no third-party commercial music.
+- Music/SFX: project-owned bed (`music-bed-v3.wav`, 137 s, VO spectral carve)
+  + 7 SFX from the composition asset pack; no third-party commercial music.
 - Fonts on screen: system/AG Grid app fonts + Arial subtitles (burned, no
   redistribution issue for a video upload).

@@ -19,20 +19,20 @@
 #s3-rule { position: absolute; left: 130px; top: 845px; width: 120px; height: 4px; background: #2dd4bf; }
 </style>
 <div id="root" data-composition-id="s3-sandbox" data-width="1920" data-height="1080">
-  <div id="s3-gw" class="clip" data-start="0" data-duration="8" data-track-index="0"><div id="s3-glow"></div></div>
-  <div id="s3-ghw" class="clip" data-start="0" data-duration="8" data-track-index="0"><div id="s3-ghost">SANDBOX</div></div>
-  <div id="s3-lw" class="clip" data-start="0.2" data-duration="7.8" data-track-index="1"><div id="s3-label">RECORDED SANDBOX EVIDENCE</div></div>
-  <div id="s3-sw" class="clip" data-start="0.4" data-duration="7.6" data-track-index="1"><div id="s3-sub">api-m.sandbox.paypal.com · fetched 2026-11-08 · credentials redacted</div></div>
-  <div id="s3-a" class="clip" data-start="0.6" data-duration="7.4" data-track-index="1"><div class="row" id="s3-r1"><span class="kind">ORDER</span><span class="id">2ER387580K033722V</span><span class="amt">$389.97</span><span class="st">COMPLETED</span></div></div>
-  <div id="s3-b" class="clip" data-start="1" data-duration="7" data-track-index="1"><div class="row" id="s3-r2"><span class="kind">CAPTURE</span><span class="id">7R158417X9367771B</span><span class="amt">$389.97</span><span class="st">PARTIALLY_REFUNDED</span></div></div>
-  <div id="s3-c" class="clip" data-start="1.4" data-duration="6.6" data-track-index="1"><div class="row" id="s3-r3"><span class="kind">REFUND</span><span class="id">8DJ895035B173303G</span><span class="amt">$129.99</span><span class="st">COMPLETED · PARTIAL</span></div></div>
-  <div id="s3-rw" class="clip" data-start="1.8" data-duration="6.2" data-track-index="1"><div id="s3-rule"></div></div>
-  <div id="s3-fw" class="clip" data-start="2" data-duration="6" data-track-index="1"><div id="s3-foot">order → capture → partial refund · the loop this film replays on simulated transport</div></div>
+  <div id="s3-gw" class="clip" data-start="0" data-duration="5.5" data-track-index="0"><div id="s3-glow"></div></div>
+  <div id="s3-ghw" class="clip" data-start="0" data-duration="5.5" data-track-index="0"><div id="s3-ghost">SANDBOX</div></div>
+  <div id="s3-lw" class="clip" data-start="0.2" data-duration="5.3" data-track-index="1"><div id="s3-label">RECORDED SANDBOX EVIDENCE</div></div>
+  <div id="s3-sw" class="clip" data-start="0.4" data-duration="5.1" data-track-index="1"><div id="s3-sub">api-m.sandbox.paypal.com · fetched 2026-11-08 · credentials redacted</div></div>
+  <div id="s3-a" class="clip" data-start="0.6" data-duration="4.9" data-track-index="1"><div class="row" id="s3-r1"><span class="kind">ORDER</span><span class="id">2ER387580K033722V</span><span class="amt">$389.97</span><span class="st">COMPLETED</span></div></div>
+  <div id="s3-b" class="clip" data-start="1" data-duration="4.5" data-track-index="1"><div class="row" id="s3-r2"><span class="kind">CAPTURE</span><span class="id">7R158417X9367771B</span><span class="amt">$389.97</span><span class="st">PARTIALLY_REFUNDED</span></div></div>
+  <div id="s3-c" class="clip" data-start="1.4" data-duration="4.1" data-track-index="1"><div class="row" id="s3-r3"><span class="kind">REFUND</span><span class="id">8DJ895035B173303G</span><span class="amt">$129.99</span><span class="st">COMPLETED · PARTIAL</span></div></div>
+  <div id="s3-rw" class="clip" data-start="1.8" data-duration="3.7" data-track-index="1"><div id="s3-rule"></div></div>
+  <div id="s3-fw" class="clip" data-start="2" data-duration="3.5" data-track-index="1"><div id="s3-foot">order → capture → partial refund · the loop this film replays on simulated transport</div></div>
 </div>
 <script>
 const tl = gsap.timeline({ paused: true });
-tl.fromTo("#s3-glow", { opacity: 0.5, scale: 1 }, { opacity: 1, scale: 1.15, duration: 8, ease: "sine.inOut" }, 0);
-tl.fromTo("#s3-ghost", { x: 0 }, { x: -90, duration: 8, ease: "none" }, 0);
+tl.fromTo("#s3-glow", { opacity: 0.5, scale: 1 }, { opacity: 1, scale: 1.15, duration: 5.5, ease: "sine.inOut" }, 0);
+tl.fromTo("#s3-ghost", { x: 0 }, { x: -90, duration: 5.5, ease: "none" }, 0);
 tl.fromTo("#s3-label", { opacity: 0, y: 22 }, { opacity: 1, y: 0, duration: 0.5, ease: "power3.out" }, 0.2);
 tl.fromTo("#s3-sub", { opacity: 0 }, { opacity: 1, duration: 0.5, ease: "power2.out" }, 0.4);
 tl.fromTo("#s3-r1", { opacity: 0, x: -60 }, { opacity: 1, x: 0, duration: 0.55, ease: "power3.out" }, 0.6);
