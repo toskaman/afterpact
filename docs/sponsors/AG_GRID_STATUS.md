@@ -11,7 +11,11 @@ Date: 2026-11-08. Authoritative for the question "did this project use AG Grid /
   the real Agent Framework loop driven by our own Vultr-backed LLM adapter
   (`POST /api/ai/studio-turn`, key server-side). Verified live: an NL
   prompt produced a configured bar chart from live rows
-  (`docs/demo/screenshots/studio-agent-trace.png`). Trial watermark shows
+  (`docs/demo/screenshots/studio-agent-trace.png`). Since TITAN VI
+  (2026-11-09) the harness declares a custom **Outcome Risk Analyst**
+  agent (`directLlmRunner`) with three read-only custom tools
+  (`api.defineAiTool`) over the same live datasets — see
+  `docs/demo/AG_GRID_AGENT_DEMO.md`. Trial watermark shows
   until `AG_STUDIO_LICENSE_KEY` is installed (owner action documented in
   `AG_STUDIO_UPGRADE_PATH.md`).
 - **AG Grid Community 36.3.0 (MIT): USED.** The same view keeps real
@@ -62,10 +66,40 @@ The AG Grid sponsor prize is "Best Use of AG Grid" (rules audit
 foundation, the entry claims this prize; the Studio also strengthens the
 Grand-prize case (Technological Implementation + Design).
 
+## Custom agent — Outcome Risk Analyst (TITAN VI, 2026-11-09)
+
+- Custom agent `outcome-risk-analyst` declared via `directLlmRunner`
+  with AFTERPACT instructions; primary agent of a custom harness
+  (`createAiHarness` setup form) with the Studio built-ins it needs
+  (`viewSchema`, `viewPage`, `executeQuery`, `addWidget`) plus three
+  custom tools. Falls back to the base harness if any API is missing —
+  never half-wired.
+- Custom tools (`api.defineAiTool`, client-executed, schema-validated
+  params): `get_incident_exposure` (incidents by unrefunded exposure),
+  `get_promise_outcome_comparison` (promised vs observed + evidence
+  coverage), `get_refund_verification_status` (refunds by verification
+  state + remaining capture balances). All read-only GETs to the single
+  allowlisted endpoint `GET /api/studio/datasets`; row caps, status
+  allowlist, abort-signal forwarding, fail-closed errors.
+- Prompt starter added: "Outcome risk briefing".
+- Keyless proof the custom path wins against the real 3.1.0 bundle:
+  `tests/e2e/studio.e2e.ts` asserts
+  `data-harness-kind="outcome-risk-analyst"` on the mounted canvas.
+- Tool behavior proof (hermetic, no bundle/key):
+  `tests/unit/studio-risk-tools.test.ts` (7 tests: ranking, caps,
+  filters, fail-closed, no-mutation tripwire, instruction bounds).
+- Honest limit: a live keyed agent trace exercising the new tools is
+  still an owner action (inference key required); the committed
+  `studio-agent-trace.png` covers the base harness loop. Full demo
+  script: `docs/demo/AG_GRID_AGENT_DEMO.md`.
+
 ## Files
 
 - `apps/api/src/studio.ts` — datasets + NL command language
 - `apps/web/public/{index.html,app.js,styles.css}` — Studio view + theme
+- `apps/web/public/ag-studio-risk-tools.js` — custom tools + analyst instructions
+- `apps/web/public/ag-studio-adapter.js` — Vultr-backed LLM adapter
 - `apps/web/public/vendor/` — pinned AG Grid Community bundle + MIT license
 - `scripts/vendor-ag-grid.mjs` — reproduce/verify vendoring
 - `tests/integration/sponsors.studio.timeline.test.ts` — dataset/NL/vendor tests
+- `tests/unit/studio-risk-tools.test.ts` — custom-tool behavior + security bounds
